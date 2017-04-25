@@ -14,7 +14,6 @@ public class BootState implements GameState{
 	private final int FADE_IN = 40;
 	private final int LENGTH = 50;
 	private final int FADE_OUT = 0;
-	
 	private int x;
 	
 	public BootState() {
@@ -24,6 +23,10 @@ public class BootState implements GameState{
 	public void init() {
 		x = 0;
 		ticks = 0;
+		//TODO work out who should own AudioManager
+		AudioManager audMan = new AudioManager();
+		audMan.addSound("intro_sound.wav", "intro_sound");
+		audMan.playSound("intro_sound", 1.0f);
 		try {
 			logo = ImageIO.read(getClass().getResourceAsStream("logo.png"));
 		}

@@ -24,6 +24,8 @@ public class Boot2State implements GameState{
 	public void init() {
 		x = 0;
 		ticks = 0;
+		AudioManager man = new AudioManager();
+		man.playSound("intro_sound.wav", 0.0f);
 		try {
 			logo = ImageIO.read(getClass().getResourceAsStream("logo2.png"));
 		}
