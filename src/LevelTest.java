@@ -7,7 +7,7 @@ public class LevelTest {
 	@Test
 	public void testLevel() {
 		Level l = new Level(1240, 680, 20);
-		l.print();
+		System.out.println(l.toString());
 	}
 	
 	@Test
@@ -19,7 +19,7 @@ public class LevelTest {
 				 + "00000000\n";
 		
 		Level l = new Level(s, 20);
-		l.print();
+		System.out.println(l.toString());
 	}
 
 }

@@ -1,7 +1,24 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
 public class Level {
+	public enum Tile {
+		WALL(0),
+		WALKABLE(1),
+		TEMP_WALKABLE(5);
+		
+		private final int intRep;
+		Tile(int intRep) {
+			this.intRep = intRep;
+		}
+		
+		public int getIntRep() {
+			return this.intRep;
+		}
+	}
+	
 	private byte levelMap[][];
 	
 	private int width; // Width of the level
@@ -23,6 +40,10 @@ public class Level {
 		this.height = screenHeight/tileSize + 2;
 		this.tileSize = tileSize;
 		
+		this.tiles = new BufferedImage[2];
+		tiles[0] = null;
+		tiles[1] = null;
+		
 		generate();
 	}
 	
@@ -42,6 +63,14 @@ public class Level {
 				levelMap[i][j] = (byte) (inputArray[sIndex++] - '0');
 			sIndex++;
 		}
+		
+		this.tiles = new BufferedImage[2];
+		tiles[0] = null;
+		tiles[1] = null;
+	}
+	
+	public void setTile(Tile t, BufferedImage tileImage) {
+		this.tiles[t.getIntRep()] = tileImage;
 	}
 	
 	/**
@@ -52,7 +81,7 @@ public class Level {
 		levelMap = new byte[height][width];
 		for (int i = 0; i < height; i++)
 			for (int j = 0; j < width; j++) 
-				levelMap[i][j] = 0;
+				levelMap[i][j] = (byte) Tile.WALL.getIntRep();
 		
 		int roughCentreHeight = height/2;
 		int roughCentreWidth = width/2;
@@ -63,15 +92,15 @@ public class Level {
 		// Place initial 9 walkables in the rough centre.
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)
-				levelMap[roughCentreHeight + i][roughCentreWidth + j] = 1;
+				levelMap[roughCentreHeight + i][roughCentreWidth + j] = (byte) Tile.WALKABLE.getIntRep();
 
 		Random rng = new Random();
 		// numPasses = number of times to attempt to place walkables.
 		// Feel free to play with this
-		for (int numPasses = 7; numPasses > 0; numPasses--) {
+		for (int numPasses = 10; numPasses > 0; numPasses--) {
 			for (int i = 1; i < height - 1; i++) {
 				for (int j = 1; j < width - 1; j++) {
-					if (levelMap[i][j] != 0)
+					if (levelMap[i][j] != Tile.WALL.getIntRep())
 						continue;
 					
 					// 0d0
@@ -94,21 +123,21 @@ public class Level {
 						break;
 					case 1: // 1/4 chance
 						if (rng.nextFloat() <= adj1Chance)
-							levelMap[i][j] = 5;
+							levelMap[i][j] = (byte) Tile.TEMP_WALKABLE.getIntRep();
 						
 						break;
 					case 2: // 1/2 change
 						if (rng.nextFloat() <= adj2Chance)
-							levelMap[i][j] = 5;
+							levelMap[i][j] = (byte) Tile.TEMP_WALKABLE.getIntRep();
 						
 						break;
 					case 3: // 3/4 chance
 						if (rng.nextFloat() <= adj3Chance)
-							levelMap[i][j] = 5;
+							levelMap[i][j] = (byte) Tile.TEMP_WALKABLE.getIntRep();
 						
 						break;
 					case 4: // definite
-						levelMap[i][j] = 5;
+						levelMap[i][j] = (byte) Tile.TEMP_WALKABLE.getIntRep();
 					}
 				}
 			}
@@ -117,16 +146,36 @@ public class Level {
 			for (int i = 1; i < height - 1; i++)
 				for (int j = 1; j < width - 1; j++) 
 					if (levelMap[i][j] == 5) 
-						levelMap[i][j] = 1;
+						levelMap[i][j] = (byte) Tile.WALKABLE.getIntRep();
 		}
 	}
 	
-	public void print() {
+	public void draw(Graphics2D bbg) {
+		int left = (int) ((double) GameMaster.WIDTH/2 - (double) (width * tileSize)/2);
+		int top = (int) ((double) GameMaster.HEIGHT/2 - (double) (height * tileSize)/2);
+		
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) { 
+				if (tiles[levelMap[i][j]] != null) {
+					bbg.drawImage(tiles[levelMap[i][j]], left + j * tileSize, top + i * tileSize, null);
+				} else {
+					bbg.setColor(new Color(levelMap[i][j] * 127));
+					bbg.fillRect(left + j * tileSize, top + i * tileSize, tileSize, tileSize);
+				}
+			}
+		}
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder s = new StringBuilder(height * (width + 1));
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) 
-				System.out.print((int) levelMap[i][j]);
+				s.append((int) levelMap[i][j]);
 			
-			System.out.println();
-		}			
+			s.append('\n');
+		}
+		
+		return s.toString();
 	}
 }
