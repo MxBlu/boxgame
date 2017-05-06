@@ -3,7 +3,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
-public class Level {
+public class Level implements GameState {
 	public enum Tile {
 		WALL(0),
 		WALKABLE(1),
@@ -177,5 +177,23 @@ public class Level {
 		}
 		
 		return s.toString();
+	}
+
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void handleInput() {
+		// TODO Auto-generated method stub
+		
 	}
 }

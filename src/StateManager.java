@@ -26,6 +26,8 @@ public class StateManager {
 		   currentState = new MenuState();
 		} else if (stateName.equals("PLAY")) {
 			currentState = new PlayState();
+		}  else if (stateName.equals("LEVEL")) {
+		currentState = new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50);
 		} 
 	}
 	

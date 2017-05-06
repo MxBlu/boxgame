@@ -46,7 +46,7 @@ public class Boot2State implements GameState{
 			if(alpha > 255) alpha = 255;
 		}
 		if(ticks > FADE_IN + LENGTH + FADE_OUT + 10) {
-			StateManager.setState("INTRO3");
+			StateManager.setState("MENU");
 		}
 	}
 	

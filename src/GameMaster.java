@@ -57,7 +57,6 @@ public class GameMaster extends JFrame{
 	}
 	
 	public void initialize() {
-		
 		setTitle("Game");
 	    setSize(WIDTH, HEIGHT);
 		setFocusable(true);
@@ -69,6 +68,7 @@ public class GameMaster extends JFrame{
 		image = new BufferedImage(WIDTH, HEIGHT, 1);
 		g = (Graphics2D) image.getGraphics();
 		backBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB); 
+		addKeyListener(new KeyInput());
 		stateManager = new StateManager();
 	}
 	

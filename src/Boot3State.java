@@ -42,7 +42,7 @@ public class Boot3State implements GameState{
 	
 	public void draw(Graphics2D bbg) {
 		bbg.setColor(new Color(0, 0, 0, alpha));
-		bbg.fillOval(0-GameMaster.WIDTH/2, 0-GameMaster.HEIGHT/2, GameMaster.WIDTH * 2, GameMaster.HEIGHT * 2);
+		bbg.fillOval(GameMaster.WIDTH/2, GameMaster.HEIGHT/2, GameMaster.WIDTH * 2, GameMaster.HEIGHT * 2);
 		bbg.setColor(Color.WHITE); 
 		bbg.drawOval(GameMaster.WIDTH/2, GameMaster.HEIGHT/2, x*2, x*2); 
 	}
