@@ -35,7 +35,7 @@ public class BootState implements GameState{
 		}
 	}
 	
-	public void update() {
+	public void update(KeyInput input) {
 		x ++;
 		ticks++;
 		if(ticks < FADE_IN) {

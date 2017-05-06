@@ -7,9 +7,8 @@ public class StateManager {
 	
 	public StateManager() {
 		
-		paused = false;		
+		paused = false;
 		currentState = new BootState();
-		
 	}
 	
 	public static void setState(String stateName) {
@@ -27,7 +26,7 @@ public class StateManager {
 		} else if (stateName.equals("PLAY")) {
 			currentState = new PlayState();
 		}  else if (stateName.equals("LEVEL")) {
-		currentState = new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50);
+			currentState = new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50);
 		} 
 	}
 	
@@ -35,7 +34,7 @@ public class StateManager {
 		currentState.draw(g);
 	}
 	
-	public void update() {
-		currentState.update();
+	public void update(KeyInput input) {
+		currentState.update(input);
 	}
 }

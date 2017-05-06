@@ -34,7 +34,7 @@ public class Boot2State implements GameState{
 		}
 	}
 	
-	public void update() {
+	public void update(KeyInput input) {
 		x ++;
 		ticks++;
 		if(ticks < FADE_IN) {
@@ -46,7 +46,9 @@ public class Boot2State implements GameState{
 			if(alpha > 255) alpha = 255;
 		}
 		if(ticks > FADE_IN + LENGTH + FADE_OUT + 10) {
-			StateManager.setState("MENU");
+			//TODO Uncomment when there's a menu
+			//StateManager.setState("MENU");
+			StateManager.setState("LEVEL");
 		}
 	}
 	

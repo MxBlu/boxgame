@@ -30,7 +30,7 @@ public class GamePanel extends JPanel implements  Runnable{
 	
 	public void update() {
 		x++;
-		stateManager.update();
+		//stateManager.update();
 	}
 	
 	public void render() {

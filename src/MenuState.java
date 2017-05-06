@@ -35,24 +35,31 @@ public class MenuState implements GameState{
 	}
 
 	public void handleInput() {
-		if (KeyInput.getPressed() == 1) {
+		/*if (input.getPressed() == 1) {
 			System.out.println("UP");
 			option++;
 		}
-		if (KeyInput.getPressed() == 2) {
+		if (input.getPressed() == 2) {
 			System.out.println("DOWN");
 			option--;
 		}
-		if (KeyInput.getPressed() == 3) {
+		if (input.getPressed() == 3) {
 			System.out.println("LEFT");
 		}
-		if (KeyInput.getPressed() == 4) {
+		if (input.getPressed() == 4) {
 			System.out.println("RIGHT");
 		}
-		if (KeyInput.getPressed() == 5) {
+		if (input.getPressed() == 5) {
 			System.out.println("SPACE");
 			option = 10;
-		}
+		}*/
 	}
+
+	@Override
+	public void update(KeyInput input) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }

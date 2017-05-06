@@ -1,23 +1,32 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Random;
 
-public class Level implements GameState {
-	public enum Tile {
-		WALL(0),
-		WALKABLE(1),
-		TEMP_WALKABLE(5);
-		
-		private final int intRep;
-		Tile(int intRep) {
-			this.intRep = intRep;
-		}
-		
-		public int getIntRep() {
-			return this.intRep;
-		}
+import javax.imageio.ImageIO;
+
+import javafx.scene.transform.Scale;
+
+enum Tile {
+	WALL(0),
+	WALKABLE(1),
+	BOX(2),
+	GOAL(3),
+	TEMP_WALKABLE(5);
+	
+	private final int intRep;
+	Tile(int intRep) {
+		this.intRep = intRep;
 	}
+	
+	public int getIntRep() {
+		return this.intRep;
+	}
+}
+
+public class Level implements GameState {
 	
 	private byte levelMap[][];
 	
@@ -25,7 +34,9 @@ public class Level implements GameState {
 	private int height; // Height of the level
 	private int tileSize;
 	
-	private BufferedImage tiles[];
+	private Image tiles[];
+	private Player player;
+	private KeyInput input;
 	
 	/**
 	 * Creates a new level.
@@ -39,10 +50,7 @@ public class Level implements GameState {
 		this.width = screenWidth/tileSize + 2;
 		this.height = screenHeight/tileSize + 2;
 		this.tileSize = tileSize;
-		
-		this.tiles = new BufferedImage[2];
-		tiles[0] = null;
-		tiles[1] = null;
+		setDefaultTiles();
 		
 		generate();
 	}
@@ -64,12 +72,27 @@ public class Level implements GameState {
 			sIndex++;
 		}
 		
-		this.tiles = new BufferedImage[2];
-		tiles[0] = null;
-		tiles[1] = null;
+		setDefaultTiles();
 	}
 	
-	public void setTile(Tile t, BufferedImage tileImage) {
+	private void setDefaultTiles() {
+		this.tiles = new Image[4];
+		try {
+			tiles[0] = ImageIO.read(getClass().getResourceAsStream("ground_solid.png")).getScaledInstance(tileSize,
+					tileSize, Image.SCALE_DEFAULT);
+			tiles[1] = ImageIO.read(getClass().getResourceAsStream("ground_empty.png")).getScaledInstance(tileSize,
+					tileSize, Image.SCALE_DEFAULT);
+			tiles[2] = ImageIO.read(getClass().getResourceAsStream("box.png")).getScaledInstance(tileSize,
+					tileSize, Image.SCALE_DEFAULT);
+			tiles[3] = ImageIO.read(getClass().getResourceAsStream("goal.png")).getScaledInstance(tileSize,
+					tileSize, Image.SCALE_DEFAULT);
+			player = new Player(1, 1, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void setTile(Tile t, Image tileImage) {
 		this.tiles[t.getIntRep()] = tileImage;
 	}
 	
@@ -148,6 +171,11 @@ public class Level implements GameState {
 					if (levelMap[i][j] == 5) 
 						levelMap[i][j] = (byte) Tile.WALKABLE.getIntRep();
 		}
+		//TEMP (adds a push block)
+		levelMap[height/2+1][width/2+1] = (byte) Tile.BOX.getIntRep();
+		//ALSO TEMP (adds a goal block)
+		levelMap[height/2-1][width/2-1] = (byte) Tile.GOAL.getIntRep();
+		
 	}
 	
 	public void draw(Graphics2D bbg) {
@@ -164,6 +192,12 @@ public class Level implements GameState {
 				}
 			}
 		}
+		
+		player.draw(bbg);
+	}
+	
+	public int getTileSize() {
+		return tileSize;
 	}
 	
 	@Override
@@ -186,14 +220,12 @@ public class Level implements GameState {
 	}
 
 	@Override
-	public void update() {
-		// TODO Auto-generated method stub
-		
+	public void update(KeyInput input) {
+		player.update(input.getPressed(), levelMap);
 	}
 
 	@Override
 	public void handleInput() {
 		// TODO Auto-generated method stub
-		
 	}
 }

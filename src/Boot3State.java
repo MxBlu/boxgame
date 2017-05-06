@@ -24,7 +24,7 @@ public class Boot3State implements GameState{
 		ticks = 0;
 	}
 	
-	public void update() {
+	public void update(KeyInput input) {
 		x ++;
 		ticks++;
 		if(ticks < FADE_IN) {
