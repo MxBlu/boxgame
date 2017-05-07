@@ -1,13 +1,10 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
-
-import javafx.scene.transform.Scale;
 
 enum Tile {
 	WALL(0),
@@ -36,7 +33,6 @@ public class Level implements GameState {
 	
 	private Image tiles[];
 	private Player player;
-	private KeyInput input;
 	
 	/**
 	 * Creates a new level.

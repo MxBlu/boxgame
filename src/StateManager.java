@@ -9,6 +9,7 @@ public class StateManager {
 		
 		paused = false;
 		currentState = new BootState();
+		//currentState = new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50);
 	}
 	
 	public static void setState(String stateName) {

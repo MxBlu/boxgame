@@ -57,7 +57,6 @@ public class Boot2State implements GameState{
 		bbg.drawImage(logo, 0, 0, GameMaster.WIDTH, GameMaster.HEIGHT, null);
 		bbg.setColor(new Color(0, 0, 0, alpha));
 		bbg.fillRect(0, 0, GameMaster.WIDTH, GameMaster.HEIGHT);
-		
 	}
 
 	@Override
