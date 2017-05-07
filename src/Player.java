@@ -102,7 +102,11 @@ public class Player {
 		if (KeyInput.getPressed() == 5) {
 			System.out.println("SPACE");
 		}
-
+		if (KeyInput.getPressed() == 6) {
+			System.out.println("ESCAPE");
+			StateManager.setState("MENU");	
+			return;
+		}
 		lastMovement = curMovement;
 		curMovement = KeyInput.getPressed();
 		if (curMovement != lastMovement)

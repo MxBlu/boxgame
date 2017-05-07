@@ -30,6 +30,10 @@ public class KeyInput extends KeyAdapter{
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
         	input = 5;
         }
+  
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+        	input = 6;
+        }
 	}
 
 	@Override
@@ -48,6 +52,9 @@ public class KeyInput extends KeyAdapter{
         }			
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
         	input = 0;
+        }
+        if (e.getKeyCode()== KeyEvent.VK_ESCAPE) {
+        	input = 6;
         }
 	}
 
