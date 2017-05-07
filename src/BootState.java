@@ -11,8 +11,8 @@ public class BootState implements GameState{
 	private int alpha;
 	private int ticks;
 	
-	private final int FADE_IN = 40;
-	private final int LENGTH = 50;
+	private final int FADE_IN = 30;
+	private final int LENGTH = 40;
 	private final int FADE_OUT = 0;
 	private int x;
 	
@@ -68,8 +68,7 @@ public class BootState implements GameState{
 			StateManager.setState("INTRO2");
 			return;
 			
-		}
-		
+		}		
 	}
 	
 	

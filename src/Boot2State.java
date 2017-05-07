@@ -12,7 +12,7 @@ public class Boot2State implements GameState{
 	private int ticks;
 	
 	private final int FADE_IN = 0;
-	private final int LENGTH = 50;
+	private final int LENGTH = 40;
 	private final int FADE_OUT = 30;
 	
 	private int x;
@@ -58,6 +58,7 @@ public class Boot2State implements GameState{
 		bbg.drawImage(logo, 0, 0, GameMaster.WIDTH, GameMaster.HEIGHT, null);
 		bbg.setColor(new Color(0, 0, 0, alpha));
 		bbg.fillRect(0, 0, GameMaster.WIDTH, GameMaster.HEIGHT);
+		
 	}
 
 	@Override
@@ -65,7 +66,7 @@ public class Boot2State implements GameState{
 		if(KeyInput.getPressed()==5){
 			StateManager.setState("MENU");
 			return;
-		}
+		}		
 	}
 	
 	

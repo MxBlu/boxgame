@@ -1,6 +1,9 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 
 public class MenuState implements GameState{
@@ -9,6 +12,9 @@ public class MenuState implements GameState{
 	private int option;
 	private int enter;
 	private int framesLastUpdate = 3;
+	private ArrayList<Rectangle> boxes;
+	private int eventTick;
+	private boolean eventStart;
 
 	public MenuState() {
 		init();
@@ -23,13 +29,17 @@ public class MenuState implements GameState{
 			e.printStackTrace();
 		}
 		option = 0;
+		boxes = new ArrayList<Rectangle>();
+		eventStart = true;
+		eventStart();
 	}
 
 	public void update() {
 		if (framesLastUpdate < 3) {
-			framesLastUpdate++;
-			return;
+			//framesLastUpdate++;
+			//return;
 		}
+		if(eventStart) eventStart();
 
 		framesLastUpdate = 0;
 		//System.out.println(option);
@@ -57,6 +67,13 @@ public class MenuState implements GameState{
 			bbg.setColor(Color.BLUE);
 			bbg.fillRect(GameMaster.WIDTH/2 + 100,520,20,30);
 		}
+		
+		// draw transition boxes
+		bbg.setColor(Color.BLACK);
+		for(int i = 0; i < boxes.size(); i++) {
+			bbg.fill(boxes.get(i));
+		}
+		
 	}
 
 	public void handleInput() {
@@ -80,6 +97,31 @@ public class MenuState implements GameState{
 		}
 	}
 
+	private void eventStart() {
+		eventTick++;
+		if(eventTick == 1) {
+			boxes.clear();
+			for(int i = 0; i < 9; i++) {
+				boxes.add(new Rectangle(0, i * 80, GameMaster.WIDTH, 80));
+			}
+		}
+		if(eventTick > 1 && eventTick < 32) {
+			for(int i = 0; i < boxes.size(); i++) {
+				Rectangle r = boxes.get(i);
+				if(i % 2 == 0) {
+					r.x -= 40;
+				}
+				else {
+					r.x += 40;
+				}
+			}
+		}
+		if(eventTick == 33) {
+			boxes.clear();
+			eventStart = false;
+			eventTick = 0;
+		}
+	}
 
 
 }
