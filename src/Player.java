@@ -33,12 +33,6 @@ public class Player {
 	public void update(byte levelMap[][]) {
 		handleInput();
 
-		if (curMovement == lastMovement && framesLastUpdate < movementSpeed) {
-			framesLastUpdate++;
-			return;
-		}
-		framesLastUpdate = 0;
-
 		int prevTileX = tileX;
 		int prevTileY = tileY;
 
@@ -83,33 +77,32 @@ public class Player {
 	public void handleInput() {
 		movX = 0;
 		movY = 0;
-		if (KeyInput.getPressed() == 1) {
-			movY--;
-			System.out.println("UP");
-		}
-		if (KeyInput.getPressed() == 2) {
-			movY++;
-			System.out.println("DOWN");
-		}
-		if (KeyInput.getPressed() == 3) {
-			movX--;
-			System.out.println("LEFT");
-		}
-		if (KeyInput.getPressed() == 4) {
-			movX++;
-			System.out.println("RIGHT");
-		}
-		if (KeyInput.getPressed() == 5) {
-			System.out.println("SPACE");
-		}
-		if (KeyInput.getPressed() == 6) {
-			System.out.println("ESCAPE");
-			StateManager.setState("MENU");	
-			return;
-		}
 		lastMovement = curMovement;
 		curMovement = KeyInput.getPressed();
-		if (curMovement != lastMovement)
-			framesLastUpdate = 0;
+		
+		if (curMovement == lastMovement && framesLastUpdate < movementSpeed) {
+			framesLastUpdate++;
+			return;
+		}
+		framesLastUpdate = 0;
+		
+		switch (curMovement) {
+		case 1:
+			movY--;
+			break;
+		case 2:
+			movY++;
+			break;
+		case 3:
+			movX--;
+			break;
+		case 4:
+			movX++;
+			break;
+		case 5:
+			//Space (TODO)
+			break;
+		}
+		
 	}
 }

@@ -229,6 +229,12 @@ public class Level implements GameState {
 	@Override
 	public void update() { //KeyInput input
 		player.update(levelMap);
+		
+		if (KeyInput.getPressed() == 6) {
+			System.out.println("ESCAPE");
+			StateManager.setState("MENU");	
+			return;
+		}
 	}
 
 	@Override

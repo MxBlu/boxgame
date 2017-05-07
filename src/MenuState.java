@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 public class MenuState implements GameState{
+
+	private static int movementSpeed = 10;
 	
 	private BufferedImage background;
 	private int option;
@@ -15,6 +17,8 @@ public class MenuState implements GameState{
 	private ArrayList<Rectangle> boxes;
 	private int eventTick;
 	private boolean eventStart;
+	private int lastInput = -1;
+	private int currentInput = 0;
 
 	public MenuState() {
 		init();
@@ -35,13 +39,8 @@ public class MenuState implements GameState{
 	}
 
 	public void update() {
-		if (framesLastUpdate < 3) {
-			//framesLastUpdate++;
-			//return;
-		}
 		if(eventStart) eventStart();
-
-		framesLastUpdate = 0;
+		
 		//System.out.println(option);
 		if (option < 0) {
 			option = 0;
@@ -77,23 +76,33 @@ public class MenuState implements GameState{
 	}
 
 	public void handleInput() {
-		if (KeyInput.getPressed() == 1) {
-			System.out.println("UP");
-			option--;
-		}
-		if (KeyInput.getPressed() == 2) {
-			System.out.println("DOWN");
-			option++;
-		}
-		if (KeyInput.getPressed() == 3) {
-			System.out.println("LEFT");
-		}
-		if (KeyInput.getPressed() == 4) {
-			System.out.println("RIGHT");
-		}
-		if (KeyInput.getPressed() == 5) {
-			System.out.println("SPACE");
-			enter = 1;
+		lastInput = currentInput;
+		currentInput = KeyInput.getPressed();
+		
+		if (lastInput != currentInput || framesLastUpdate > movementSpeed) {
+			framesLastUpdate = 0;
+			
+			if (KeyInput.getPressed() == 1) {
+				System.out.println("UP");
+				option--;
+			}
+			if (KeyInput.getPressed() == 2) {
+				System.out.println("DOWN");
+				option++;
+			}
+			if (KeyInput.getPressed() == 3) {
+				System.out.println("LEFT");
+			}
+			if (KeyInput.getPressed() == 4) {
+				System.out.println("RIGHT");
+			}
+			if (KeyInput.getPressed() == 5) {
+				System.out.println("SPACE");
+				enter = 1;
+			}
+		} else {
+			framesLastUpdate++;
+			System.out.println(framesLastUpdate + " " + movementSpeed);
 		}
 	}
 
