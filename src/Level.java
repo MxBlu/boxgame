@@ -174,14 +174,26 @@ public class Level implements GameState {
 			
 			// Set all temp values to actual.
 			for (int i = 1; i < height - 1; i++)
-				for (int j = 1; j < width - 1; j++) 
+				for (int j = 1; j < width - 1; j++)  
 					if (levelMap[i][j] == 5) 
 						levelMap[i][j] = (byte) Tile.WALKABLE.getIntRep();
 		}
 		//TEMP (adds a push block)
-		levelMap[height/2+1][width/2+1] = (byte) Tile.BOX.getIntRep();
+		/*rng = new Random();
+		while (!checkLegible(rng)){
+			rng = new Random();
+		}
+		levelMap[height/2+rng.nextInt()%5][width/2+ rng.nextInt()%5] = (byte) Tile.BOX.getIntRep();
+		
+		levelMap[height/2+rng.nextInt()%5][width/2+ rng.nextInt()%5] = (byte) Tile.BOX.getIntRep();
 		//ALSO TEMP (adds a goal block)
-		levelMap[height/2-1][width/2-1] = (byte) Tile.GOAL.getIntRep();
+		levelMap[height/2-1][width/2-1] = (byte) Tile.GOAL.getIntRep();*/
+		
+		setLoc("Box");
+		setLoc("Box");
+		
+		setLoc("Goal");
+		setLoc("Goal");
 		
 	}
 	
@@ -205,6 +217,48 @@ public class Level implements GameState {
 	
 	public int getTileSize() {
 		return tileSize;
+	}
+	
+	/*
+	 * @param type  Tile that needs to be set
+	 * makes sure that all the surounding blocks are walkable 
+	 * 
+	 */
+	private void setLoc(String type) {
+		Random xRand = new Random();
+		Random yRand = new Random();
+		int x = Math.abs(xRand.nextInt())%(width-1)+1;
+		int y = Math.abs(yRand.nextInt())%(height-1)+1;
+		/*System.out.println("system height and width "+ height + " "+ width);
+		System.out.println(y + " " + x);*/
+		
+		/*System.out.println(x + " " + y);*/
+		if (type.equals("Box")) {
+			while(levelMap[y][x]!= 1 || levelMap[y+1][x+1]!= 1
+					|| levelMap[y+1][x]!= 1 || levelMap[y+1][x-1]!= 1
+					|| levelMap[y][x+1]!= 1 || levelMap[y][x-1]!= 1
+					|| levelMap[y-1][x+1]!= 1 || levelMap[y-1][x]!= 1
+					|| levelMap[y-1][x-1]!= 1 || (x!= width/2 && y != height/2)){
+				xRand = new Random();
+				yRand = new Random();
+				x = Math.abs(xRand.nextInt())%(width-1) +1;
+				y = Math.abs(yRand.nextInt())%(height-1) +1;
+				//System.out.println("fails on "+ x + " " + y);
+				
+			}
+			levelMap[y][x] = (byte) Tile.BOX.getIntRep();
+		} else if (type.equals("Goal")){
+			while(levelMap[y][x]!= 1 || (x!= width/2 && y != height/2)){
+				xRand = new Random();
+				yRand = new Random();
+				x = Math.abs(xRand.nextInt())%(width-1) +1;
+				y = Math.abs(yRand.nextInt())%(height-1) +1;
+				//System.out.println("fails on "+ x + " " + y);
+				
+			}
+			levelMap[y][x] = (byte) Tile.GOAL.getIntRep();
+		}
+
 	}
 	
 	@Override
