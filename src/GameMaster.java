@@ -68,12 +68,12 @@ public class GameMaster extends JFrame{
 		g = (Graphics2D) image.getGraphics();
 		backBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		input = new KeyInput();
-		addKeyListener(input);
+		addKeyListener(new KeyInput());
 		stateManager = new StateManager();
 	}
 	
 	public void update() {
-		stateManager.update(input);
+		stateManager.update(); //input
 	}
 	
 }

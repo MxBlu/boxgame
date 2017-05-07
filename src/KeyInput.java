@@ -9,7 +9,7 @@ public class KeyInput extends KeyAdapter{
 		
 	}
 	
-	public int getPressed() {
+	public static int getPressed() {
 		return input;
 	}
 	

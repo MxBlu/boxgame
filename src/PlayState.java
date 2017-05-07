@@ -18,7 +18,7 @@ public class PlayState implements GameState {
 	}
 
 	@Override
-	public void update(KeyInput input) {
+	public void update() {
 		// TODO Auto-generated method stub
 		
 	}

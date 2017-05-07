@@ -17,10 +17,7 @@ public class StateManager {
 			currentState = new BootState();
 		} else if (stateName.equals("INTRO2")) {
 			currentState = null;
-			currentState = new Boot2State();
-		} else if (stateName.equals("INTRO3")) {
-			currentState = null;
-			currentState = new Boot3State();
+			currentState = new Boot2State(); 
 		} else if (stateName.equals("MENU")) {
 		   currentState = new MenuState();
 		} else if (stateName.equals("PLAY")) {
@@ -34,7 +31,7 @@ public class StateManager {
 		currentState.draw(g);
 	}
 	
-	public void update(KeyInput input) {
-		currentState.update(input);
+	public void update() {//KeyInput input
+		currentState.update(); //input
 	}
 }

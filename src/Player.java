@@ -7,7 +7,9 @@ public class Player {
 	private Image sprite;
 	private int tileSize;
 	private int lvlWidth, lvlHeight;
-	private int framesLastUpdate = 15;
+	private int framesLastUpdate = 5;
+	private int movY;
+	private int movX;
 	
 	public Player(int tileX, int tileY, Image sprite, int tileSize, int lvlWidth, int lvlHeight) {
 		this.tileX = tileX;
@@ -23,35 +25,22 @@ public class Player {
 	 * @param input
 	 * @param levelMap
 	 */
-	public void update(int input, byte levelMap[][]) {
+	public void update(byte levelMap[][]) {
+		//handleInput();
 		//Rubbish way to stop moving too fast
-		if (framesLastUpdate < 15) {
+		if (framesLastUpdate < 5) {
 			framesLastUpdate++;
 			return;
 		}
-		if (input == 0) {
-			return;
-		}
+
 		framesLastUpdate = 0;
 		
 		int prevTileX = tileX;
 		int prevTileY = tileY;
-		int movX = 0;
-		int movY = 0;
-		
-		if (input == 1) {
-			//up
-			movY -= 1;
-		} else if (input == 2) {
-			//down
-			movY += 1;
-		} else if (input == 3) {
-			//left
-			movX -= 1;
-		} else if (input == 4) {
-			//right
-			movX += 1;
-		}
+		movX = 0;
+		movY = 0;
+		handleInput();
+
 		tileX += movX;
 		tileY += movY;
 		
@@ -64,7 +53,7 @@ public class Player {
 		}
 		
 		//Check collision on solid tiles
-		if (input != 0) {
+		//if (input != 0) {
 			//levelMap is reversed for some reason
 			int tile = levelMap[tileY][tileX];
 			if (tile == Tile.WALL.getIntRep()) {
@@ -81,7 +70,7 @@ public class Player {
 					tileY = prevTileY;
 				}
 			}
-		}
+		//}
 	}
 	
 	public void draw(Graphics2D bbg) {
@@ -90,5 +79,25 @@ public class Player {
 		
 		bbg.drawImage(sprite, left + tileX * tileSize, top + tileY * tileSize, sprite.getWidth(null), sprite.getHeight(null), null);
 	}
-	
+	public void handleInput() {
+		if (KeyInput.getPressed() == 1) {
+			movY --;
+			System.out.println("UP");
+		}
+		if (KeyInput.getPressed() == 2) {
+			movY ++;
+			System.out.println("DOWN");
+		}
+		if (KeyInput.getPressed() == 3) {
+			movX --;
+			System.out.println("LEFT");
+		}
+		if (KeyInput.getPressed() == 4) {
+			movX ++;
+			System.out.println("RIGHT");
+		}
+		if (KeyInput.getPressed() == 5) {
+			System.out.println("SPACE");
+		}
+	}
 }

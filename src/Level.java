@@ -231,8 +231,8 @@ public class Level implements GameState {
 	}
 
 	@Override
-	public void update(KeyInput input) {
-		player.update(input.getPressed(), levelMap);
+	public void update() { //KeyInput input
+		player.update(levelMap);
 	}
 
 	@Override
