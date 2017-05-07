@@ -19,7 +19,6 @@ public class GameMaster extends JFrame{
 	private BufferedImage image;
     private BufferedImage backBuffer; 
 	private Graphics2D g;
-	private KeyInput input;
 
     public static void main(String[] args) {
     	GameMaster gameMaster = new GameMaster();
@@ -61,19 +60,19 @@ public class GameMaster extends JFrame{
 		setFocusable(true);
 		setVisible(true);
 		setResizable(false); 		
+		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         fps = 60;
 		running = true;
 		image = new BufferedImage(WIDTH, HEIGHT, 1);
 		g = (Graphics2D) image.getGraphics();
 		backBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-		input = new KeyInput();
 		addKeyListener(new KeyInput());
 		stateManager = new StateManager();
 	}
 	
 	public void update() {
-		stateManager.update(); //input
+		stateManager.update(); 
 	}
 	
 }

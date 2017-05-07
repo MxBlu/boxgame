@@ -3,7 +3,7 @@ import java.awt.Image;
 
 public class Player {
 
-	private static int movementSpeed = 15;
+	private static int movementSpeed = 20;
 
 	private int tileX, tileY;
 	private Image sprite;

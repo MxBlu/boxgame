@@ -9,7 +9,6 @@ public class StateManager {
 		
 		paused = false;
 		currentState = new BootState();
-		//currentState = new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50);
 	}
 	
 	public static void setState(String stateName) {
@@ -24,7 +23,9 @@ public class StateManager {
 		} else if (stateName.equals("PLAY")) {
 			currentState = new PlayState();
 		}  else if (stateName.equals("LEVEL")) {
-			currentState = new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50);
+			currentState = new Level(GameMaster.WIDTH-100, GameMaster.HEIGHT-100, 55);
+		} else if (stateName.equals("CREDITS")) {
+			currentState = new CreditsState();
 		} 
 	}
 	
@@ -32,7 +33,7 @@ public class StateManager {
 		currentState.draw(g);
 	}
 	
-	public void update() {//KeyInput input
-		currentState.update(); //input
+	public void update() {
+		currentState.update();
 	}
 }

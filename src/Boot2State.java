@@ -13,7 +13,7 @@ public class Boot2State implements GameState{
 	
 	private final int FADE_IN = 0;
 	private final int LENGTH = 40;
-	private final int FADE_OUT = 30;
+	private final int FADE_OUT = 35;
 	
 	private int x;
 	

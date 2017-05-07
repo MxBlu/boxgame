@@ -11,17 +11,15 @@ public class BootState implements GameState{
 	private int alpha;
 	private int ticks;
 	
-	private final int FADE_IN = 30;
+	private final int FADE_IN = 35;
 	private final int LENGTH = 40;
 	private final int FADE_OUT = 0;
-	private int x;
 	
 	public BootState() {
 		init();
 	}
 	
 	public void init() {
-		x = 0;
 		ticks = 0;
 		//TODO work out who should own AudioManager
 		AudioManager audMan = new AudioManager();
@@ -37,7 +35,6 @@ public class BootState implements GameState{
 	
 	public void update() {
 		handleInput();
-		x ++;
 		ticks++;
 		if(ticks < FADE_IN) {
 			alpha = (int) (255 - 255 * (1.0 * ticks / FADE_IN));
@@ -59,7 +56,6 @@ public class BootState implements GameState{
 		bbg.setColor(new Color(0, 0, 0, alpha));
 		bbg.fillRect(0, 0, GameMaster.WIDTH, GameMaster.HEIGHT);
 		bbg.setColor(Color.BLACK); 
-		//bbg.drawRect(GameMaster.WIDTH/2, GameMaster.HEIGHT/2, x, x); 	 
 	}
 
 	@Override
@@ -67,7 +63,6 @@ public class BootState implements GameState{
 		if(KeyInput.getPressed()==5){
 			StateManager.setState("INTRO2");
 			return;
-			
 		}		
 	}
 	

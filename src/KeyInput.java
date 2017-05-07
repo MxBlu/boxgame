@@ -4,7 +4,8 @@ import java.awt.event.KeyEvent;
 public class KeyInput extends KeyAdapter{
 	
 	public static int input = 0;
-	
+    private long lastPressProcessed = 0;
+
 	public KeyInput () {
 		
 	}
@@ -15,25 +16,34 @@ public class KeyInput extends KeyAdapter{
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
-        	input = 1;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-        	input = 2;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-        	input = 3;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-        	input = 4;
-        }		
-        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-        	input = 5;
-        }
-  
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-        	input = 6;
-        }
+		
+        if(System.currentTimeMillis() - lastPressProcessed > 500) {
+            
+            if (e.getKeyCode() == KeyEvent.VK_UP) {
+            	input = 1;
+            	return;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            	input = 2;
+            	return;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            	input = 3;
+            	return;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            	input = 4;
+            	return;
+            }		
+            if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            	input = 5;
+            	return;
+            }            
+            if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            	input = 6;
+            }
+            lastPressProcessed = System.currentTimeMillis();
+        }   
 	}
 
 	@Override
@@ -54,7 +64,7 @@ public class KeyInput extends KeyAdapter{
         	input = 0;
         }
         if (e.getKeyCode()== KeyEvent.VK_ESCAPE) {
-        	input = 6;
+        	input = 0;
         }
 	}
 

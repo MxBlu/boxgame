@@ -11,14 +11,12 @@ public class MenuState implements GameState{
 	private BufferedImage background;
 	private int option;
 	private int enter;
-	private int framesLastUpdate = 3;
 	private ArrayList<Rectangle> boxes;
 	private int eventTick;
 	private boolean eventStart;
 
 	public MenuState() {
 		init();
-
 	}
 
 	public void init() {
@@ -35,22 +33,14 @@ public class MenuState implements GameState{
 	}
 
 	public void update() {
-		if (framesLastUpdate < 3) {
-			//framesLastUpdate++;
-			//return;
-		}
-		if(eventStart) eventStart();
 
-		framesLastUpdate = 0;
-		//System.out.println(option);
-		if (option < 0) {
-			option = 0;
-		} else if (option > 2) {
-			option = 2;
-		} 
+		if(eventStart) eventStart();
 		handleInput();
 		if (option == 0 && enter == 1) {
 			StateManager.setState("LEVEL");			
+		}
+		if (option == 1 && enter == 1) {
+			StateManager.setState("CREDITS");			
 		}
 		enter = 0;
 	}
@@ -58,15 +48,12 @@ public class MenuState implements GameState{
 	public void draw(Graphics2D bbg) {
 		bbg.drawImage(background, 0, 0, GameMaster.WIDTH, GameMaster.HEIGHT, null);
 		if (option == 0) {
-			bbg.setColor(Color.BLUE);
-			bbg.fillRect(GameMaster.WIDTH/2 + 100,280,20,30);
+			bbg.setColor(Color.RED);
+			bbg.fillRect(GameMaster.WIDTH/2 - 161,367,28,40);
 		} else if (option == 1) {
-			bbg.setColor(Color.BLUE);
-			bbg.fillRect(GameMaster.WIDTH/2 + 100,400,20,30);
-		} else if (option == 2) {
-			bbg.setColor(Color.BLUE);
-			bbg.fillRect(GameMaster.WIDTH/2 + 100,520,20,30);
-		}
+			bbg.setColor(Color.RED);
+			bbg.fillRect(GameMaster.WIDTH/2 - 161,469,28,40);
+		} 
 		
 		// draw transition boxes
 		bbg.setColor(Color.BLACK);
@@ -79,11 +66,19 @@ public class MenuState implements GameState{
 	public void handleInput() {
 		if (KeyInput.getPressed() == 1) {
 			System.out.println("UP");
-			option--;
+			if (option == 1) {
+				option = 0;
+			} else if (option == 0) {
+				option = 1;
+			}
 		}
 		if (KeyInput.getPressed() == 2) {
 			System.out.println("DOWN");
-			option++;
+			if (option == 1) {
+				option = 0;
+			} else if (option == 0) {
+				option = 1;
+			}
 		}
 		if (KeyInput.getPressed() == 3) {
 			System.out.println("LEFT");
@@ -105,7 +100,7 @@ public class MenuState implements GameState{
 				boxes.add(new Rectangle(0, i * 80, GameMaster.WIDTH, 80));
 			}
 		}
-		if(eventTick > 1 && eventTick < 32) {
+		if(eventTick > 1 && eventTick < 35) {
 			for(int i = 0; i < boxes.size(); i++) {
 				Rectangle r = boxes.get(i);
 				if(i % 2 == 0) {
@@ -116,7 +111,7 @@ public class MenuState implements GameState{
 				}
 			}
 		}
-		if(eventTick == 33) {
+		if(eventTick == 36) {
 			boxes.clear();
 			eventStart = false;
 			eventTick = 0;

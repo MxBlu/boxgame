@@ -1,7 +1,9 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -33,6 +35,11 @@ public class Level implements GameState {
 	
 	private Image tiles[];
 	private Player player;
+
+	// Animation Code for Introduction Sequence
+	private ArrayList<Rectangle> boxes;
+	private int eventTick;
+	private boolean eventStart;
 	
 	/**
 	 * Creates a new level.
@@ -107,6 +114,10 @@ public class Level implements GameState {
 	 * Generate a random level (for now, just walls and walkable space).
 	 */
 	private void generate() {
+		// Initialize animations
+		boxes = new ArrayList<Rectangle>();
+		eventStart = true;
+		eventStart();
 		// Initialise matrix
 		levelMap = new byte[height][width];
 		for (int i = 0; i < height; i++)
@@ -213,6 +224,12 @@ public class Level implements GameState {
 		}
 		
 		player.draw(bbg);
+
+		// draw transition boxes for intro animation
+		bbg.setColor(Color.BLACK);
+		for(int b = 0; b < boxes.size(); b++) {
+			bbg.fill(boxes.get(b));
+		}
 	}
 	
 	public int getTileSize() {
@@ -274,6 +291,32 @@ public class Level implements GameState {
 		return s.toString();
 	}
 
+	private void eventStart() {
+		eventTick++;
+		if(eventTick == 1) {
+			boxes.clear();
+			for(int i = 0; i < 9; i++) {
+				boxes.add(new Rectangle(0, i * 80, GameMaster.WIDTH, 80));
+			}
+		}
+		if(eventTick > 1 && eventTick < 35) {
+			for(int i = 0; i < boxes.size(); i++) {
+				Rectangle r = boxes.get(i);
+				if(i % 2 == 0) {
+					r.x -= 40;
+				}
+				else {
+					r.x += 40;
+				}
+			}
+		}
+		if(eventTick == 36) {
+			boxes.clear();
+			eventStart = false;
+			eventTick = 0;
+		}
+	}
+
 	@Override
 	public void init() {
 		// TODO Auto-generated method stub
@@ -281,7 +324,8 @@ public class Level implements GameState {
 	}
 
 	@Override
-	public void update() { //KeyInput input
+	public void update() { 
+		if (eventStart) eventStart();
 		player.update(levelMap);
 	}
 
