@@ -53,6 +53,12 @@ public class Level implements GameState {
 		setDefaultTiles();
 		
 		generate();
+		
+		try {
+			player = new Player(width / 2, height / 2, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	Level(String input, int tileSize) {
@@ -73,6 +79,12 @@ public class Level implements GameState {
 		}
 		
 		setDefaultTiles();
+		
+		try {
+			player = new Player(1, 1, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void setDefaultTiles() {
@@ -86,7 +98,6 @@ public class Level implements GameState {
 					tileSize, Image.SCALE_DEFAULT);
 			tiles[3] = ImageIO.read(getClass().getResourceAsStream("goal.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
-			player = new Player(1, 1, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
