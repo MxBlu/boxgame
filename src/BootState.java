@@ -36,6 +36,7 @@ public class BootState implements GameState{
 	}
 	
 	public void update() {
+		handleInput();
 		x ++;
 		ticks++;
 		if(ticks < FADE_IN) {
@@ -63,7 +64,11 @@ public class BootState implements GameState{
 
 	@Override
 	public void handleInput() {
-		// TODO Auto-generated method stub
+		if(KeyInput.getPressed()==5){
+			StateManager.setState("INTRO2");
+			return;
+			
+		}
 		
 	}
 	
