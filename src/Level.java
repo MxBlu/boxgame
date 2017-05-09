@@ -178,22 +178,9 @@ public class Level implements GameState {
 					if (levelMap[i][j] == 5) 
 						levelMap[i][j] = (byte) Tile.WALKABLE.getIntRep();
 		}
-		//TEMP (adds a push block)
-		/*rng = new Random();
-		while (!checkLegible(rng)){
-			rng = new Random();
-		}
-		levelMap[height/2+rng.nextInt()%5][width/2+ rng.nextInt()%5] = (byte) Tile.BOX.getIntRep();
+	
 		
-		levelMap[height/2+rng.nextInt()%5][width/2+ rng.nextInt()%5] = (byte) Tile.BOX.getIntRep();
-		//ALSO TEMP (adds a goal block)
-		levelMap[height/2-1][width/2-1] = (byte) Tile.GOAL.getIntRep();*/
-		
-		setLoc("Box");
-		setLoc("Box");
-		
-		setLoc("Goal");
-		setLoc("Goal");
+		setLevel(StateManager.getLevel());
 		
 	}
 	
@@ -219,9 +206,16 @@ public class Level implements GameState {
 		return tileSize;
 	}
 	
+	private void setLevel(int x){
+		for (int i =0; i< x; i++){
+			setLoc("Box");
+			setLoc("Goal");
+		}
+	}
+	
 	/*
 	 * @param type  Tile that needs to be set
-	 * makes sure that all the surounding blocks are walkable 
+	 * makes sure that all the surrounding blocks are walkable 
 	 * 
 	 */
 	private void setLoc(String type) {

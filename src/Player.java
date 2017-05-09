@@ -14,6 +14,7 @@ public class Player {
 	private int framesLastUpdate = movementSpeed;
 	private int movY;
 	private int movX;
+	private int level;
 
 	public Player(int tileX, int tileY, Image sprite, int tileSize, int lvlWidth, int lvlHeight) {
 		this.tileX = tileX;
@@ -21,7 +22,8 @@ public class Player {
 		this.tileSize = tileSize;
 		this.lvlWidth = lvlWidth;
 		this.lvlHeight = lvlHeight;
-
+		this.level = StateManager.getLevel();
+		System.out.println("level state manager" + this.level);
 		this.sprite = sprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
 	}
 
@@ -59,6 +61,16 @@ public class Player {
 			if (levelMap[tileY + movY][tileX + movX] == Tile.WALKABLE.getIntRep()) {
 				levelMap[tileY + movY][tileX + movX] = (byte) Tile.BOX.getIntRep();
 				levelMap[tileY][tileX] = (byte) Tile.WALKABLE.getIntRep();
+			} else if (levelMap[tileY + movY][tileX + movX] == Tile.GOAL.getIntRep()) {
+				System.out.println("in condition of goal levle " + this.level);
+				levelMap[tileY + movY][tileX + movX] = (byte) Tile.BOX.getIntRep();
+				levelMap[tileY][tileX] = (byte) Tile.WALKABLE.getIntRep();
+				this.level --;
+				if (this.level == 0){
+					System.out.println("in condition of goal levle " + this.level);
+					StateManager.setLevel();
+					StateManager.setState("LEVEL");
+				}
 			} else {
 				tileX = prevTileX;
 				tileY = prevTileY;

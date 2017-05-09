@@ -4,11 +4,13 @@ public class StateManager {
 	
 	private boolean paused;
 	private static GameState currentState;
+	private static int Level;
 	
 	public StateManager() {
 		
 		paused = false;
 		currentState = new BootState();
+		Level = 1;
 		//currentState = new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50);
 	}
 	
@@ -34,5 +36,13 @@ public class StateManager {
 	
 	public void update() {//KeyInput input
 		currentState.update(); //input
+	}
+	
+	public static int getLevel(){
+		return Level;
+	}
+	
+	public static void setLevel(){
+		Level++;
 	}
 }
