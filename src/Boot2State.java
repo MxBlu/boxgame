@@ -3,18 +3,23 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import javax.swing.Timer;
 
-public class Boot2State implements GameState{
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class Boot2State implements GameState, ActionListener{
 	
 	private BufferedImage logo;
 	
 	private int alpha;
-	private int ticks;
+
 	
 	private final int FADE_IN = 0;
 	private final int LENGTH = 40;
 	private final int FADE_OUT = 30;
 	
+	Timer timer;
 	private int x;
 	
 	public Boot2State() {
@@ -23,8 +28,10 @@ public class Boot2State implements GameState{
 	
 	public void init() {
 		x = 0;
-		ticks = 0;
+
 		AudioManager man = new AudioManager();
+		timer = new Timer(50, this);
+        timer.start();
 		man.playSound("intro_sound.wav", 0.0f);
 		try {
 			logo = ImageIO.read(getClass().getResourceAsStream("logo2.png"));
@@ -37,17 +44,18 @@ public class Boot2State implements GameState{
 	public void update() {
 		handleInput();
 		x ++;
-		ticks++;
-		if(ticks < FADE_IN) {
-			alpha = (int) (255 - 255 * (1.0 * ticks / FADE_IN));
+	
+		if( x< FADE_IN) {
+			alpha = (int) (255 - 255 * (1.0 * x / FADE_IN));
 			if(alpha < 0) alpha = 0;
 		}
-		if(ticks > FADE_IN + LENGTH) {
-			alpha = (int) (255 * (1.0 * ticks - FADE_IN - LENGTH) / FADE_OUT);
+		if(x > FADE_IN + LENGTH) {
+			alpha = (int) (255 * (1.0 * x - FADE_IN - LENGTH) / FADE_OUT);
 			if(alpha > 255) alpha = 255;
 		}
-		if(ticks > FADE_IN + LENGTH + FADE_OUT + 10) {
+		if(x > FADE_IN + LENGTH + FADE_OUT + 10) {
 			//TODO Uncomment when there's a menu
+			timer.stop();
 			StateManager.setState("MENU");
 			//StateManager.setState("LEVEL");
 		}
@@ -64,9 +72,16 @@ public class Boot2State implements GameState{
 	@Override
 	public void handleInput() {
 		if(KeyInput.getPressed()==5){
+			timer.stop();
 			StateManager.setState("MENU");
 			return;
 		}		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		update();
+		
 	}
 	
 	
