@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Random;
 
@@ -8,13 +9,13 @@ import javax.imageio.ImageIO;
 
 public class Level implements GameState {
 	
-	private byte levelMap[][];
+	private Tile levelMap[][];
 	
 	private int width; // Width of the level
 	private int height; // Height of the level
 	private int tileSize;
 	
-	private Image tiles[];
+	private Image tileImgs[];
 	private Player player;
 	
 	/**
@@ -49,33 +50,33 @@ public class Level implements GameState {
 		this.height = inputArray.length/(width + 1);
 		//System.out.println("Length: " + inputArray.length + ", Height :" + this.height + ", Width: " + this.width);
 		
-		levelMap = new byte[this.height][this.width];
+		levelMap = new Tile[this.height][this.width];
 		int sIndex = 0;
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) 
-				levelMap[i][j] = (byte) (inputArray[sIndex++] - '0');
+				levelMap[i][j] = Tile.getTile(inputArray[sIndex++] - '0');
 			sIndex++;
 		}
 		
 		setDefaultTiles();
 		
 		try {
-			player = new Player(1, 1, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
+			player = new Player(1, 1, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width/2, height/2);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	private void setDefaultTiles() {
-		this.tiles = new Image[4];
+		this.tileImgs = new Image[4];
 		try {
-			tiles[0] = ImageIO.read(getClass().getResourceAsStream("ground_solid.png")).getScaledInstance(tileSize,
+			tileImgs[0] = ImageIO.read(getClass().getResourceAsStream("ground_solid.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
-			tiles[1] = ImageIO.read(getClass().getResourceAsStream("ground_empty.png")).getScaledInstance(tileSize,
+			tileImgs[1] = ImageIO.read(getClass().getResourceAsStream("ground_empty.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
-			tiles[2] = ImageIO.read(getClass().getResourceAsStream("box.png")).getScaledInstance(tileSize,
+			tileImgs[2] = ImageIO.read(getClass().getResourceAsStream("box.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
-			tiles[3] = ImageIO.read(getClass().getResourceAsStream("goal.png")).getScaledInstance(tileSize,
+			tileImgs[3] = ImageIO.read(getClass().getResourceAsStream("goal.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -83,7 +84,7 @@ public class Level implements GameState {
 	}
 	
 	public void setTile(Tile t, Image tileImage) {
-		this.tiles[t.getIntRep()] = tileImage;
+		this.tileImgs[t.getIntRep()] = tileImage;
 	}
 	
 	/**
@@ -91,10 +92,10 @@ public class Level implements GameState {
 	 */
 	private void generate() {
 		// Initialise matrix
-		levelMap = new byte[height][width];
+		levelMap = new Tile[height][width];
 		for (int i = 0; i < height; i++)
 			for (int j = 0; j < width; j++) 
-				levelMap[i][j] = (byte) Tile.WALL.getIntRep();
+				levelMap[i][j] = Tile.WALL;
 		
 		int roughCentreHeight = height/2;
 		int roughCentreWidth = width/2;
@@ -105,7 +106,7 @@ public class Level implements GameState {
 		// Place initial 9 walkables in the rough centre.
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++)
-				levelMap[roughCentreHeight + i][roughCentreWidth + j] = (byte) Tile.WALKABLE.getIntRep();
+				levelMap[roughCentreHeight + i][roughCentreWidth + j] = Tile.WALKABLE;
 
 		Random rng = new Random();
 		// numPasses = number of times to attempt to place walkables.
@@ -113,7 +114,7 @@ public class Level implements GameState {
 		for (int numPasses = 10; numPasses > 0; numPasses--) {
 			for (int i = 1; i < height - 1; i++) {
 				for (int j = 1; j < width - 1; j++) {
-					if (levelMap[i][j] != Tile.WALL.getIntRep())
+					if (levelMap[i][j] != Tile.WALL)
 						continue;
 					
 					// 0d0
@@ -122,35 +123,35 @@ public class Level implements GameState {
 					// Consider '1' as being the place being checked.
 					// Totals the 'd' values to find number of adjacent walkables.
 					
-					int numAdj = levelMap[i + 1][j] + levelMap[i - 1][j] +
-							levelMap[i][j + 1] + levelMap[i][j - 1];
+					int numAdj = ((levelMap[i + 1][j] == Tile.WALKABLE) ? 1 : 0) +
+							((levelMap[i - 1][j] == Tile.WALKABLE) ? 1 : 0) +
+							((levelMap[i][j + 1] == Tile.WALKABLE) ? 1 : 0) +
+							((levelMap[i][j - 1] == Tile.WALKABLE) ? 1 : 0);
 
 					// Feel free to mess with the chance values.
-					float adj1Chance = 0.5f;
-					float adj2Chance = 0.25f;
-					float adj3Chance = 0.75f;
 					
 					// Set values to a temp of 5 so they don't affect the current pass.
 					switch (numAdj) {
 					case 0:
 						break;
 					case 1: // 1/4 chance
-						if (rng.nextFloat() <= adj1Chance)
-							levelMap[i][j] = (byte) Tile.TEMP_WALKABLE.getIntRep();
+						if (rng.nextFloat() <= MenuState.adj1Chance)
+							levelMap[i][j] = Tile.TEMP_WALKABLE;
 						
 						break;
 					case 2: // 1/2 change
-						if (rng.nextFloat() <= adj2Chance)
-							levelMap[i][j] = (byte) Tile.TEMP_WALKABLE.getIntRep();
+						if (rng.nextFloat() <= MenuState.adj2Chance)
+							levelMap[i][j] = Tile.TEMP_WALKABLE;
 						
 						break;
 					case 3: // 3/4 chance
-						if (rng.nextFloat() <= adj3Chance)
-							levelMap[i][j] = (byte) Tile.TEMP_WALKABLE.getIntRep();
+						if (rng.nextFloat() <= MenuState.adj3Chance)
+							levelMap[i][j] = Tile.TEMP_WALKABLE;
 						
 						break;
 					case 4: // definite
-						levelMap[i][j] = (byte) Tile.TEMP_WALKABLE.getIntRep();
+						if (rng.nextFloat() <= MenuState.adj4Chance)
+							levelMap[i][j] = Tile.TEMP_WALKABLE;
 					}
 				}
 			}
@@ -158,8 +159,8 @@ public class Level implements GameState {
 			// Set all temp values to actual.
 			for (int i = 1; i < height - 1; i++)
 				for (int j = 1; j < width - 1; j++)  
-					if (levelMap[i][j] == 5) 
-						levelMap[i][j] = (byte) Tile.WALKABLE.getIntRep();
+					if (levelMap[i][j] == Tile.TEMP_WALKABLE) 
+						levelMap[i][j] = Tile.WALKABLE;
 		}
 	
 		
@@ -173,10 +174,10 @@ public class Level implements GameState {
 		
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) { 
-				if (tiles[levelMap[i][j]] != null) {
-					bbg.drawImage(tiles[levelMap[i][j]], left + j * tileSize, top + i * tileSize, null);
+				if (tileImgs[levelMap[i][j].getIntRep()] != null) {
+					bbg.drawImage(tileImgs[levelMap[i][j].getIntRep()], left + j * tileSize, top + i * tileSize, null);
 				} else {
-					bbg.setColor(new Color(levelMap[i][j] * 127));
+					bbg.setColor(new Color(levelMap[i][j].getIntRep() * 127));
 					bbg.fillRect(left + j * tileSize, top + i * tileSize, tileSize, tileSize);
 				}
 			}
@@ -211,11 +212,11 @@ public class Level implements GameState {
 		
 		/*System.out.println(x + " " + y);*/
 		if (type.equals("Box")) {
-			while(levelMap[y][x]!= 1 || levelMap[y+1][x+1]!= 1
-					|| levelMap[y+1][x]!= 1 || levelMap[y+1][x-1]!= 1
-					|| levelMap[y][x+1]!= 1 || levelMap[y][x-1]!= 1
-					|| levelMap[y-1][x+1]!= 1 || levelMap[y-1][x]!= 1
-					|| levelMap[y-1][x-1]!= 1 || (x!= width/2 && y != height/2)){
+			while(levelMap[y][x]!= Tile.WALKABLE || levelMap[y+1][x+1]!= Tile.WALKABLE
+					|| levelMap[y+1][x]!= Tile.WALKABLE || levelMap[y+1][x-1]!= Tile.WALKABLE
+					|| levelMap[y][x+1]!= Tile.WALKABLE || levelMap[y][x-1]!= Tile.WALKABLE
+					|| levelMap[y-1][x+1]!= Tile.WALKABLE || levelMap[y-1][x]!= Tile.WALKABLE
+					|| levelMap[y-1][x-1]!= Tile.WALKABLE || (x!= width/2 && y != height/2)){
 				xRand = new Random();
 				yRand = new Random();
 				x = Math.abs(xRand.nextInt())%(width-1) +1;
@@ -223,9 +224,9 @@ public class Level implements GameState {
 				//System.out.println("fails on "+ x + " " + y);
 				
 			}
-			levelMap[y][x] = (byte) Tile.BOX.getIntRep();
+			levelMap[y][x] = Tile.BOX;
 		} else if (type.equals("Goal")){
-			while(levelMap[y][x]!= 1 || (x!= width/2 && y != height/2)){
+			while(levelMap[y][x]!= Tile.WALKABLE || (x!= width/2 && y != height/2)){
 				xRand = new Random();
 				yRand = new Random();
 				x = Math.abs(xRand.nextInt())%(width-1) +1;
@@ -233,7 +234,7 @@ public class Level implements GameState {
 				//System.out.println("fails on "+ x + " " + y);
 				
 			}
-			levelMap[y][x] = (byte) Tile.GOAL.getIntRep();
+			levelMap[y][x] = Tile.GOAL;
 		}
 
 	}
@@ -243,7 +244,7 @@ public class Level implements GameState {
 		StringBuilder s = new StringBuilder(height * (width + 1));
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) 
-				s.append((int) levelMap[i][j]);
+				s.append(levelMap[i][j].getIntRep());
 			
 			s.append('\n');
 		}
@@ -261,10 +262,14 @@ public class Level implements GameState {
 	public void update() { //KeyInput input
 		player.update(levelMap);
 		
-		if (KeyInput.getPressed() == 6) {
+		switch (KeyInput.getPressed()) {
+		case KeyEvent.VK_ESCAPE:
 			System.out.println("ESCAPE");
 			StateManager.setState("MENU");	
 			return;
+		}
+		
+		if (KeyInput.getPressed() == KeyEvent.VK_ESCAPE) {
 		}
 	}
 

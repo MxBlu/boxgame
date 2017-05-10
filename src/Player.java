@@ -1,5 +1,6 @@
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.KeyEvent;
 
 public class Player {
 
@@ -32,7 +33,7 @@ public class Player {
 	 * 
 	 * @param levelMap
 	 */
-	public void update(byte levelMap[][]) {
+	public void update(Tile[][] levelMap) {
 		handleInput();
 
 		int prevTileX = tileX;
@@ -51,20 +52,20 @@ public class Player {
 
 		// Check collision on solid tiles
 		// levelMap is reversed for some reason
-		int tile = levelMap[tileY][tileX];
-		if (tile == Tile.WALL.getIntRep()) {
+		Tile tile = levelMap[tileY][tileX];
+		if (tile == Tile.WALL) {
 			// Against wall
 			tileX = prevTileX;
 			tileY = prevTileY;
-		} else if (tile == Tile.BOX.getIntRep()) {
+		} else if (tile == Tile.BOX) {
 			// Against push block
-			if (levelMap[tileY + movY][tileX + movX] == Tile.WALKABLE.getIntRep()) {
-				levelMap[tileY + movY][tileX + movX] = (byte) Tile.BOX.getIntRep();
-				levelMap[tileY][tileX] = (byte) Tile.WALKABLE.getIntRep();
-			} else if (levelMap[tileY + movY][tileX + movX] == Tile.GOAL.getIntRep()) {
-				System.out.println("in condition of goal levle " + this.level);
-				levelMap[tileY + movY][tileX + movX] = (byte) Tile.BOX.getIntRep();
-				levelMap[tileY][tileX] = (byte) Tile.WALKABLE.getIntRep();
+			if (levelMap[tileY + movY][tileX + movX] == Tile.WALKABLE) {
+				levelMap[tileY + movY][tileX + movX] = Tile.BOX;
+				levelMap[tileY][tileX] = Tile.WALKABLE;
+			} else if (levelMap[tileY + movY][tileX + movX] == Tile.GOAL) {
+				System.out.println("in condition of goal level " + this.level);
+				levelMap[tileY + movY][tileX + movX] = Tile.BOX;
+				levelMap[tileY][tileX] = Tile.WALKABLE;
 				this.level --;
 				if (this.level == 0){
 					System.out.println("in condition of goal levle " + this.level);
@@ -99,19 +100,19 @@ public class Player {
 		framesLastUpdate = 0;
 		
 		switch (curMovement) {
-		case 1:
+		case KeyEvent.VK_UP:
 			movY--;
 			break;
-		case 2:
+		case KeyEvent.VK_DOWN:
 			movY++;
 			break;
-		case 3:
+		case KeyEvent.VK_LEFT:
 			movX--;
 			break;
-		case 4:
+		case KeyEvent.VK_RIGHT:
 			movX++;
 			break;
-		case 5:
+		case KeyEvent.VK_SPACE:
 			//Space (TODO)
 			break;
 		}

@@ -14,4 +14,12 @@ enum Tile {
 	public int getIntRep() {
 		return this.intRep;
 	}
+	
+	public static Tile getTile(int intRep) {
+		for (Tile t : values())
+			if (t.intRep == intRep)
+				return t;
+		
+		return null;
+	}	
 }

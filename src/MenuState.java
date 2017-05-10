@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import com.sun.glass.events.KeyEvent;
+
 public class MenuState implements GameState{
 
 	private static int movementSpeed = 6;
@@ -19,6 +21,11 @@ public class MenuState implements GameState{
 	private int lastInput = -1;
 	private int currentInput = 0;
 	private int framesLastUpdate = 0;
+
+	public static float adj1Chance = 0.40f;
+	public static float adj2Chance = 0.20f;
+	public static float adj3Chance = 0.50f;
+	public static float adj4Chance = 0.60f;
 
 	public MenuState() {
 		init();
@@ -74,23 +81,52 @@ public class MenuState implements GameState{
 		if (lastInput != currentInput || framesLastUpdate > movementSpeed) {
 			framesLastUpdate = 0;
 			
-			if (KeyInput.getPressed() == 1) {
-				System.out.println("UP");
+			switch(KeyInput.getPressed()) {
+			case KeyEvent.VK_UP:
 				option--;
-			}
-			if (KeyInput.getPressed() == 2) {
-				System.out.println("DOWN");
+				break;
+			case KeyEvent.VK_DOWN:
 				option++;
-			}
-			if (KeyInput.getPressed() == 3) {
-				System.out.println("LEFT");
-			}
-			if (KeyInput.getPressed() == 4) {
-				System.out.println("RIGHT");
-			}
-			if (KeyInput.getPressed() == 5) {
-				System.out.println("SPACE");
+				break;
+			case KeyEvent.VK_LEFT:
+				break;
+			case KeyEvent.VK_RIGHT:
+				break;
+			case KeyEvent.VK_SPACE:
 				enter = 1;
+				break;
+			case KeyEvent.VK_1:
+				MenuState.adj1Chance += 0.05f;
+				System.out.println("1: " + adj1Chance);
+				break;
+			case KeyEvent.VK_2:
+				MenuState.adj1Chance -= 0.05f;
+				System.out.println("1: " + adj1Chance);
+				break;
+			case KeyEvent.VK_3:
+				MenuState.adj2Chance += 0.05f;
+				System.out.println("2: " + adj2Chance);
+				break;
+			case KeyEvent.VK_4:
+				MenuState.adj2Chance -= 0.05f;
+				System.out.println("2: " + adj2Chance);
+				break;
+			case KeyEvent.VK_5:
+				MenuState.adj3Chance += 0.05f;
+				System.out.println("3: " + adj3Chance);
+				break;
+			case KeyEvent.VK_6:
+				MenuState.adj3Chance -= 0.05f;
+				System.out.println("3: " + adj3Chance);
+				break;
+			case KeyEvent.VK_7:
+				MenuState.adj4Chance += 0.05f;
+				System.out.println("4: " + adj4Chance);
+				break;
+			case KeyEvent.VK_8:
+				MenuState.adj4Chance -= 0.05f;
+				System.out.println("4: " + adj4Chance);
+				break;
 			}
 		} else {
 			framesLastUpdate++;
