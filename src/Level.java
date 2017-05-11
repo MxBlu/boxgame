@@ -135,22 +135,22 @@ public class Level implements GameState {
 					case 0:
 						break;
 					case 1: // 1/4 chance
-						if (rng.nextFloat() <= MenuState.adj1Chance)
+						if (rng.nextFloat() <= GameMaster.adj1Chance)
 							levelMap[i][j] = Tile.TEMP_WALKABLE;
 						
 						break;
 					case 2: // 1/2 change
-						if (rng.nextFloat() <= MenuState.adj2Chance)
+						if (rng.nextFloat() <= GameMaster.adj2Chance)
 							levelMap[i][j] = Tile.TEMP_WALKABLE;
 						
 						break;
 					case 3: // 3/4 chance
-						if (rng.nextFloat() <= MenuState.adj3Chance)
+						if (rng.nextFloat() <= GameMaster.adj3Chance)
 							levelMap[i][j] = Tile.TEMP_WALKABLE;
 						
 						break;
 					case 4: // definite
-						if (rng.nextFloat() <= MenuState.adj4Chance)
+						if (rng.nextFloat() <= GameMaster.adj4Chance)
 							levelMap[i][j] = Tile.TEMP_WALKABLE;
 					}
 				}
