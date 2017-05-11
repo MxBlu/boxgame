@@ -22,11 +22,6 @@ public class MenuState implements GameState{
 	private int currentInput = 0;
 	private int framesLastUpdate = 0;
 
-	public static float adj1Chance = 0.40f;
-	public static float adj2Chance = 0.20f;
-	public static float adj3Chance = 0.50f;
-	public static float adj4Chance = 0.60f;
-
 	public MenuState() {
 		init();
 	}
@@ -95,7 +90,7 @@ public class MenuState implements GameState{
 			case KeyEvent.VK_SPACE:
 				enter = 1;
 				break;
-			case KeyEvent.VK_1:
+			/*case KeyEvent.VK_1: // DEBUG FOR LEVEL GEN
 				MenuState.adj1Chance += 0.05f;
 				System.out.println("1: " + adj1Chance);
 				break;
@@ -126,7 +121,7 @@ public class MenuState implements GameState{
 			case KeyEvent.VK_8:
 				MenuState.adj4Chance -= 0.05f;
 				System.out.println("4: " + adj4Chance);
-				break;
+				break;*/
 			}
 		} else {
 			framesLastUpdate++;

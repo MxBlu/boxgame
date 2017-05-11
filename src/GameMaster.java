@@ -11,6 +11,12 @@ public class GameMaster extends JFrame{
 	
 	public static final int WIDTH = 1280;
 	public static final int HEIGHT = 720;
+
+	// Here for debugging reasons only
+	public static float adj1Chance = 0.40f;
+	public static float adj2Chance = 0.20f;
+	public static float adj3Chance = 0.50f;
+	public static float adj4Chance = 0.60f;
 	
 	private boolean running;
 	private int fps; 
