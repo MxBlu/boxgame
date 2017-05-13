@@ -1,6 +1,6 @@
 import java.util.Random;
 
-public class BlotGen implements LevelGenerator {
+public class LevelGenBlot implements LevelGen {
 	
 	/**
 	 * Generate a random level (for now, just walls and walkable space).

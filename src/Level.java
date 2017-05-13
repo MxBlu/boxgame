@@ -25,7 +25,7 @@ public class Level implements GameState {
 	 * @param screenHeight Screen height in pixels.
 	 * @param tileSize Width/Height of a tile in pixels.
 	 */
-	Level(int screenWidth, int screenHeight, int tileSize, LevelGenerator levelGen) {
+	Level(int screenWidth, int screenHeight, int tileSize, LevelGen levelGen) {
 		// 1 pixel padding so I don't need to add edge cases to generation.
 		this.width = screenWidth/tileSize + 2;
 		this.height = screenHeight/tileSize + 2;

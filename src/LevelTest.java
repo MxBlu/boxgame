@@ -6,7 +6,7 @@ public class LevelTest {
 
 	@Test
 	public void testLevel() {
-		Level l = new Level(1240, 680, 20, new BlotGen());
+		Level l = new Level(1240, 680, 20, new LevelGenBlot());
 		System.out.println(l.toString());
 	}
 	
