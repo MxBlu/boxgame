@@ -1,6 +1,6 @@
 
 public interface LevelGen {
 
-	public void generate(Tile[][] levelMap, int height, int width);
+	public Tile[][] generate(int height, int width);
 	
 }

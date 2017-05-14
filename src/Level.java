@@ -35,8 +35,7 @@ public class Level implements GameState {
 		setDefaultTiles();
 		boxList = new ArrayList<Box>();
 
-		levelMap = new Tile[height][width];
-		levelGen.generate(levelMap, height, width);
+		levelMap = levelGen.generate(height, width);
 		
 		try {
 			player = new Player(width / 2, height / 2, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
