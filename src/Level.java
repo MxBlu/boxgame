@@ -104,8 +104,8 @@ public class Level implements GameState {
 			for (int j = 0; j < width; j++) { 
 				//slight temp bodge because we're stilling storing boxes in the tile array
 				if (levelMap[i][j] == Tile.BOX) {
-				//	bbg.drawImage(tileImgs[Tile.WALKABLE.getIntRep()], left + j * tileSize, top + i * tileSize, null);
-				//	continue;
+					bbg.drawImage(tileImgs[Tile.WALKABLE.getIntRep()], left + j * tileSize, top + i * tileSize, null);
+					continue;
 				}
 				
 				if (tileImgs[levelMap[i][j].getIntRep()] != null) {
@@ -150,11 +150,11 @@ public class Level implements GameState {
 		
 		/*System.out.println(x + " " + y);*/
 		if (type.equals("Box")) {
-			while(levelMap[y][x]!= Tile.WALKABLE || levelMap[y+1][x+1]!= Tile.WALKABLE
+			/*while(levelMap[y][x]!= Tile.WALKABLE || levelMap[y+1][x+1]!= Tile.WALKABLE
 					|| levelMap[y+1][x]!= Tile.WALKABLE || levelMap[y+1][x-1]!= Tile.WALKABLE
 					|| levelMap[y][x+1]!= Tile.WALKABLE || levelMap[y][x-1]!= Tile.WALKABLE
 					|| levelMap[y-1][x+1]!= Tile.WALKABLE || levelMap[y-1][x]!= Tile.WALKABLE
-					|| levelMap[y-1][x-1]!= Tile.WALKABLE || (x!= width/2 && y != height/2)){
+					|| levelMap[y-1][x-1]!= Tile.WALKABLE || (x!= width/2 && y != height/2))*/{
 				xRand = new Random();
 				yRand = new Random();
 				x = Math.abs(xRand.nextInt())%(width-1) +1;

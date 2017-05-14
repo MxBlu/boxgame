@@ -12,6 +12,9 @@ public class Box {
 		this.tileX = tileX;
 		this.tileY = tileY;
 		this.sprite = sprite;
+		this.tileSize = tileSize;
+		this.lvlWidth = lvlWidth;
+		this.lvlHeight = lvlHeight;
 	}
 	
 	public int getTileX() {

@@ -9,10 +9,9 @@ public class StateManager {
 	public StateManager() {
 		
 		paused = false;
-		//currentState = new BootState();
+		currentState = new BootState();
 		Level = 1;
-		currentState = new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50, new LevelGenBlot());
-		//currentState = new Level((int)(GameMaster.WIDTH * 0.9), GameMaster.HEIGHT, 50, new LevelGenBlot());
+		//currentState = new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50, new LevelGenBlock());
 	}
 	
 	public static void setState(String stateName) {
@@ -25,7 +24,7 @@ public class StateManager {
 		} else if (stateName.equals("PLAY")) {
 			currentState = new PlayState();
 		}  else if (stateName.equals("LEVEL")) {
-			currentState = new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50, new LevelGenBlot());
+			currentState = new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50, new LevelGenBlock());
 		} 
 	}
 	

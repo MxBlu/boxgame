@@ -58,24 +58,26 @@ public class Player {
 			// Against wall
 			tileX = prevTileX;
 			tileY = prevTileY;
-		} else if (tile == Tile.BOX) {
-			// Against push block
-			if (levelMap[tileY + movY][tileX + movX] == Tile.WALKABLE) {
-				levelMap[tileY + movY][tileX + movX] = Tile.BOX;
-				levelMap[tileY][tileX] = Tile.WALKABLE;
-			} else if (levelMap[tileY + movY][tileX + movX] == Tile.GOAL) {
-				System.out.println("in condition of goal level " + this.level);
-				levelMap[tileY + movY][tileX + movX] = Tile.BOX;
-				levelMap[tileY][tileX] = Tile.WALKABLE;
-				this.level --;
-				if (this.level == 0){
-					System.out.println("in condition of goal levle " + this.level);
-					StateManager.setLevel();
-					StateManager.setState("LEVEL");
+		} else {
+			// Check against boxes
+			Box box = getBoxAt(tileX, tileY, boxList);
+			if (box != null) {
+				if (levelMap[tileY + movY][tileX + movX] == Tile.WALKABLE) {
+					box.setTilePos(tileX + movX, tileY + movY);
+				} else if (levelMap[tileY + movY][tileX + movX] == Tile.GOAL) {
+					box.setTilePos(tileX + movX, tileY + movY);
+					
+					System.out.println("in condition of goal level " + this.level);
+					this.level --;
+					if (this.level == 0){
+						System.out.println("in condition of goal levle " + this.level);
+						StateManager.setLevel();
+						StateManager.setState("LEVEL");
+					}
+				} else {
+					tileX = prevTileX;
+					tileY = prevTileY;
 				}
-			} else {
-				tileX = prevTileX;
-				tileY = prevTileY;
 			}
 		}
 	}
@@ -118,5 +120,16 @@ public class Player {
 			break;
 		}
 		
+	}
+	
+	private Box getBoxAt(int tileX, int tileY, ArrayList<Box> boxList) {
+		for (int i = 0; i < boxList.size(); i++) {
+			Box box = boxList.get(i);
+			if (box.getTileX() == tileX && box.getTileY() == tileY) {
+				return box;
+			}
+		}
+		
+		return null;
 	}
 }
