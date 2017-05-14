@@ -1,6 +1,7 @@
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 public class Player {
 
@@ -33,7 +34,7 @@ public class Player {
 	 * 
 	 * @param levelMap
 	 */
-	public void update(Tile[][] levelMap) {
+	public void update(Tile[][] levelMap, ArrayList<Box> boxList) {
 		handleInput();
 
 		int prevTileX = tileX;

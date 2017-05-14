@@ -3,6 +3,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -10,6 +11,7 @@ import javax.imageio.ImageIO;
 public class Level implements GameState {
 	
 	private Tile levelMap[][];
+	private ArrayList<Box> boxList;
 	
 	private int width; // Width of the level
 	private int height; // Height of the level
@@ -31,6 +33,7 @@ public class Level implements GameState {
 		this.height = screenHeight/tileSize + 2;
 		this.tileSize = tileSize;
 		setDefaultTiles();
+		boxList = new ArrayList<Box>();
 
 		levelMap = new Tile[height][width];
 		levelGen.generate(levelMap, height, width);
@@ -46,6 +49,7 @@ public class Level implements GameState {
 	
 	Level(String input, int tileSize) {
 		this.tileSize = tileSize;
+		boxList = new ArrayList<Box>();
 		byte inputArray[] = input.getBytes();
 		
 		// Get the width and height
@@ -79,6 +83,7 @@ public class Level implements GameState {
 					tileSize, Image.SCALE_DEFAULT);
 			tileImgs[1] = ImageIO.read(getClass().getResourceAsStream("ground_empty.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
+			//todo remove [2]
 			tileImgs[2] = ImageIO.read(getClass().getResourceAsStream("box.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
 			tileImgs[3] = ImageIO.read(getClass().getResourceAsStream("goal.png")).getScaledInstance(tileSize,
@@ -98,6 +103,12 @@ public class Level implements GameState {
 		
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) { 
+				//slight temp bodge because we're stilling storing boxes in the tile array
+				if (levelMap[i][j] == Tile.BOX) {
+				//	bbg.drawImage(tileImgs[Tile.WALKABLE.getIntRep()], left + j * tileSize, top + i * tileSize, null);
+				//	continue;
+				}
+				
 				if (tileImgs[levelMap[i][j].getIntRep()] != null) {
 					bbg.drawImage(tileImgs[levelMap[i][j].getIntRep()], left + j * tileSize, top + i * tileSize, null);
 				} else {
@@ -105,6 +116,10 @@ public class Level implements GameState {
 					bbg.fillRect(left + j * tileSize, top + i * tileSize, tileSize, tileSize);
 				}
 			}
+		}
+		
+		for (Box box : boxList) {
+			box.draw(bbg);
 		}
 		
 		player.draw(bbg);
@@ -149,6 +164,7 @@ public class Level implements GameState {
 				
 			}
 			levelMap[y][x] = Tile.BOX;
+			boxList.add(new Box(x, y, tileImgs[2], tileSize, width, height));
 		} else if (type.equals("Goal")){
 			while(levelMap[y][x]!= Tile.WALKABLE || (x!= width/2 && y != height/2)){
 				xRand = new Random();
@@ -184,7 +200,7 @@ public class Level implements GameState {
 
 	@Override
 	public void update() { //KeyInput input
-		player.update(levelMap);
+		player.update(levelMap, boxList);
 		
 		switch (KeyInput.getPressed()) {
 		case KeyEvent.VK_ESCAPE:
