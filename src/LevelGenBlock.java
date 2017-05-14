@@ -1,5 +1,7 @@
 import java.util.Random;
 
+import sun.awt.windows.WPrinterJob;
+
 public class LevelGenBlock implements LevelGen {
 
 	LevelGenPattern patterns[];
@@ -110,39 +112,56 @@ public class LevelGenBlock implements LevelGen {
 	}
 	
 	@Override
-	public void generate(Tile[][] levelMap, int height, int width) {
-			if (height % 3 != 2 || width % 3 != 2)
-				System.out.println("Generated map size not ideal");
+	public Tile[][] generate(int height, int width) {
+		if (height % 3 != 2 || width % 3 != 2)
+			System.out.println("Generated map size not ideal");
+		
+		Tile[][] levelMap = new Tile[height][width];
+		for (int i = 0; i < height; i++)
+			for (int j = 0; j < width; j++)
+				levelMap[i][j] = Tile.WALL;
+		
+		int workingHeight = (height - 2) - ((height - 2) % 3);
+		int hStart = (height - workingHeight)/2;
+		System.out.println(height + " " + workingHeight + " " + hStart);
+		
+		int workingWidth = (width - 2) - ((width - 2) % 3);
+		int wStart = (width - workingWidth)/2;
+		System.out.println(width + " " + workingWidth + " " + wStart);
+		
+		for (int i = hStart; i < hStart + workingHeight; i++)
+			for (int j = wStart; j < wStart + workingWidth; j++)
+				levelMap[i][j] = Tile.WALKABLE;
+		
+		System.out.println("Adjusted");
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) 
+				System.out.print(levelMap[i][j].getIntRep());
+			System.out.println();
+		}
 			
-			for (int i = 0; i < height; i++) {
-				for (int j = 0; j < width; j++) { 
-					if (i == 0 || j == 0 || i == height - 1 || j == width - 1)
-						levelMap[i][j] = Tile.WALL;
-					else
-						levelMap[i][j] = Tile.WALKABLE;
+		// tiles are all connected
+		// cap number of pattern[0] blocks
+		// needs enough empty space
+		// no tile surrounded by 3 walls
+		
+		Random r = new Random();
+		int amtPicked[] = new int[17];
+		
+		boolean generate_f = true;
+		while (generate_f) {
+			for (int i = hStart; (i + 2) < hStart + workingHeight; i += 3) {
+				for (int j = wStart; (j + 2) < wStart + workingWidth; j += 3) {
+					int pat = 0;
+					while (!patterns[pat = r.nextInt(17)].applyPattern(levelMap,j, i));
+					amtPicked[pat]++;
 				}
 			}
 			
-			// tiles are all connected
-			// cap number of pattern[0] blocks
-			// needs enough empty space
-			// no tile surrounded by 3 walls
-			
-			Random r = new Random();
-			int amtPicked[] = new int[17];
-			
-			boolean generate_f = true;
-			while (generate_f) {
-				for (int i = 1; (i + 2) < height; i += 3) {
-					for (int j = 1; (j + 2) < width; j += 3) {
-						int pat = 0;
-						while (!patterns[pat = r.nextInt(17)].applyPattern(levelMap,j, i));
-						amtPicked[pat]++;
-					}
-				}
-				
-				break;
-			}
+			break;
+		}
+		
+		return levelMap;
 	}
 
 }

@@ -56,8 +56,6 @@ public class LevelGenPattern {
 				if (borderMask[i][j] != Tile.ANY && levelMap[y - 1 + i][x - 1 + j] != borderMask[i][j])
 					return false;
 		
-		System.out.println("Mask pass");
-		
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++) 
 				levelMap[y + i][x + j] = transformedPattern[1 + i][1 + j];
