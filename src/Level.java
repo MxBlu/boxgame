@@ -201,6 +201,10 @@ public class Level implements GameState {
 	public void update() { //KeyInput input
 		player.update(levelMap, boxList);
 		
+		for (Box box : boxList) {
+			box.update();
+		}
+		
 		switch (KeyInput.getPressed()) {
 		case KeyEvent.VK_ESCAPE:
 			System.out.println("ESCAPE");

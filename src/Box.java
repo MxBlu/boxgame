@@ -3,7 +3,10 @@ import java.awt.Image;
 
 public class Box {
 
+	private static int movementSpeed = 8;
+	
 	private int tileX, tileY;
+	private int renderX, renderY;
 	private Image sprite;
 	private int tileSize;
 	private int lvlWidth, lvlHeight;
@@ -13,6 +16,8 @@ public class Box {
 		this.tileY = tileY;
 		this.sprite = sprite;
 		this.tileSize = tileSize;
+		this.renderX = tileX * tileSize;
+		this.renderY = tileY * tileSize;
 		this.lvlWidth = lvlWidth;
 		this.lvlHeight = lvlHeight;
 	}
@@ -25,6 +30,28 @@ public class Box {
 		return tileY;
 	}
 	
+	public void update() {
+		//Update animation
+		if (renderX < tileX * tileSize) {
+			renderX+= movementSpeed;
+			if (renderX > tileX * tileSize) renderX = tileX * tileSize; 
+			return;
+		} else if (renderX > tileX * tileSize) {
+			renderX-= movementSpeed;
+			if (renderX < tileX * tileSize) renderX = tileX * tileSize;
+			return;
+		} else if (renderY < tileY * tileSize) {
+			renderY+= movementSpeed;
+			if (renderY > tileY * tileSize) renderY = tileY * tileSize;
+			return;
+		} else if (renderY > tileY * tileSize) {
+			renderY-= movementSpeed;
+			if (renderY < tileY * tileSize) renderY = tileY * tileSize;
+			return;
+		}
+				
+	}
+	
 	//Potentially just change this to a move(int direction) method
 	public void setTilePos(int tileX, int tileY){
 		this.tileX = tileX;
@@ -35,7 +62,7 @@ public class Box {
 		int left = (int) ((double) GameMaster.WIDTH / 2 - (double) (lvlWidth * tileSize) / 2);
 		int top = (int) ((double) GameMaster.HEIGHT / 2 - (double) (lvlHeight * tileSize) / 2);
 
-		bbg.drawImage(sprite, left + tileX * tileSize, top + tileY * tileSize, sprite.getWidth(null),
+		bbg.drawImage(sprite, left + renderX, top + renderY, sprite.getWidth(null),
 				sprite.getHeight(null), null);
 	}
 	

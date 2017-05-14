@@ -5,15 +5,13 @@ import java.util.ArrayList;
 
 public class Player {
 
-	private static int movementSpeed = 15;
+	private static int movementSpeed = 8;
 
 	private int tileX, tileY;
+	private int renderX, renderY;
 	private Image sprite;
 	private int tileSize;
 	private int lvlWidth, lvlHeight;
-	private int lastMovement = 0;
-	private int curMovement = 0;
-	private int framesLastUpdate = movementSpeed;
 	private int movY;
 	private int movX;
 	private int level;
@@ -22,6 +20,8 @@ public class Player {
 		this.tileX = tileX;
 		this.tileY = tileY;
 		this.tileSize = tileSize;
+		this.renderX = tileX * tileSize;
+		this.renderY = tileY * tileSize;
 		this.lvlWidth = lvlWidth;
 		this.lvlHeight = lvlHeight;
 		this.level = StateManager.getLevel();
@@ -35,6 +35,29 @@ public class Player {
 	 * @param levelMap
 	 */
 	public void update(Tile[][] levelMap, ArrayList<Box> boxList) {
+		// Update animation
+		if (renderX < tileX * tileSize) {
+			renderX += movementSpeed;
+			if (renderX > tileX * tileSize)
+				renderX = tileX * tileSize;
+			return;
+		} else if (renderX > tileX * tileSize) {
+			renderX -= movementSpeed;
+			if (renderX < tileX * tileSize)
+				renderX = tileX * tileSize;
+			return;
+		} else if (renderY < tileY * tileSize) {
+			renderY += movementSpeed;
+			if (renderY > tileY * tileSize)
+				renderY = tileY * tileSize;
+			return;
+		} else if (renderY > tileY * tileSize) {
+			renderY -= movementSpeed;
+			if (renderY < tileY * tileSize)
+				renderY = tileY * tileSize;
+			return;
+		}
+
 		handleInput();
 
 		int prevTileX = tileX;
@@ -62,14 +85,15 @@ public class Player {
 			// Check against boxes
 			Box box = getBoxAt(tileX, tileY, boxList);
 			if (box != null) {
-				if (levelMap[tileY + movY][tileX + movX] == Tile.WALKABLE) {
+				if (levelMap[tileY + movY][tileX + movX] == Tile.WALKABLE
+						|| levelMap[tileY + movY][tileX + movX] == Tile.BOX) {
 					box.setTilePos(tileX + movX, tileY + movY);
 				} else if (levelMap[tileY + movY][tileX + movX] == Tile.GOAL) {
 					box.setTilePos(tileX + movX, tileY + movY);
-					
+
 					System.out.println("in condition of goal level " + this.level);
-					this.level --;
-					if (this.level == 0){
+					this.level--;
+					if (this.level == 0) {
 						System.out.println("in condition of goal levle " + this.level);
 						StateManager.setLevel();
 						StateManager.setState("LEVEL");
@@ -86,22 +110,14 @@ public class Player {
 		int left = (int) ((double) GameMaster.WIDTH / 2 - (double) (lvlWidth * tileSize) / 2);
 		int top = (int) ((double) GameMaster.HEIGHT / 2 - (double) (lvlHeight * tileSize) / 2);
 
-		bbg.drawImage(sprite, left + tileX * tileSize, top + tileY * tileSize, sprite.getWidth(null),
-				sprite.getHeight(null), null);
+		bbg.drawImage(sprite, left + renderX, top + renderY, sprite.getWidth(null), sprite.getHeight(null), null);
 	}
 
 	public void handleInput() {
 		movX = 0;
 		movY = 0;
-		lastMovement = curMovement;
-		curMovement = KeyInput.getPressed();
-		
-		if (curMovement == lastMovement && framesLastUpdate < movementSpeed) {
-			framesLastUpdate++;
-			return;
-		}
-		framesLastUpdate = 0;
-		
+		int curMovement = KeyInput.getPressed();
+
 		switch (curMovement) {
 		case KeyEvent.VK_UP:
 			movY--;
@@ -116,12 +132,12 @@ public class Player {
 			movX++;
 			break;
 		case KeyEvent.VK_SPACE:
-			//Space (TODO)
+			// Space (TODO)
 			break;
 		}
-		
+
 	}
-	
+
 	private Box getBoxAt(int tileX, int tileY, ArrayList<Box> boxList) {
 		for (int i = 0; i < boxList.size(); i++) {
 			Box box = boxList.get(i);
@@ -129,7 +145,7 @@ public class Player {
 				return box;
 			}
 		}
-		
+
 		return null;
 	}
 }

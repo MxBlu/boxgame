@@ -5,8 +5,12 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import javax.swing.Timer;
 
+import com.sun.corba.se.impl.oa.poa.ActiveObjectMap.Key;
+import com.sun.glass.events.KeyEvent;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 
 public class BootState implements GameState, ActionListener{
 	
@@ -70,7 +74,7 @@ public class BootState implements GameState, ActionListener{
 
 	@Override
 	public void handleInput() {
-		if(KeyInput.getPressed()==5){
+		if(KeyInput.getPressed()==KeyEvent.VK_SPACE){
 			timer.stop();
 			StateManager.setState("INTRO2");
 			return;
