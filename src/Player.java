@@ -3,7 +3,7 @@ import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public class Player {
+public class Player extends Entity implements Cloneable {
 
 	private static int movementSpeed = 8;
 
@@ -15,6 +15,7 @@ public class Player {
 	private int movY;
 	private int movX;
 	private int level;
+	private boolean atNewTile = true;
 
 	public Player(int tileX, int tileY, Image sprite, int tileSize, int lvlWidth, int lvlHeight) {
 		this.tileX = tileX;
@@ -25,7 +26,7 @@ public class Player {
 		this.lvlWidth = lvlWidth;
 		this.lvlHeight = lvlHeight;
 		this.level = StateManager.getLevel();
-		System.out.println("level state manager" + this.level);
+		//System.out.println("level state manager" + this.level);
 		this.sprite = sprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
 	}
 
@@ -38,26 +39,35 @@ public class Player {
 		// Update animation
 		if (renderX < tileX * tileSize) {
 			renderX += movementSpeed;
-			if (renderX > tileX * tileSize)
+			if (renderX >= tileX * tileSize) {
 				renderX = tileX * tileSize;
+				atNewTile = true;
+			}
 			return;
 		} else if (renderX > tileX * tileSize) {
 			renderX -= movementSpeed;
-			if (renderX < tileX * tileSize)
+			if (renderX <= tileX * tileSize) {
 				renderX = tileX * tileSize;
+				atNewTile = true;
+			}
 			return;
 		} else if (renderY < tileY * tileSize) {
 			renderY += movementSpeed;
-			if (renderY > tileY * tileSize)
+			if (renderY > tileY * tileSize) {
 				renderY = tileY * tileSize;
+				atNewTile = true;
+			}
 			return;
 		} else if (renderY > tileY * tileSize) {
 			renderY -= movementSpeed;
-			if (renderY < tileY * tileSize)
+			if (renderY < tileY * tileSize) {
 				renderY = tileY * tileSize;
+				atNewTile = true;
+			}
 			return;
 		}
 
+		atNewTile = false;
 		handleInput();
 
 		int prevTileX = tileX;
@@ -105,6 +115,10 @@ public class Player {
 			}
 		}
 	}
+	
+	public boolean atNewTile() {
+		return atNewTile;
+	}
 
 	public void draw(Graphics2D bbg) {
 		int left = (int) ((double) GameMaster.WIDTH / 2 - (double) (lvlWidth * tileSize) / 2);
@@ -135,8 +149,32 @@ public class Player {
 			// Space (TODO)
 			break;
 		}
-
 	}
+	
+	public int getTileX() {
+		return tileX;
+	}
+	
+	public int getTileY() {
+		return tileY;
+	}
+	
+	public Object clone() throws CloneNotSupportedException{  
+		Player player = (Player) super.clone();
+		player.atNewTile = atNewTile;
+		player.tileX = tileX;
+		player.tileY = tileY;
+		player.renderX = renderX;
+		player.renderY = renderY;
+		player.sprite = sprite;
+		player.tileSize = tileSize;
+		player.lvlWidth = lvlWidth;
+		player.lvlHeight = lvlHeight;
+		player.movX = movX;
+		player.movY = movY;
+		player.level = level;
+		return player;
+	} 
 
 	private Box getBoxAt(int tileX, int tileY, ArrayList<Box> boxList) {
 		for (int i = 0; i < boxList.size(); i++) {

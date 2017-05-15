@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Stack;
 
 import javax.imageio.ImageIO;
 
@@ -12,6 +13,7 @@ public class Level implements GameState {
 	
 	private Tile levelMap[][];
 	private ArrayList<Box> boxList;
+	private Stack<ArrayList<Entity>> prevStates;
 	
 	private int width; // Width of the level
 	private int height; // Height of the level
@@ -32,6 +34,7 @@ public class Level implements GameState {
 		this.width = screenWidth/tileSize + 2;
 		this.height = screenHeight/tileSize + 2;
 		this.tileSize = tileSize;
+		prevStates = new Stack<ArrayList<Entity>>();
 		setDefaultTiles();
 		boxList = new ArrayList<Box>();
 
@@ -50,6 +53,7 @@ public class Level implements GameState {
 		this.tileSize = tileSize;
 		boxList = new ArrayList<Box>();
 		byte inputArray[] = input.getBytes();
+		prevStates = new Stack<ArrayList<Entity>>();
 		
 		// Get the width and height
 		for (this.width = 0; inputArray[this.width] != '\n'; this.width++);
@@ -178,6 +182,21 @@ public class Level implements GameState {
 
 	}
 	
+	private void undo() {
+		if (!prevStates.isEmpty()) {
+			ArrayList<Entity> prevState = prevStates.pop();
+			boxList = new ArrayList<Box>();
+			for (Entity e : prevState) {
+				if (e.getClass() == Player.class) {
+					player = (Player) e;
+					System.out.println("o " + player.getTileX() + " " + player.getTileY());
+				} else {
+					boxList.add((Box)e);
+				}
+			}
+		}
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder(height * (width + 1));
@@ -205,15 +224,34 @@ public class Level implements GameState {
 			box.update();
 		}
 		
+		if (player.atNewTile()) {
+			// save state
+			ArrayList<Entity> newState = new ArrayList<Entity>();
+			try {
+				Player newPlayer = (Player) player.clone();
+				System.out.println("n " + newPlayer.getTileX() + " " + newPlayer.getTileY());
+				newState.add(newPlayer);
+
+				for (Box b : boxList) {
+					newState.add((Entity) b.clone());
+				}
+			} catch (CloneNotSupportedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			prevStates.push(newState);
+		}
+		
 		switch (KeyInput.getPressed()) {
 		case KeyEvent.VK_ESCAPE:
-			System.out.println("ESCAPE");
+			//System.out.println("ESCAPE");
 			StateManager.setState("MENU");	
+			return;
+		case KeyEvent.VK_U:
+			undo();
 			return;
 		}
 		
-		if (KeyInput.getPressed() == KeyEvent.VK_ESCAPE) {
-		}
 	}
 
 	@Override

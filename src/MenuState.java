@@ -1,14 +1,17 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
+import javax.swing.JButton;
 
 import com.sun.glass.events.KeyEvent;
 
-public class MenuState implements GameState{
+public class MenuState implements GameState {
 
 	private static int movementSpeed = 6;
 	
@@ -36,7 +39,7 @@ public class MenuState implements GameState{
 		option = 0;
 		boxes = new ArrayList<Rectangle>();
 		eventStart = true;
-		eventStart();
+		eventStart();		
 	}
 
 	public void update() {
@@ -154,6 +157,5 @@ public class MenuState implements GameState{
 			eventTick = 0;
 		}
 	}
-
 
 }
