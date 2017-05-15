@@ -1,4 +1,11 @@
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.Random;
+
+import javax.swing.plaf.basic.BasicScrollPaneUI.HSBChangeListener;
+
+import com.sun.jndi.url.corbaname.corbanameURLContextFactory;
 
 import sun.awt.windows.WPrinterJob;
 
@@ -117,39 +124,29 @@ public class LevelGenBlock implements LevelGen {
 			System.out.println("Generated map size not ideal");
 		
 		Tile[][] levelMap = new Tile[height][width];
-		for (int i = 0; i < height; i++)
-			for (int j = 0; j < width; j++)
-				levelMap[i][j] = Tile.WALL;
-		
-		int workingHeight = (height - 2) - ((height - 2) % 3);
-		int hStart = (height - workingHeight)/2;
-		System.out.println(height + " " + workingHeight + " " + hStart);
-		
-		int workingWidth = (width - 2) - ((width - 2) % 3);
-		int wStart = (width - workingWidth)/2;
-		System.out.println(width + " " + workingWidth + " " + wStart);
-		
-		for (int i = hStart; i < hStart + workingHeight; i++)
-			for (int j = wStart; j < wStart + workingWidth; j++)
-				levelMap[i][j] = Tile.WALKABLE;
-		
-		System.out.println("Adjusted");
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) 
-				System.out.print(levelMap[i][j].getIntRep());
-			System.out.println();
-		}
-			
-		// tiles are all connected
+
 		// cap number of pattern[0] blocks
 		// needs enough empty space
-		// no tile surrounded by 3 walls
 		
 		Random r = new Random();
 		int amtPicked[] = new int[17];
 		
+		int workingHeight = (height - 2) - ((height - 2) % 3);
+		int hStart = (height - workingHeight)/2;
+		
+		int workingWidth = (width - 2) - ((width - 2) % 3);
+		int wStart = (width - workingWidth)/2;
+		
 		boolean generate_f = true;
 		while (generate_f) {
+			for (int i = 0; i < height; i++)
+				for (int j = 0; j < width; j++)
+					levelMap[i][j] = Tile.WALL;
+			
+			for (int i = hStart; i < hStart + workingHeight; i++)
+				for (int j = wStart; j < wStart + workingWidth; j++)
+					levelMap[i][j] = Tile.WALKABLE;
+			
 			for (int i = hStart; (i + 2) < hStart + workingHeight; i += 3) {
 				for (int j = wStart; (j + 2) < wStart + workingWidth; j += 3) {
 					int pat = 0;
@@ -158,10 +155,117 @@ public class LevelGenBlock implements LevelGen {
 				}
 			}
 			
-			break;
+			if (checkConnectedness(levelMap, height, width))
+				break;
+		}
+		
+		boolean noChange_f = false;
+		while (!noChange_f) {
+			noChange_f = true;
+			for (int i = hStart; i < hStart + workingHeight; i++) {
+				for (int j = wStart; j < wStart + workingWidth; j++) {
+					if (levelMap[i][j] == Tile.WALL)
+						continue;
+					
+					int numAdj = ((levelMap[i + 1][j] == Tile.WALL) ? 1 : 0) +
+							((levelMap[i - 1][j] == Tile.WALL) ? 1 : 0) +
+							((levelMap[i][j + 1] == Tile.WALL) ? 1 : 0) +
+							((levelMap[i][j - 1] == Tile.WALL) ? 1 : 0);
+					
+					if (numAdj != 3)
+						continue;
+					
+					levelMap[i][j] = Tile.WALL;
+					noChange_f = false;
+				}
+			}
+		}
+
+		System.out.println("Final");
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) 
+				System.out.print(levelMap[i][j].getIntRep());
+			System.out.println();
 		}
 		
 		return levelMap;
 	}
 
+	private boolean checkConnectedness(Tile[][] levelMap, int height, int width) {
+		int intMap[][] = new int [height][width];
+		
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				if (levelMap[i][j] == Tile.WALL)
+					intMap[i][j] = 1;
+				else
+					intMap[i][j] = 0;
+			}
+		}
+		
+		int i = 0;
+		int j = 0;
+		boolean startFound_f = false;
+		for (i = 0; i < height; i++) {
+			for (j = 0; j < width; j++) {
+				if (intMap[i][j] == 0) {
+					startFound_f = true;
+					System.out.println(i + " " + j);
+					break;
+				}
+			}
+			if (startFound_f)
+				break;
+		}
+		
+		if (!startFound_f)
+			return false;
+		
+		
+		class IntPair { 
+			int i; 
+			int j; 
+			IntPair(int i, int j) { 
+				this.i = i; 
+				this.j = j;
+			} 
+			
+			public boolean equals(Object o) {
+				IntPair e = (IntPair) o;
+				return (this.i == e.i && this.j == e.j);
+			}
+		}
+		
+		Queue<IntPair> open = new LinkedList<IntPair>();
+		List<IntPair> closed = new LinkedList<IntPair>();
+		
+		open.add(new IntPair(i, j));
+		
+		while (!open.isEmpty()) {
+			IntPair curr = open.poll();
+			closed.add(curr);
+			
+			intMap[curr.i][curr.j] = 2;
+			
+			IntPair newStates[] = new IntPair[4];
+			newStates[0] = new IntPair(curr.i + 1, curr.j);
+			newStates[1] = new IntPair(curr.i - 1, curr.j);
+			newStates[2] = new IntPair(curr.i, curr.j - 1);
+			newStates[3] = new IntPair(curr.i, curr.j + 1);
+			
+			for (i = 0; i < 4; i++) {
+				if (closed.contains(newStates[i]) || open.contains(newStates[i]) || intMap[newStates[i].i][newStates[i].j] != 0)
+					continue;
+				
+				open.add(newStates[i]);
+			}
+		}
+		
+		for (i = 0; i < height; i++)
+			for (j = 0; j < width; j++) 
+				if (intMap[i][j] == 0)
+					return false;
+		
+		return true;
+	}
 }
