@@ -1,7 +1,7 @@
 import java.awt.Graphics2D;
 import java.awt.Image;
 
-public class Box {
+public class Box extends Entity implements Cloneable {
 
 	private static int movementSpeed = 8;
 	
@@ -65,5 +65,18 @@ public class Box {
 		bbg.drawImage(sprite, left + renderX, top + renderY, sprite.getWidth(null),
 				sprite.getHeight(null), null);
 	}
+	
+	public Object clone() throws CloneNotSupportedException{  
+		Box box = (Box) super.clone();
+		box.tileX = tileX;
+		box.tileY = tileY;
+		box.renderX = renderX;
+		box.renderY = renderY;
+		box.sprite = sprite;
+		box.tileSize = tileSize;
+		box.lvlWidth = lvlWidth;
+		box.lvlHeight = lvlHeight;
+		return box;
+	} 
 	
 }
