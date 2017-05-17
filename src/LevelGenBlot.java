@@ -6,7 +6,7 @@ public class LevelGenBlot implements LevelGen {
 	 * Generate a random level (for now, just walls and walkable space).
 	 */
 	@Override
-	public Tile[][] generate(int height, int width) {
+	public Tile[][] generate(int height, int width, int level) {
 		Tile[][] levelMap = new Tile[height][width];
 		
 		// Initialise matrix
@@ -79,6 +79,23 @@ public class LevelGenBlot implements LevelGen {
 					if (levelMap[i][j] == Tile.TEMP_WALKABLE) 
 						levelMap[i][j] = Tile.WALKABLE;
 		}
+		
+		Random xRand = new Random();
+		Random yRand = new Random();
+		int x = Math.abs(xRand.nextInt())%(width-1)+1;
+		int y = Math.abs(yRand.nextInt())%(height-1)+1;
+		
+		for (int i = 0; i < level; i++) {
+			while(levelMap[y][x]!= Tile.WALKABLE || (x!= width/2 && y != height/2)){
+				xRand = new Random();
+				yRand = new Random();
+				x = Math.abs(xRand.nextInt())%(width-1) +1;
+				y = Math.abs(yRand.nextInt())%(height-1) +1;
+				//System.out.println("fails on "+ x + " " + y);
+				
+			}
+		}
+		levelMap[y][x] = Tile.GOAL;
 		
 		return levelMap;
 	}

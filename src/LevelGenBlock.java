@@ -119,26 +119,26 @@ public class LevelGenBlock implements LevelGen {
 	}
 	
 	@Override
-	public Tile[][] generate(int height, int width) {
+	public Tile[][] generate(int height, int width, int level) {
 		if (height % 3 != 2 || width % 3 != 2)
 			System.out.println("Generated map size not ideal");
 		
 		Tile[][] levelMap = new Tile[height][width];
 
-		// cap number of pattern[0] blocks
-		// needs enough empty space
+		// needs enough empty space? might not be necessary
 		
 		Random r = new Random();
-		int amtPicked[] = new int[17];
 		
-		int workingHeight = (height - 2) - ((height - 2) % 3);
+		int workingHeight = 9;//(height - 2) - ((height - 2) % 3);
 		int hStart = (height - workingHeight)/2;
 		
-		int workingWidth = (width - 2) - ((width - 2) % 3);
+		int workingWidth = 9;//(width - 2) - ((width - 2) % 3);
 		int wStart = (width - workingWidth)/2;
 		
-		boolean generate_f = true;
-		while (generate_f) {
+		int numRegions = (workingHeight/3) * (workingWidth/3);
+		
+		while (true) {
+			int amtPicked[] = new int[17];
 			for (int i = 0; i < height; i++)
 				for (int j = 0; j < width; j++)
 					levelMap[i][j] = Tile.WALL;
@@ -154,6 +154,9 @@ public class LevelGenBlock implements LevelGen {
 					amtPicked[pat]++;
 				}
 			}
+
+			if (amtPicked[0] > ((numRegions % 2 == 0) ? numRegions/2 : (numRegions + 1)/2))
+				continue;
 			
 			if (checkConnectedness(levelMap, height, width))
 				break;
@@ -180,7 +183,30 @@ public class LevelGenBlock implements LevelGen {
 				}
 			}
 		}
-
+		
+		for (int l = 0; l < level; l++) {
+			while (true) {
+				int i = 0;
+				int j = 0;
+				int k = r.nextInt(workingWidth * workingHeight); 
+				
+				for (i = hStart; k >= 0 && i < hStart + workingHeight; i++)
+					for (j = wStart; k >= 0 && j < wStart + workingWidth; j++, k--);
+				
+				if (levelMap[i][j] == Tile.WALL || levelMap[i][j] == Tile.GOAL)
+					continue;
+				
+				if (	(levelMap[i + 1][j] == Tile.WALL && levelMap[i][j + 1] == Tile.WALL) ||
+						(levelMap[i][j + 1] == Tile.WALL && levelMap[i - 1][j] == Tile.WALL) ||
+						(levelMap[i - 1][j] == Tile.WALL && levelMap[i][j - 1] == Tile.WALL) ||
+						(levelMap[i][j - 1] == Tile.WALL && levelMap[i + 1][j] == Tile.WALL))
+					continue;
+				
+				levelMap[i][j] = Tile.GOAL;
+				break;
+			}
+		}
+		
 		System.out.println("Final");
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) 

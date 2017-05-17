@@ -38,7 +38,7 @@ public class Level implements GameState {
 		setDefaultTiles();
 		boxList = new ArrayList<Box>();
 
-		levelMap = levelGen.generate(height, width);
+		levelMap = levelGen.generate(height, width, StateManager.getLevel());
 		
 		try {
 			player = new Player(width / 2, height / 2, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
@@ -46,7 +46,9 @@ public class Level implements GameState {
 			e.printStackTrace();
 		}
 		
-		setLevel(StateManager.getLevel());
+		for (int i = 0; i < StateManager.getLevel(); i++)
+			placeBox();
+		
 	}
 	
 	Level(String input, int tileSize) {
@@ -58,13 +60,16 @@ public class Level implements GameState {
 		// Get the width and height
 		for (this.width = 0; inputArray[this.width] != '\n'; this.width++);
 		this.height = inputArray.length/(width + 1);
-		//System.out.println("Length: " + inputArray.length + ", Height :" + this.height + ", Width: " + this.width);
 		
 		levelMap = new Tile[this.height][this.width];
 		int sIndex = 0;
 		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) 
-				levelMap[i][j] = Tile.getTile(inputArray[sIndex++] - '0');
+			for (int j = 0; j < width; j++) {
+				if (inputArray[sIndex++] == Tile.BOX.getIntRep())
+					boxList.add(new Box(j, i, tileImgs[2], tileSize, width, height));
+				else
+					levelMap[i][j] = Tile.getTile(inputArray[sIndex] - '0');
+			}
 			sIndex++;
 		}
 		
@@ -75,8 +80,6 @@ public class Level implements GameState {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		setLevel(StateManager.getLevel());
 	}
 	
 	private void setDefaultTiles() {
@@ -106,12 +109,6 @@ public class Level implements GameState {
 		
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) { 
-				//slight temp bodge because we're stilling storing boxes in the tile array
-				if (levelMap[i][j] == Tile.BOX) {
-					bbg.drawImage(tileImgs[Tile.WALKABLE.getIntRep()], left + j * tileSize, top + i * tileSize, null);
-					continue;
-				}
-				
 				if (tileImgs[levelMap[i][j].getIntRep()] != null) {
 					bbg.drawImage(tileImgs[levelMap[i][j].getIntRep()], left + j * tileSize, top + i * tileSize, null);
 				} else {
@@ -132,54 +129,25 @@ public class Level implements GameState {
 		return tileSize;
 	}
 	
-	private void setLevel(int x){
-		for (int i =0; i< x; i++){
-			setLoc("Box");
-			setLoc("Goal");
-		}
-	}
-	
-	/*
-	 * @param type  Tile that needs to be set
-	 * makes sure that all the surrounding blocks are walkable 
-	 * 
-	 */
-	private void setLoc(String type) {
-		Random xRand = new Random();
-		Random yRand = new Random();
-		int x = Math.abs(xRand.nextInt())%(width-1)+1;
-		int y = Math.abs(yRand.nextInt())%(height-1)+1;
-		/*System.out.println("system height and width "+ height + " "+ width);
-		System.out.println(y + " " + x);*/
+	private void placeBox() {
+		Random r = new Random();
 		
-		/*System.out.println(x + " " + y);*/
-		if (type.equals("Box")) {
-			/*while(levelMap[y][x]!= Tile.WALKABLE || levelMap[y+1][x+1]!= Tile.WALKABLE
-					|| levelMap[y+1][x]!= Tile.WALKABLE || levelMap[y+1][x-1]!= Tile.WALKABLE
-					|| levelMap[y][x+1]!= Tile.WALKABLE || levelMap[y][x-1]!= Tile.WALKABLE
-					|| levelMap[y-1][x+1]!= Tile.WALKABLE || levelMap[y-1][x]!= Tile.WALKABLE
-					|| levelMap[y-1][x-1]!= Tile.WALKABLE || (x!= width/2 && y != height/2))*/{
-				xRand = new Random();
-				yRand = new Random();
-				x = Math.abs(xRand.nextInt())%(width-1) +1;
-				y = Math.abs(yRand.nextInt())%(height-1) +1;
-				//System.out.println("fails on "+ x + " " + y);
-				
-			}
-			levelMap[y][x] = Tile.BOX;
+		while (true) {
+			int x = r.nextInt(width);
+			int y = r.nextInt(height);
+			
+			if (levelMap[y][x] == Tile.WALL)
+				continue;
+			
+			if (	(levelMap[y + 1][x] == Tile.WALL && levelMap[y][x + 1] == Tile.WALL) ||
+					(levelMap[y][x + 1] == Tile.WALL && levelMap[y - 1][x] == Tile.WALL) ||
+					(levelMap[y - 1][x] == Tile.WALL && levelMap[y][x - 1] == Tile.WALL) ||
+					(levelMap[y][x - 1] == Tile.WALL && levelMap[y + 1][x] == Tile.WALL))
+				continue;
+			
 			boxList.add(new Box(x, y, tileImgs[2], tileSize, width, height));
-		} else if (type.equals("Goal")){
-			while(levelMap[y][x]!= Tile.WALKABLE || (x!= width/2 && y != height/2)){
-				xRand = new Random();
-				yRand = new Random();
-				x = Math.abs(xRand.nextInt())%(width-1) +1;
-				y = Math.abs(yRand.nextInt())%(height-1) +1;
-				//System.out.println("fails on "+ x + " " + y);
-				
-			}
-			levelMap[y][x] = Tile.GOAL;
+			break;
 		}
-
 	}
 	
 	private void undo() {

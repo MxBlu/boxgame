@@ -93,38 +93,6 @@ public class MenuState implements GameState {
 			case KeyEvent.VK_SPACE:
 				enter = 1;
 				break;
-			/*case KeyEvent.VK_1: // DEBUG FOR LEVEL GEN
-				MenuState.adj1Chance += 0.05f;
-				System.out.println("1: " + adj1Chance);
-				break;
-			case KeyEvent.VK_2:
-				MenuState.adj1Chance -= 0.05f;
-				System.out.println("1: " + adj1Chance);
-				break;
-			case KeyEvent.VK_3:
-				MenuState.adj2Chance += 0.05f;
-				System.out.println("2: " + adj2Chance);
-				break;
-			case KeyEvent.VK_4:
-				MenuState.adj2Chance -= 0.05f;
-				System.out.println("2: " + adj2Chance);
-				break;
-			case KeyEvent.VK_5:
-				MenuState.adj3Chance += 0.05f;
-				System.out.println("3: " + adj3Chance);
-				break;
-			case KeyEvent.VK_6:
-				MenuState.adj3Chance -= 0.05f;
-				System.out.println("3: " + adj3Chance);
-				break;
-			case KeyEvent.VK_7:
-				MenuState.adj4Chance += 0.05f;
-				System.out.println("4: " + adj4Chance);
-				break;
-			case KeyEvent.VK_8:
-				MenuState.adj4Chance -= 0.05f;
-				System.out.println("4: " + adj4Chance);
-				break;*/
 			}
 		} else {
 			framesLastUpdate++;
