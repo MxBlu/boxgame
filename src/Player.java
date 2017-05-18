@@ -100,11 +100,16 @@ public class Player extends Entity implements Cloneable {
 					tileY = prevTileY;
 				} else if (levelMap[tileY + movY][tileX + movX] == Tile.WALKABLE) {
 					box.setTilePos(tileX + movX, tileY + movY);
+					if (levelMap[tileY][tileX] == Tile.GOAL) {
+						this.level++;
+					}
 				} else if (levelMap[tileY + movY][tileX + movX] == Tile.GOAL) {
 					box.setTilePos(tileX + movX, tileY + movY);
-
+					if (levelMap[tileY][tileX] != Tile.GOAL) {
+						this.level--;
+					}
 					System.out.println("in condition of goal level " + this.level);
-					this.level--;
+					
 					if (this.level == 0) {
 						System.out.println("in condition of goal levle " + this.level);
 						StateManager.setLevel();

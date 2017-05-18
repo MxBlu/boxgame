@@ -40,14 +40,18 @@ public class Level implements GameState {
 
 		levelMap = levelGen.generate(height, width, StateManager.getLevel());
 		
+		
 		try {
 			player = new Player(width / 2, height / 2, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
+		
 		for (int i = 0; i < StateManager.getLevel(); i++)
 			placeBox();
+		
+		//checkPlayerPlace();
 		
 	}
 	
@@ -75,11 +79,13 @@ public class Level implements GameState {
 		
 		setDefaultTiles();
 		
+		
 		try {
 			player = new Player(1, 1, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width/2, height/2);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 	}
 	
 	private void setDefaultTiles() {
@@ -149,7 +155,29 @@ public class Level implements GameState {
 			break;
 		}
 	}
-	
+/*	
+	private void checkPlayerPlace() {		
+		Random r = new Random();
+		
+		if (levelMap[player.getTileY()][player.getTileX()] != Tile.WALL &&
+				player.getBoxAt(player.getTileX(), player.getTileY(), boxList) == null) {
+			return;
+		}
+			
+		while (true) {
+			int x = r.nextInt(width);
+			int y = r.nextInt(height);
+			
+			if (levelMap[y][x] == Tile.WALL || player.getBoxAt(x, y, boxList) != null)
+				continue;
+			
+			player.setTileX(x);
+			player.setTileY(y);
+			break;
+		}
+
+	}
+*/	
 	private void undo() {
 		if (!prevStates.isEmpty()) {
 			ArrayList<Entity> prevState = prevStates.pop();
