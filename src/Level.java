@@ -41,17 +41,17 @@ public class Level implements GameState {
 		levelMap = levelGen.generate(height, width, StateManager.getLevel());
 		
 		
-		try {
+		/*try {
 			player = new Player(width / 2, height / 2, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 		
 		
 		for (int i = 0; i < StateManager.getLevel(); i++)
 			placeBox();
 		
-		//checkPlayerPlace();
+		makePlayer();
 		
 	}
 	
@@ -142,9 +142,10 @@ public class Level implements GameState {
 			int x = r.nextInt(width);
 			int y = r.nextInt(height);
 			
-			if (levelMap[y][x] == Tile.WALL)
+			if (levelMap[y][x] == Tile.WALL || levelMap[y][x] == Tile.GOAL ||
+					checkBoxList(x, y) == true) {
 				continue;
-			
+			}
 			if (	(levelMap[y + 1][x] == Tile.WALL && levelMap[y][x + 1] == Tile.WALL) ||
 					(levelMap[y][x + 1] == Tile.WALL && levelMap[y - 1][x] == Tile.WALL) ||
 					(levelMap[y - 1][x] == Tile.WALL && levelMap[y][x - 1] == Tile.WALL) ||
@@ -155,29 +156,45 @@ public class Level implements GameState {
 			break;
 		}
 	}
-/*	
-	private void checkPlayerPlace() {		
-		Random r = new Random();
+	
+	private void makePlayer() {
+		int x = width/2;
+		int y = height/2;
 		
-		if (levelMap[player.getTileY()][player.getTileX()] != Tile.WALL &&
-				player.getBoxAt(player.getTileX(), player.getTileY(), boxList) == null) {
-			return;
+		if (levelMap[y][x] == Tile.WALL || checkBoxList(x, y) == true) {
+			Random r = new Random();
+				
+			while (true) {
+				x = r.nextInt(width);
+				y = r.nextInt(height);
+				
+				if (levelMap[y][x] == Tile.WALL || checkBoxList(x, y) == true)
+					continue;
+
+				break;
+			}
 		}
-			
-		while (true) {
-			int x = r.nextInt(width);
-			int y = r.nextInt(height);
-			
-			if (levelMap[y][x] == Tile.WALL || player.getBoxAt(x, y, boxList) != null)
-				continue;
-			
-			player.setTileX(x);
-			player.setTileY(y);
-			break;
+		
+		try {
+			player = new Player(x, y, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 	}
-*/	
+	
+	// someone should probably change this, since it already has something similar
+	// in class Player... :v
+	private boolean checkBoxList(int x, int y) {
+		for (int i = 0; i < boxList.size(); i++) {
+			Box box = boxList.get(i);
+			if (box.getTileX() == x && box.getTileY() == y) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private void undo() {
 		if (!prevStates.isEmpty()) {
 			ArrayList<Entity> prevState = prevStates.pop();
