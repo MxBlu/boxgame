@@ -95,8 +95,10 @@ public class Player extends Entity implements Cloneable {
 			// Check against boxes
 			Box box = getBoxAt(tileX, tileY, boxList);
 			if (box != null) {
-				if (levelMap[tileY + movY][tileX + movX] == Tile.WALKABLE
-						|| levelMap[tileY + movY][tileX + movX] == Tile.BOX) {
+				if (getBoxAt(tileX + movX, tileY + movY, boxList) != null) {
+					tileX = prevTileX;
+					tileY = prevTileY;
+				} else if (levelMap[tileY + movY][tileX + movX] == Tile.WALKABLE) {
 					box.setTilePos(tileX + movX, tileY + movY);
 				} else if (levelMap[tileY + movY][tileX + movX] == Tile.GOAL) {
 					box.setTilePos(tileX + movX, tileY + movY);
