@@ -10,6 +10,8 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage; 
 
 public class GameMaster{
+	public static final int WIDTH = 1280;
+	public static final int HEIGHT = 720;
 
 	// Here for debugging reasons only
 	public static float adj1Chance = 0.40f;

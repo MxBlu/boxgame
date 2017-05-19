@@ -24,6 +24,13 @@ public class StateManager {
 		currentState = new MenuStateTrial();
 		Level = 1;
 		//currentState = new JFrame();
+		init();
+		/*currentState.revalidate();
+		currentState.repaint();*/
+		//currentState = new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50, new LevelGenBlock());
+	}
+	
+	private void init() {
 		currentState.setTitle("Game");
 		currentState.setSize(WIDTH, HEIGHT);
 		currentState.setFocusable(true);
@@ -35,9 +42,6 @@ public class StateManager {
 		backBuffer = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		input = new KeyInput();
 		currentState.addKeyListener(new KeyInput());
-		currentState.revalidate();
-		currentState.repaint();
-		//currentState = new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50, new LevelGenBlock());
 	}
 	
 /*	public static void setState(String stateName) {
