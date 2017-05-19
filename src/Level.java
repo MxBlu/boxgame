@@ -40,14 +40,6 @@ public class Level implements GameState {
 
 		levelMap = levelGen.generate(height, width, StateManager.getLevel());
 		
-		
-		/*try {
-			player = new Player(width / 2, height / 2, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
-		
-		
 		for (int i = 0; i < StateManager.getLevel(); i++)
 			placeBox();
 		
@@ -79,12 +71,7 @@ public class Level implements GameState {
 		
 		setDefaultTiles();
 		
-		
-		try {
-			player = new Player(1, 1, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width/2, height/2);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		makePlayer();
 		
 	}
 	
@@ -214,9 +201,26 @@ public class Level implements GameState {
 	public String toString() {
 		StringBuilder s = new StringBuilder(height * (width + 1));
 		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) 
-				s.append(levelMap[i][j].getIntRep());
-			
+			for (int j = 0; j < width; j++) {
+				if (player.getTileX() == i && player.getTileY() == j) {
+					s.append(Tile.PLAYER.getIntRep());
+					continue;
+				}
+				
+				boolean box_f = false;
+				for (Box b : boxList) {
+					if (b.getTileY() == i && b.getTileX() == j) {
+						box_f = true;
+						break;
+					}
+				}
+				
+				if (box_f)
+					s.append(Tile.BOX.getIntRep());
+				else
+					s.append(levelMap[i][j].getIntRep());
+			}
+				
 			s.append('\n');
 		}
 		

@@ -4,6 +4,7 @@ enum Tile {
 	WALKABLE(1),
 	BOX(2),
 	GOAL(3),
+	PLAYER(4),
 	TEMP_WALKABLE(5),
 	ANY(6);
 	
