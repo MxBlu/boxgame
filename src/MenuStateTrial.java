@@ -25,7 +25,7 @@ public class MenuStateTrial extends JPanel{
 		play.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				System.out.println("change thing");
-				GameMaster.changeScreens(newScreen);
+				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50, new LevelGenBlock()));
 			}
 		});
 		
