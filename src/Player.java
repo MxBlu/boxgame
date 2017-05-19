@@ -2,10 +2,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 
-public class Player extends Entity implements Cloneable, KeyListener {
+public class Player extends Entity implements Cloneable {
 
 	private static int movementSpeed = 8;
 
@@ -70,7 +69,7 @@ public class Player extends Entity implements Cloneable, KeyListener {
 		}
 
 		atNewTile = false;
-		//handle iput was here
+		handleInput();
 
 		int prevTileX = tileX;
 		int prevTileY = tileY;
@@ -136,6 +135,30 @@ public class Player extends Entity implements Cloneable, KeyListener {
 		bbg.drawImage(sprite, left + renderX, top + renderY, sprite.getWidth(null), sprite.getHeight(null), null);
 	}
 
+	public void handleInput() {
+		movX = 0;
+		movY = 0;
+		int curMovement = KeyInput.getPressed();
+
+		switch (curMovement) {
+		case KeyEvent.VK_UP:
+			
+			movY--;
+			break;
+		case KeyEvent.VK_DOWN:
+			movY++;
+			break;
+		case KeyEvent.VK_LEFT:
+			movX--;
+			break;
+		case KeyEvent.VK_RIGHT:
+			movX++;
+			break;
+		case KeyEvent.VK_SPACE:
+			// Space (TODO)
+			break;
+		}
+	}
 	
 	public int getTileX() {
 		return tileX;
@@ -171,42 +194,5 @@ public class Player extends Entity implements Cloneable, KeyListener {
 		}
 
 		return null;
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		movX = 0;
-		movY = 0;
-		System.out.println("In player and handling input");
-		switch (e.getKeyCode()) {
-		case KeyEvent.VK_UP:
-			movY--;
-			break;
-		case KeyEvent.VK_DOWN:
-			movY++;
-			break;
-		case KeyEvent.VK_LEFT:
-			movX--;
-			break;
-		case KeyEvent.VK_RIGHT:
-			movX++;
-			break;
-		case KeyEvent.VK_SPACE:
-			// Space (TODO)
-			break;
-		}
-		
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 }

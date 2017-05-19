@@ -11,8 +11,10 @@ import java.util.Random;
 import java.util.Stack;
 
 import javax.imageio.ImageIO;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
 public class Level extends JPanel implements ActionListener {
@@ -29,6 +31,17 @@ public class Level extends JPanel implements ActionListener {
 	
 	private Image tileImgs[];
 	private Player player;
+	
+	private int currMove;
+	
+	//for key input
+
+    private static final int IFW = JComponent.WHEN_IN_FOCUSED_WINDOW;
+    private static final String MOVE_UP = "move up";
+    private static final String MOVE_DOWN = "move down";
+    private static final String MOVE_LEFT = "move left";
+    private static final String MOVE_RIGHT = "move right";
+    private static final String FIRE = "move fire";
 	
 	/**
 	 * Creates a new level.
@@ -49,10 +62,15 @@ public class Level extends JPanel implements ActionListener {
 		boxList = new ArrayList<Box>();
 
 		levelMap = levelGen.generate(height, width, 1);
+	/*	this.getInputMap(IFW).put(KeyStroke.getKeyStroke("UP"),MOVE_UP);
+		this.getInputMap(IFW).put(KeyStroke.getKeyStroke("DOWN"),MOVE_DOWN);
+		this.getInputMap(IFW).put(KeyStroke.getKeyStroke("LEFT"),MOVE_LEFT);
+		this.getInputMap(IFW).put(KeyStroke.getKeyStroke("RIGHT"),MOVE_RIGHT);
 		
-		this.setFocusable(true);
-        this.requestFocus();
-		
+		this.getActionMap(MOVE_UP,  currMove = 1);
+		this.getActionMap(MOVE_DOWN,  );
+		this.getActionMap(MOVE_LEFT,  );
+		this.getActionMap(MOVE_RIGHT,  );*/
 		makePlayer();
 		
 	}
@@ -176,7 +194,6 @@ public class Level extends JPanel implements ActionListener {
 		try {
 			player = new Player(x, y, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
 			
-	        this.addKeyListener(player);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -247,6 +264,7 @@ public class Level extends JPanel implements ActionListener {
 	}
 
 	public void update() { //KeyInput input
+		//System.out.println("player.update");
 		player.update(levelMap, boxList);
 		
 		for (Box box : boxList) {
