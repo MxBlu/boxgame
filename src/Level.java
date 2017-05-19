@@ -15,15 +15,15 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
-import javax.swing.Timer;
 
-public class Level extends JPanel implements ActionListener {
+
+public class Level extends JPanel{
 	
 	private Tile levelMap[][];
 	private ArrayList<Box> boxList;
 	private Stack<ArrayList<Entity>> prevStates;
 	
-	private Timer timer;
+	
 	
 	private int width; // Width of the level
 	private int height; // Height of the level
@@ -52,8 +52,7 @@ public class Level extends JPanel implements ActionListener {
 	 */
 	Level(int screenWidth, int screenHeight, int tileSize, LevelGen levelGen) {
 		// 1 pixel padding so I don't need to add edge cases to generation.
-		timer = new Timer(100, this);
-        timer.start();
+		
 		this.width = screenWidth/tileSize + 2;
 		this.height = screenHeight/tileSize + 2;
 		this.tileSize = tileSize;
@@ -62,15 +61,12 @@ public class Level extends JPanel implements ActionListener {
 		boxList = new ArrayList<Box>();
 
 		levelMap = levelGen.generate(height, width, 1);
-	/*	this.getInputMap(IFW).put(KeyStroke.getKeyStroke("UP"),MOVE_UP);
+		this.getInputMap(IFW).put(KeyStroke.getKeyStroke("UP"),MOVE_UP);
 		this.getInputMap(IFW).put(KeyStroke.getKeyStroke("DOWN"),MOVE_DOWN);
 		this.getInputMap(IFW).put(KeyStroke.getKeyStroke("LEFT"),MOVE_LEFT);
 		this.getInputMap(IFW).put(KeyStroke.getKeyStroke("RIGHT"),MOVE_RIGHT);
 		
-		this.getActionMap(MOVE_UP,  currMove = 1);
-		this.getActionMap(MOVE_DOWN,  );
-		this.getActionMap(MOVE_LEFT,  );
-		this.getActionMap(MOVE_RIGHT,  );*/
+	
 		makePlayer();
 		
 	}
@@ -174,6 +170,8 @@ public class Level extends JPanel implements ActionListener {
 	}
 	
 	private void makePlayer() {
+		
+		
 		int x = width/2;
 		int y = height/2;
 		
@@ -193,6 +191,13 @@ public class Level extends JPanel implements ActionListener {
 		
 		try {
 			player = new Player(x, y, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
+			this.getActionMap().put(MOVE_UP,  new PlayerAction(1, player, this));
+			this.getActionMap().put(MOVE_DOWN,  new PlayerAction(2, player, this));
+			this.getActionMap().put(MOVE_LEFT,  new PlayerAction(3, player, this));
+			this.getActionMap().put(MOVE_RIGHT,  new PlayerAction(4, player, this));
+			/*this.getActionMap(MOVE_DOWN,  );
+			this.getActionMap(MOVE_LEFT,  );
+			this.getActionMap(MOVE_RIGHT,  );*/
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -264,7 +269,7 @@ public class Level extends JPanel implements ActionListener {
 	}
 
 	public void update() { //KeyInput input
-		//System.out.println("player.update");
+		System.out.println("player.update");
 		player.update(levelMap, boxList);
 		
 		for (Box box : boxList) {
@@ -301,12 +306,5 @@ public class Level extends JPanel implements ActionListener {
 		
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		//System.out.println("repainting");
-		update();
-		repaint();
-		
-	}
-
+	
 }

@@ -69,7 +69,7 @@ public class Player extends Entity implements Cloneable {
 		}
 
 		atNewTile = false;
-		handleInput();
+		
 
 		int prevTileX = tileX;
 		int prevTileY = tileY;
@@ -134,7 +134,7 @@ public class Player extends Entity implements Cloneable {
 
 		bbg.drawImage(sprite, left + renderX, top + renderY, sprite.getWidth(null), sprite.getHeight(null), null);
 	}
-
+/*
 	public void handleInput() {
 		movX = 0;
 		movY = 0;
@@ -158,7 +158,7 @@ public class Player extends Entity implements Cloneable {
 			// Space (TODO)
 			break;
 		}
-	}
+	}*/
 	
 	public int getTileX() {
 		return tileX;
@@ -195,4 +195,24 @@ public class Player extends Entity implements Cloneable {
 
 		return null;
 	}
+	public void moveUp(){
+		movY--;
+		System.out.println("moved up");
+	}
+	
+	public void moveDown(){
+		movY++;
+		System.out.println("moved down");
+	}
+	
+	public void moveLeft(){
+		movX--;
+		System.out.println("moved left");
+	}
+	
+	public void moveRight(){
+		movX++;
+		System.out.println("moved right");
+	}
+	
 }
