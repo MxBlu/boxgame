@@ -39,17 +39,6 @@ public class BootScreen extends JPanel implements ActionListener, KeyListener {
     
    
 
-  /*  
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Fade out");
-        frame.add(new FadeIn());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(WIDTH, HEIGHT);
-        // frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-    }
-    */
     public void paintComponent(Graphics g) {
         //paintComponent(g);
     
@@ -78,13 +67,9 @@ public class BootScreen extends JPanel implements ActionListener, KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		GameMaster.changeScreens(new MenuStateTrial());
 		
-		
-		GameMaster.frame.getContentPane().removeAll();
-		GameMaster.frame.getContentPane().add( new MenuStateTrial());
-		GameMaster.frame.repaint();
-		GameMaster.frame.revalidate();
-		
+	
 		
 		System.out.println("Key pressed ");
 

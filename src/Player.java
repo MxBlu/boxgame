@@ -25,7 +25,7 @@ public class Player extends Entity implements Cloneable {
 		this.renderY = tileY * tileSize;
 		this.lvlWidth = lvlWidth;
 		this.lvlHeight = lvlHeight;
-		this.level = StateManager.getLevel();
+		this.level = 1;
 		//System.out.println("level state manager" + this.level);
 		this.sprite = sprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
 	}
@@ -110,11 +110,10 @@ public class Player extends Entity implements Cloneable {
 					}
 					System.out.println("in condition of goal level " + this.level);
 					
-					if (this.level == 0) {
+					/*if (this.level == 0) {
 						System.out.println("in condition of goal levle " + this.level);
-						StateManager.setLevel();
-						StateManager.setState("LEVEL");
-					}
+						
+					}*/
 				} else {
 					tileX = prevTileX;
 					tileY = prevTileY;

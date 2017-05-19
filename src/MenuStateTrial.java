@@ -22,6 +22,19 @@ public class MenuStateTrial extends JPanel{
 		credits = new JButton("Credits");
 		highScore = new JButton("High Score");
 		
+		play.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent e){
+				System.out.println("change thing");
+				GameMaster.changeScreens(newScreen);
+			}
+		});
+		
+		credits.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent e){
+				System.out.println("change screen");
+			}
+		});
+		
 		add(play);
 		add(credits);
 		add(highScore);

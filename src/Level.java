@@ -9,8 +9,9 @@ import java.util.Stack;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-public class Level extends JFrame {
+public class Level extends JPanel {
 	
 	private Tile levelMap[][];
 	private ArrayList<Box> boxList;
@@ -39,10 +40,9 @@ public class Level extends JFrame {
 		setDefaultTiles();
 		boxList = new ArrayList<Box>();
 
-		levelMap = levelGen.generate(height, width, StateManager.getLevel());
+		levelMap = levelGen.generate(height, width, 1);
 		
-		for (int i = 0; i < StateManager.getLevel(); i++)
-			placeBox();
+		
 		
 		makePlayer();
 		
@@ -228,13 +228,12 @@ public class Level extends JFrame {
 		return s.toString();
 	}
 
-	@Override
+
 	public void init() {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void update() { //KeyInput input
 		player.update(levelMap, boxList);
 		
@@ -263,7 +262,7 @@ public class Level extends JFrame {
 		switch (KeyInput.getPressed()) {
 		case KeyEvent.VK_ESCAPE:
 			//System.out.println("ESCAPE");
-			StateManager.setState("MENU");	
+			GameMaster.changeScreens(new MenuStateTrial());	
 			return;
 		case KeyEvent.VK_U:
 			undo();
