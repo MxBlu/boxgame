@@ -1,6 +1,9 @@
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,12 +13,15 @@ import java.util.Stack;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
-public class Level extends JPanel {
+public class Level extends JPanel implements ActionListener {
 	
 	private Tile levelMap[][];
 	private ArrayList<Box> boxList;
 	private Stack<ArrayList<Entity>> prevStates;
+	
+	private Timer timer;
 	
 	private int width; // Width of the level
 	private int height; // Height of the level
@@ -33,6 +39,8 @@ public class Level extends JPanel {
 	 */
 	Level(int screenWidth, int screenHeight, int tileSize, LevelGen levelGen) {
 		// 1 pixel padding so I don't need to add edge cases to generation.
+		timer = new Timer(100, this);
+        timer.start();
 		this.width = screenWidth/tileSize + 2;
 		this.height = screenHeight/tileSize + 2;
 		this.tileSize = tileSize;
@@ -42,7 +50,8 @@ public class Level extends JPanel {
 
 		levelMap = levelGen.generate(height, width, 1);
 		
-		
+		this.setFocusable(true);
+        this.requestFocus();
 		
 		makePlayer();
 		
@@ -97,7 +106,8 @@ public class Level extends JPanel {
 		this.tileImgs[t.getIntRep()] = tileImage;
 	}
 	
-	public void draw(Graphics2D bbg) {
+	public void paintComponent(Graphics g) {
+		Graphics2D bbg = (Graphics2D) g;
 		int left = (int) ((double) GameMaster.WIDTH/2 - (double) (width * tileSize)/2);
 		int top = (int) ((double) GameMaster.HEIGHT/2 - (double) (height * tileSize)/2);
 		
@@ -116,7 +126,7 @@ public class Level extends JPanel {
 			box.draw(bbg);
 		}
 		
-		player.draw(bbg);
+		player.paintComponent(bbg);
 	}
 	
 	public int getTileSize() {
@@ -165,6 +175,8 @@ public class Level extends JPanel {
 		
 		try {
 			player = new Player(x, y, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
+			
+	        this.addKeyListener(player);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -268,6 +280,14 @@ public class Level extends JPanel {
 			undo();
 			return;
 		}
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		//System.out.println("repainting");
+		update();
+		repaint();
 		
 	}
 
