@@ -3,6 +3,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 import javax.swing.Timer;
 
 import com.sun.glass.events.KeyEvent;
@@ -10,7 +11,7 @@ import com.sun.glass.events.KeyEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Boot2State implements GameState, ActionListener{
+public class Boot2State extends JFrame implements ActionListener{
 	
 	private BufferedImage logo;
 	
@@ -71,7 +72,7 @@ public class Boot2State implements GameState, ActionListener{
 		
 	}
 
-	@Override
+
 	public void handleInput() {
 		if(KeyInput.getPressed()==KeyEvent.VK_SPACE){
 			timer.stop();

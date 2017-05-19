@@ -6,20 +6,29 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class MenuStateTrial implements GameState{
+public class MenuStateTrial extends JFrame{
 
 	private JButton play;
 	private JButton credits;
 	private JButton highScore;
 	private JPanel gamePanel;
 	public MenuStateTrial() {
-		init();
-		
+		play = new JButton("Play");
+		credits = new JButton("Credits");
+		highScore = new JButton("High Score");
+		gamePanel = new JPanel(new FlowLayout());
+		gamePanel.add(play);
+		gamePanel.add(credits);
+		gamePanel.add(highScore);
+		gamePanel.revalidate();
+		gamePanel.setBackground(Color.BLUE);
+		add(gamePanel);
 		
 	}
-
+/*
 	@Override
 	public void init() {
 		play = new JButton("Play");
@@ -31,12 +40,12 @@ public class MenuStateTrial implements GameState{
 		gamePanel.add(highScore);
 		gamePanel.revalidate();
 		gamePanel.setBackground(Color.BLUE);
-		StateManager.getFrame().add(gamePanel);
+		
 		System.out.println("finished in menu");
 		
-	}
+	}*/
 
-	@Override
+	/*@Override
 	public void update() {
 		handleInput();
 		
@@ -68,6 +77,6 @@ public class MenuStateTrial implements GameState{
 			}
 		});
 		
-	}
+	}*/
 
 }

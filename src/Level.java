@@ -8,8 +8,9 @@ import java.util.Random;
 import java.util.Stack;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 
-public class Level implements GameState {
+public class Level extends JFrame {
 	
 	private Tile levelMap[][];
 	private ArrayList<Box> boxList;
@@ -271,8 +272,4 @@ public class Level implements GameState {
 		
 	}
 
-	@Override
-	public void handleInput() {
-		// TODO Auto-generated method stub
-	}
 }
