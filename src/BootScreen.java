@@ -8,14 +8,17 @@ import java.awt.Image;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class FadeIn extends JPanel implements ActionListener {
+public class BootScreen extends JPanel implements ActionListener, KeyListener {
 
+	//JFrame main;
     Image imagem;
     Timer timer;
     
@@ -24,17 +27,19 @@ public class FadeIn extends JPanel implements ActionListener {
 	
     private float alpha = 0f;
 
-    public FadeIn() {
-    	
+    public BootScreen( ) {
+    	//main = m;
         imagem = new ImageIcon("logo.png").getImage();
         timer = new Timer(100, this);
         timer.start();
         this.setFocusable(true);
-        this.requestFocusInWindow();
-
+        this.requestFocus();
+        this.addKeyListener(this);
     }
-
     
+   
+
+  /*  
     public static void main(String[] args) {
         JFrame frame = new JFrame("Fade out");
         frame.add(new FadeIn());
@@ -44,9 +49,9 @@ public class FadeIn extends JPanel implements ActionListener {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
-    
+    */
     public void paintComponent(Graphics g) {
-        super.paintComponent(g);
+        //paintComponent(g);
     
 
         Graphics2D g2d = (Graphics2D) g;
@@ -70,4 +75,30 @@ public class FadeIn extends JPanel implements ActionListener {
 
         repaint();
     }
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		
+		
+		GameMaster.frame.getContentPane().removeAll();
+		GameMaster.frame.getContentPane().add( new MenuStateTrial());
+		GameMaster.frame.repaint();
+		GameMaster.frame.revalidate();
+		
+		
+		System.out.println("Key pressed ");
+
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 }

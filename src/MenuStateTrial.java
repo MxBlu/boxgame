@@ -9,23 +9,26 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class MenuStateTrial extends JFrame{
+public class MenuStateTrial extends JPanel{
 
 	private JButton play;
 	private JButton credits;
 	private JButton highScore;
-	private JPanel gamePanel;
+	//private JPanel gamePanel;
+	
 	public MenuStateTrial() {
+		System.out.println("in menu screen");
 		play = new JButton("Play");
 		credits = new JButton("Credits");
 		highScore = new JButton("High Score");
-		gamePanel = new JPanel(new FlowLayout());
-		gamePanel.add(play);
-		gamePanel.add(credits);
-		gamePanel.add(highScore);
-		gamePanel.revalidate();
-		gamePanel.setBackground(Color.BLUE);
-		add(gamePanel);
+		
+		add(play);
+		add(credits);
+		add(highScore);
+		revalidate();
+		setBackground(Color.BLUE);
+		this.setFocusable(true);
+	    this.requestFocusInWindow();
 		
 	}
 /*
