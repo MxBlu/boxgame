@@ -7,6 +7,7 @@ public class GameMaster{
     // The window and game dimensions
     public static final int WIDTH = 1280;
     public static final int HEIGHT = 720;
+    public static final int PANEL_HEIGHT = 691;
     
     // Set the frames per second
     public static final int FPS = 60;

@@ -1,24 +1,34 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 import java.util.Stack;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-import com.sun.tracing.dtrace.StabilityLevel;
-
+import com.sun.xml.internal.bind.v2.runtime.reflect.Lister.Pack;
 
 public class Level extends JPanel implements ActionListener {
 	
@@ -32,8 +42,12 @@ public class Level extends JPanel implements ActionListener {
 	
 	private Image tileImgs[];
 	private Player player;
-
+	private int moves = 0;
 	private Timer animationTimer;
+	private JPanel uiPanel;
+	private JLabel movesLabel;
+	private JLabel timerLabel;
+	private long startTime;
 	
 	//for key input
     private static final String MOVE_UP = "move up";
@@ -61,11 +75,14 @@ public class Level extends JPanel implements ActionListener {
 
 		animationTimer = new Timer(GameMaster.FRAME_DELTA, this);
 		levelMap = levelGen.generate(height, width, 1);
+		startTime = System.currentTimeMillis();
 		
 		setDefaultTiles();
 		makePlayer();
 		placeBox();
 		setActions();
+		setupUI();
+		animationTimer.start();
 	}
 	
 	Level(String input, int tileSize) {
@@ -93,6 +110,8 @@ public class Level extends JPanel implements ActionListener {
 		setDefaultTiles();
 		makePlayer();
 		setActions();
+		setupUI();
+		animationTimer.start();
 	}
 	
 	private void setActions() {
@@ -160,6 +179,8 @@ public class Level extends JPanel implements ActionListener {
 		}
 		
 		player.paintComponent(bbg);
+		super.paintComponent(bbg);
+		//movesLabel.paint(bbg);
 	}
 	
 	public int getTileSize() {
@@ -277,6 +298,7 @@ public class Level extends JPanel implements ActionListener {
 				}
 			}
 		}
+		System.out.print(getHeight());
 		
 		repaint();
 	}
@@ -315,10 +337,13 @@ public class Level extends JPanel implements ActionListener {
 		System.out.println("player.update");
 		player.update(levelMap, boxList);
 		
-		if (player.isAnimating())
-			animationTimer.start();
+//		if (player.isAnimating())
+//			animationTimer.start();
 		
 		if (player.atNewTile()) {
+			moves++;
+			movesLabel.setText("Moves: " + moves);
+			
 			// save state
 			ArrayList<Entity> newState = new ArrayList<Entity>();
 			try {
@@ -335,13 +360,13 @@ public class Level extends JPanel implements ActionListener {
 			}
 			prevStates.push(newState);
 			repaint();
-		}		
+		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		boolean stillAnimating = false;
-		System.out.print("timer " + Thread.currentThread().getId());
+		
 		if (player.isAnimating()) {
 			stillAnimating = true;
 			player.updateAnimation();
@@ -354,11 +379,41 @@ public class Level extends JPanel implements ActionListener {
 			}
 		}
 		
+		// Update time label
+		Date date = new Date(System.currentTimeMillis() - startTime);
+		DateFormat dateFormat = new SimpleDateFormat("mm:ss:SSS");
+		timerLabel.setText("Time: " + dateFormat.format(date));
+		
 		if (stillAnimating)
 			repaint();
-		else
-			animationTimer.stop();
+		//else
+		//	animationTimer.stop();
 	}
 
+	private void setupUI() {
+		setOpaque(false);
+		setLayout(null);
+
+		movesLabel = new JLabel("Moves: " + moves);
+		Font font = new Font("Arial", Font.PLAIN, 35);
+		movesLabel.setFont(font);
+		movesLabel.setForeground(Color.WHITE);
+		movesLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+		
+		timerLabel = new JLabel("Time: 0:00:000");
+		timerLabel.setFont(font);
+		timerLabel.setForeground(Color.WHITE);
+		timerLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+		
+		uiPanel = new JPanel(new BorderLayout());
+		uiPanel.setPreferredSize(new Dimension(GameMaster.WIDTH, 80));
+		uiPanel.setBounds(new Rectangle(new Point(0, (int) (GameMaster.PANEL_HEIGHT - uiPanel.getPreferredSize().getHeight())), uiPanel.getPreferredSize()));
+		uiPanel.setBackground(new Color(58, 58, 58));
+		
+		uiPanel.add(movesLabel, BorderLayout.WEST);
+		uiPanel.add(timerLabel);
+		
+		add(uiPanel);
+	}
 	
 }
