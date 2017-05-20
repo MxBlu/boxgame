@@ -10,7 +10,7 @@ import javax.swing.Timer;
 
 public class Player extends Entity implements Cloneable {
 
-	private static int movementSpeed = 8;
+	private static int movementSpeed = 12;
 
 	private int tileX, tileY;
 	
