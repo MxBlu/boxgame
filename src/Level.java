@@ -15,9 +15,10 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
 
 
-public class Level extends JPanel{
+public class Level extends JPanel implements ActionListener{
 	
 	private Tile levelMap[][];
 	private ArrayList<Box> boxList;
@@ -29,6 +30,7 @@ public class Level extends JPanel{
 	private int height; // Height of the level
 	private int tileSize;
 	
+	private Timer timer;
 	private Image tileImgs[];
 	private Player player;
 	
@@ -52,7 +54,8 @@ public class Level extends JPanel{
 	 */
 	Level(int screenWidth, int screenHeight, int tileSize, LevelGen levelGen) {
 		// 1 pixel padding so I don't need to add edge cases to generation.
-		
+		 timer = new Timer(50, this);
+	     timer.start();
 		this.width = screenWidth/tileSize + 2;
 		this.height = screenHeight/tileSize + 2;
 		this.tileSize = tileSize;
@@ -304,6 +307,12 @@ public class Level extends JPanel{
 			return;
 		}
 		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		update();
+		repaint();
 	}
 
 	

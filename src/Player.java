@@ -17,6 +17,7 @@ public class Player extends Entity implements Cloneable {
 	private int movX;
 	private int level;
 	private boolean atNewTile = true;
+	private int currMove;
 
 	public Player(int tileX, int tileY, Image sprite, int tileSize, int lvlWidth, int lvlHeight) {
 		this.tileX = tileX;
@@ -69,7 +70,7 @@ public class Player extends Entity implements Cloneable {
 		}
 
 		atNewTile = false;
-		
+		handleInput();
 
 		int prevTileX = tileX;
 		int prevTileY = tileY;
@@ -134,31 +135,31 @@ public class Player extends Entity implements Cloneable {
 
 		bbg.drawImage(sprite, left + renderX, top + renderY, sprite.getWidth(null), sprite.getHeight(null), null);
 	}
-/*
+
 	public void handleInput() {
 		movX = 0;
 		movY = 0;
-		int curMovement = KeyInput.getPressed();
 
-		switch (curMovement) {
-		case KeyEvent.VK_UP:
+		switch (currMove) {
+		case 1:
 			
 			movY--;
 			break;
-		case KeyEvent.VK_DOWN:
+		case 2:
 			movY++;
 			break;
-		case KeyEvent.VK_LEFT:
+		case 3:
 			movX--;
 			break;
-		case KeyEvent.VK_RIGHT:
+		case 4:
 			movX++;
 			break;
 		case KeyEvent.VK_SPACE:
 			// Space (TODO)
 			break;
 		}
-	}*/
+		currMove = 0;
+	}
 	
 	public int getTileX() {
 		return tileX;
@@ -195,24 +196,10 @@ public class Player extends Entity implements Cloneable {
 
 		return null;
 	}
-	public void moveUp(){
-		movY--;
-		System.out.println("moved up");
+	public void setMove(int x){
+		currMove = x;
 	}
 	
-	public void moveDown(){
-		movY++;
-		System.out.println("moved down");
-	}
 	
-	public void moveLeft(){
-		movX--;
-		System.out.println("moved left");
-	}
-	
-	public void moveRight(){
-		movX++;
-		System.out.println("moved right");
-	}
 	
 }
