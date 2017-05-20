@@ -39,7 +39,6 @@ public class Player extends Entity implements Cloneable {
 		this.renderY = tileY * tileSize;
 		this.lvlWidth = lvlWidth;
 		this.lvlHeight = lvlHeight;
-		this.level = 1;
 		this.downSprite = downSprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
 		this.rightSprite = rightSprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
 		//Mirror rightSprite for leftSprite
