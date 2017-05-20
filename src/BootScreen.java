@@ -59,9 +59,9 @@ public class BootScreen extends JPanel implements ActionListener{
 
     public void actionPerformed(ActionEvent e) {
     	if (state == 0) {
-	        alpha += 0.001f;
+	        alpha += 0.015f;
 	        
-	        if (alpha > 0.1) {
+	        if (alpha > 1) {
 	            alpha = 1;
 	            timer.setDelay(2000);
 	            state = 1;
