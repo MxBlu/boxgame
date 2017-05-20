@@ -4,17 +4,24 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.swing.Timer;
 
 public class Player extends Entity implements Cloneable {
-
+	
 	private static int movementSpeed = 12;
 
 	private int tileX, tileY;
 	
-	private Image sprite;
+	private Image downSprite;
+	private Image upSprite;
+	private Image rightSprite;
+	private Image leftSprite;
+	private Image renderSprite;
 	private int tileSize;
 	private int lvlWidth, lvlHeight;
 	private int movY;
@@ -25,7 +32,7 @@ public class Player extends Entity implements Cloneable {
 	private int renderX, renderY;
 	private boolean animating = true;
 
-	public Player(int tileX, int tileY, Image sprite, int tileSize, int lvlWidth, int lvlHeight) {
+	public Player(int tileX, int tileY, Image downSprite, Image upSprite, Image rightSprite, int tileSize, int lvlWidth, int lvlHeight) {
 		this.tileX = tileX;
 		this.tileY = tileY;
 		this.tileSize = tileSize;
@@ -34,9 +41,16 @@ public class Player extends Entity implements Cloneable {
 		this.lvlWidth = lvlWidth;
 		this.lvlHeight = lvlHeight;
 		this.level = 1;
-		//System.out.println("level state manager" + this.level);
-		this.sprite = sprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
-		this.animating = false;
+		this.downSprite = downSprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
+		this.rightSprite = rightSprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
+		//Mirror rightSprite for leftSprite
+		AffineTransform tx = AffineTransform.getScaleInstance(-1.0,1.0);
+	    tx.translate(-rightSprite.getWidth(null), 0);
+        AffineTransformOp tr=new AffineTransformOp(tx, null);
+		this.leftSprite = tr.filter((BufferedImage) rightSprite, null);
+		this.upSprite = upSprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
+		renderSprite = downSprite;
+		animating = false;
 	}
 
 	/*
@@ -102,6 +116,19 @@ public class Player extends Entity implements Cloneable {
 				animating = true;
 			}
 		}
+		
+		//Change direction for rendering
+		if (prevTileX != tileX || prevTileY != tileY) {
+			if (movX == 1) {
+				renderSprite = rightSprite;
+			} else if (movX == -1) {
+				renderSprite = leftSprite;
+			} else if (movY == -1) {
+				renderSprite = upSprite;
+			} else if (movY == 1) {
+				renderSprite = downSprite;
+			}
+		}
 	}
 	
 	public void updateAnimation() {
@@ -149,7 +176,7 @@ public class Player extends Entity implements Cloneable {
 		int left = (int) ((double) GameMaster.WIDTH / 2 - (double) (lvlWidth * tileSize) / 2);
 		int top = (int) ((double) GameMaster.HEIGHT / 2 - (double) (lvlHeight * tileSize) / 2);
 
-		bbg.drawImage(sprite, left + renderX, top + renderY, sprite.getWidth(null), sprite.getHeight(null), null);
+		bbg.drawImage(renderSprite, left + renderX, top + renderY, upSprite.getWidth(null), upSprite.getHeight(null), null);		 
 	}
 	
 	public int getTileX() {
@@ -167,13 +194,17 @@ public class Player extends Entity implements Cloneable {
 		player.tileY = tileY;
 		player.renderX = renderX;
 		player.renderY = renderY;
-		player.sprite = sprite;
+		player.downSprite = downSprite;
+		player.upSprite = upSprite;
+		player.rightSprite = rightSprite;
+		player.leftSprite = leftSprite;
 		player.tileSize = tileSize;
 		player.lvlWidth = lvlWidth;
 		player.lvlHeight = lvlHeight;
 		player.movX = movX;
 		player.movY = movY;
 		player.level = level;
+		player.renderSprite = renderSprite;
 		return player;
 	} 
 

@@ -207,7 +207,7 @@ public class Level extends JPanel implements ActionListener {
 		}
 		
 		try {
-			player = new Player(x, y, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
+			player = new Player(x, y, ImageIO.read(getClass().getResourceAsStream("player.png")), ImageIO.read(getClass().getResourceAsStream("player_up.png")), ImageIO.read(getClass().getResourceAsStream("player_right.png")), tileSize, width, height);
 			
 			this.getActionMap().put(MOVE_UP, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
