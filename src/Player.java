@@ -55,8 +55,10 @@ public class Player extends Entity implements Cloneable {
 		// Check level boundaries
 		if (tileX >= lvlWidth || tileX < 0) {
 			tileX = prevTileX;
+			return;
 		} else if (tileY >= lvlHeight || tileY < 0) {
 			tileY = prevTileY;
+			return;
 		}
 
 		// Check collision on solid tiles
@@ -187,6 +189,9 @@ public class Player extends Entity implements Cloneable {
 	}
 	
 	public void setMove(int x){
+		movY = 0;
+		movX = 0;
+		
 		switch (x) {
 		case 1:
 			movY = -1;

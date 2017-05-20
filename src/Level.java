@@ -65,6 +65,7 @@ public class Level extends JPanel implements ActionListener {
 		
 		setDefaultTiles();
 		makePlayer();
+		placeBox();
 		setActions();
 	}
 	
@@ -330,8 +331,6 @@ public class Level extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		boolean stillAnimating = false;
-		
-		System.out.println("TIMER UP");
 		
 		if (player.isAnimating()) {
 			stillAnimating = true;
