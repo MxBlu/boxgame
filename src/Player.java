@@ -26,7 +26,6 @@ public class Player extends Entity implements Cloneable {
 	private int lvlWidth, lvlHeight;
 	private int movY;
 	private int movX;
-	private int level;
 	private boolean atNewTile = true;
 	
 	private int renderX, renderY;
@@ -40,7 +39,6 @@ public class Player extends Entity implements Cloneable {
 		this.renderY = tileY * tileSize;
 		this.lvlWidth = lvlWidth;
 		this.lvlHeight = lvlHeight;
-		this.level = 1;
 		this.downSprite = downSprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
 		this.rightSprite = rightSprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
 		//Mirror rightSprite for leftSprite
@@ -90,17 +88,8 @@ public class Player extends Entity implements Cloneable {
 					tileX = prevTileX;
 					tileY = prevTileY;
 				} else {
-					if (levelMap[tileY + movY][tileX + movX] == Tile.WALKABLE) {
+					if (levelMap[tileY + movY][tileX + movX] != Tile.WALL) {
 						box.setTilePos(tileX + movX, tileY + movY);
-						if (levelMap[tileY][tileX] == Tile.GOAL)
-							this.level++;
-						
-						atNewTile = true;
-						animating = true;
-					} else if (levelMap[tileY + movY][tileX + movX] == Tile.GOAL) {
-						box.setTilePos(tileX + movX, tileY + movY);
-						if (levelMap[tileY][tileX] != Tile.GOAL)
-							this.level--;
 						
 						atNewTile = true;
 						animating = true;
@@ -108,9 +97,7 @@ public class Player extends Entity implements Cloneable {
 						tileX = prevTileX;
 						tileY = prevTileY;
 					}
-				}
-				System.out.println("in condition of goal level " + this.level);
-					
+				}	
 			} else {
 				atNewTile = true;
 				animating = true;
@@ -203,7 +190,6 @@ public class Player extends Entity implements Cloneable {
 		player.lvlHeight = lvlHeight;
 		player.movX = movX;
 		player.movY = movY;
-		player.level = level;
 		player.renderSprite = renderSprite;
 		return player;
 	} 

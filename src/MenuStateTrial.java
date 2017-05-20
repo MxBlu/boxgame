@@ -48,7 +48,7 @@ public class MenuStateTrial extends JPanel{
 		}		
 		
 		// Initialize JButtons
-		// Give them names, and dimensions. Also
+		// Give them names, dimension, and images. Also
 		// add tool tips on mouse over to assist the user.
 		play = new JButton();
 		play.setIcon(new ImageIcon(playbutton));
@@ -76,7 +76,7 @@ public class MenuStateTrial extends JPanel{
 		play.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				System.out.println("change thing");
-				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50, new LevelGenBlock()));
+				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 40, new LevelGenBlock()));
 			}
 		});
 		
@@ -89,6 +89,12 @@ public class MenuStateTrial extends JPanel{
 			}
 		});
 		
+		highScore.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent e){
+				GameMaster.changeScreens(new IntermissionScreen());
+			}
+		});
+	
 		// Set the layout of this JPanel
 		// We can use one of the preset layouts from
 		// JPanel's API to arrange the layout and 
