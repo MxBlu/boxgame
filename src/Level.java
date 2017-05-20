@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
+import com.sun.tracing.dtrace.StabilityLevel;
+
 
 public class Level extends JPanel implements ActionListener {
 	
@@ -262,14 +264,6 @@ public class Level extends JPanel implements ActionListener {
 		return false;
 	}
 	
-	private boolean isCompleted() {
-		for (Box b : boxList)
-			if (levelMap[b.getTileY()][b.getTileX()] != Tile.GOAL)
-				return false;
-		
-		return true;
-	}
-	
 	private void undo() {
 		if (!prevStates.isEmpty()) {
 			ArrayList<Entity> prevState = prevStates.pop();
@@ -362,11 +356,8 @@ public class Level extends JPanel implements ActionListener {
 		
 		if (stillAnimating)
 			repaint();
-		else {
+		else
 			animationTimer.stop();
-			if (isCompleted())
-				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, tileSize, new LevelGenBlock()));
-		}
 	}
 
 	
