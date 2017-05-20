@@ -11,12 +11,15 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
-public class BootScreen extends JPanel implements ActionListener, KeyListener {
+public class BootScreen extends JPanel implements ActionListener{
 
 	//JFrame main;
     Image imagem;
@@ -25,19 +28,26 @@ public class BootScreen extends JPanel implements ActionListener, KeyListener {
     public static final int WIDTH = 1280;
 	public static final int HEIGHT = 720;
 	
-    private float alpha = 0f;
+	public static final String SKIP = "SKIP";
+	
+    private float alpha = 0.0f;
+    private int state = 0;
 
     public BootScreen( ) {
     	//main = m;
         imagem = new ImageIcon("logo.png").getImage();
-        timer = new Timer(100, this);
+        timer = new Timer(GameMaster.FRAME_DELTA, this);
         timer.start();
-        this.setFocusable(true);
-        this.requestFocus();
-        this.addKeyListener(this);
-    }
-    
-   
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), SKIP);
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), SKIP);
+        
+        this.getActionMap().put(SKIP, new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+			public void actionPerformed(ActionEvent e) {
+				GameMaster.changeScreens(new MenuStateTrial());	
+			}
+		});
+    } 
 
     public void paintComponent(Graphics g) {
         //paintComponent(g);
@@ -54,36 +64,23 @@ public class BootScreen extends JPanel implements ActionListener, KeyListener {
 
 
     public void actionPerformed(ActionEvent e) {
-        alpha += 0.05f;
-        if (alpha >1) {
-            alpha = 1;
-            timer.stop();
-            imagem = new ImageIcon("logo2.png").getImage();
-          
-        }
+    	if (state == 0) {
+	        alpha += 0.001f;
+	        
+	        if (alpha > 0.1) {
+	            alpha = 1;
+	            timer.setDelay(2000);
+	            state = 1;
+	            
+	            imagem = new ImageIcon("logo2.png").getImage();
+	          
+	        }
 
-        repaint();
+	        repaint();
+    	} else {
+    		System.out.println("end me already");
+    		timer.stop();
+    		GameMaster.changeScreens(new MenuStateTrial());
+    	}
     }
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		GameMaster.changeScreens(new MenuStateTrial());
-		
-	
-		
-		System.out.println("Key pressed ");
-
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 }

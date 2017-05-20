@@ -13,6 +13,8 @@ import java.awt.image.BufferedImage;
 public class GameMaster{
 	public static final int WIDTH = 1280;
 	public static final int HEIGHT = 720;
+	public static final int FPS = 60;
+	public static final int FRAME_DELTA = 1000/FPS;
 
 	// Here for debugging reasons only
 	public static float adj1Chance = 0.40f;
