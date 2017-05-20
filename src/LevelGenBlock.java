@@ -3,12 +3,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 
-import javax.swing.plaf.basic.BasicScrollPaneUI.HSBChangeListener;
-
-import com.sun.jndi.url.corbaname.corbanameURLContextFactory;
-
-import sun.awt.windows.WPrinterJob;
-
 public class LevelGenBlock implements LevelGen {
 
 	LevelGenPattern patterns[];
@@ -129,10 +123,10 @@ public class LevelGenBlock implements LevelGen {
 		
 		Random r = new Random();
 		
-		int workingHeight = 9;//(height - 2) - ((height - 2) % 3);
+		int workingHeight = 3 * (2 + level);//(height - 2) - ((height - 2) % 3);
 		int hStart = (height - workingHeight)/2;
 		
-		int workingWidth = 9;//(width - 2) - ((width - 2) % 3);
+		int workingWidth = 3 * (2 + level);//(width - 2) - ((width - 2) % 3);
 		int wStart = (width - workingWidth)/2;
 		
 		int numRegions = (workingHeight/3) * (workingWidth/3);
