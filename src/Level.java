@@ -36,7 +36,6 @@ public class Level extends JPanel implements ActionListener {
 	private Timer animationTimer;
 	
 	//for key input
-
     private static final String MOVE_UP = "move up";
     private static final String MOVE_DOWN = "move down";
     private static final String MOVE_LEFT = "move left";
@@ -97,21 +96,21 @@ public class Level extends JPanel implements ActionListener {
 	}
 	
 	private void setActions() {
-		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), MOVE_UP);
-		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), MOVE_DOWN);
-		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), MOVE_LEFT);
-		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), MOVE_RIGHT);
+		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), MOVE_UP);
+		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), MOVE_DOWN);
+		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), MOVE_LEFT);
+		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), MOVE_RIGHT);
 		
-		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), MENU);
-		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("U"), UNDO);
+		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), MENU);
+		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("U"), UNDO);
 		
-		this.getActionMap().put(MENU, new AbstractAction() {
+		getActionMap().put(MENU, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				GameMaster.changeScreens(new MenuStateTrial());
 			}
 		});
 		
-		this.getActionMap().put(UNDO, new AbstractAction() {
+		getActionMap().put(UNDO, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				undo();
 			}
@@ -211,32 +210,42 @@ public class Level extends JPanel implements ActionListener {
 			
 			this.getActionMap().put(MOVE_UP, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
-					player.setMove(1);
-					update();
+					if (!player.isAnimating()) {
+						player.setMove(1);
+						update();
+					}
 				}
 			});
-			
+
 			this.getActionMap().put(MOVE_DOWN, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
-					player.setMove(2);
-					update();
+					if (!player.isAnimating()) {
+						System.out.print("none " + Thread.currentThread().getId());
+						player.setMove(2);
+						update();
+					}
 				}
 			});
-			
+
 			this.getActionMap().put(MOVE_LEFT, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
-					player.setMove(3);
-					update();
+					if (!player.isAnimating()) {
+						System.out.print("none " + Thread.currentThread().getId());
+						player.setMove(3);
+						update();
+					}
 				}
 			});
-			
+
 			this.getActionMap().put(MOVE_RIGHT, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
-					player.setMove(4);
-					update();
+					if (!player.isAnimating()) {
+						player.setMove(4);
+						update();
+					}
 				}
 			});
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -331,7 +340,7 @@ public class Level extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		boolean stillAnimating = false;
-		
+		System.out.print("timer " + Thread.currentThread().getId());
 		if (player.isAnimating()) {
 			stillAnimating = true;
 			player.updateAnimation();

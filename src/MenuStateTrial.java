@@ -1,20 +1,20 @@
 import java.awt.Color;
-import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 public class MenuStateTrial extends JPanel{
 
@@ -28,8 +28,13 @@ public class MenuStateTrial extends JPanel{
 	private JButton highScore;
 	//private JPanel gamePanel;
 	
+    private static final String MOVE_UP = "move up";
+    private static final String MOVE_DOWN = "move down";
+    private static final String QUIT_MENU = "quit menu";
+	private static final String JFrame = null;
+	
 	public MenuStateTrial() {
-		System.out.println("in menu screen");
+		//setTraversalKeys();
 		
 		// Get the image file for the background and buttons
 		try {
@@ -49,16 +54,20 @@ public class MenuStateTrial extends JPanel{
 		play.setIcon(new ImageIcon(playbutton));
 		play.setToolTipText("Click this to begin the game!");
 		play.setBorderPainted(false);
+		play.setContentAreaFilled(false);
 		
 		credits = new JButton();
 		credits.setIcon(new ImageIcon(creditsbutton));
 		credits.setToolTipText("Click this to see who made the game!");
 		credits.setBorderPainted(false);
+		credits.setOpaque(false);
+		credits.setContentAreaFilled(false);
 
 		highScore = new JButton();
 		highScore.setIcon(new ImageIcon(highscoresbutton));
 		highScore.setToolTipText("Click this to everyone's highest scores!");
 		highScore.setBorderPainted(false);
+		highScore.setContentAreaFilled(false);
 
 		// Play button action listener
 		// When play button is clicked, call the game master
@@ -103,9 +112,30 @@ public class MenuStateTrial extends JPanel{
 		
 		// Set the JPanels attributes and revalidate.
 		revalidate();
-		this.setFocusable(true);
-	    this.requestFocusInWindow();
+		setFocusable(true);
+	    requestFocusInWindow();
+	    
+	    // Keyinput
+	    getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), MOVE_UP);
+		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), MOVE_DOWN);
+		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), QUIT_MENU);
+		getActionMap().put(MOVE_UP, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				handleUp();
+			}
+		});
 		
+		getActionMap().put(MOVE_DOWN, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				handleDown();
+			}
+		});
+		
+		getActionMap().put(QUIT_MENU, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				quitMenu();
+			}
+		});
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -116,59 +146,46 @@ public class MenuStateTrial extends JPanel{
 	    // Draw the background for this JPanel
 	    g.setColor(Color.BLACK);
         g.drawImage(background, 0, 0, null);
-        	     
 	}
 	
+	private void handleDown() {
+		if (play.isFocusOwner()) {
+			credits.requestFocus();
+		} else if (credits.isFocusOwner()) {
+			highScore.requestFocus();
+		} else if (!highScore.isFocusOwner()) {
+			play.requestFocus();
+		}
+	}
 	
-/*
-	@Override
-	public void init() {
-		play = new JButton("Play");
-		credits = new JButton("Credits");
-		highScore = new JButton("High Score");
-		gamePanel = new JPanel(new FlowLayout());
-		gamePanel.add(play);
-		gamePanel.add(credits);
-		gamePanel.add(highScore);
-		gamePanel.revalidate();
-		gamePanel.setBackground(Color.BLUE);
-		
-		System.out.println("finished in menu");
-		
-	}*/
-
-	/*@Override
-	public void update() {
-		handleInput();
-		
-		
+	private void handleUp() {
+		if (highScore.isFocusOwner()) {
+			credits.requestFocus();
+		} else if (credits.isFocusOwner()) {
+			play.requestFocus();
+		} else if (!play.isFocusOwner()) {
+			highScore.requestFocus();
+		}
 	}
-
-	@Override
-	public void draw(Graphics2D g) {
-		Font font = new Font("arial", Font.BOLD, 50);
-		g.setFont(font);
-		g.setColor(Color.WHITE);
-		g.drawString("BLOCK STUFF",GameMaster.WIDTH/2 , 100);
-		System.out.println("inside the block for draw mentustate ");
+	
+	private void quitMenu() {
+		((JFrame)SwingUtilities.getWindowAncestor(this)).dispose();
 	}
-
-	@Override
-	public void handleInput() {
-		play.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent e){
-				StateManager.getFrame().removeAll();
-				StateManager.setState("LEVEL");		
-			}
-		});
+	
+	/*private void setTraversalKeys() {
+		Set forwardKeys = getFocusTraversalKeys(
+			    KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS);
+		Set newForwardKeys = new HashSet(forwardKeys);
+		newForwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0));
+		setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS,
+			    newForwardKeys);
 		
-		credits.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent e){
-				StateManager.getFrame().removeAll();
-				StateManager.setState("CREDITS");	
-			}
-		});
-		
+		Set backwardKeys = getFocusTraversalKeys(
+			    KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS);
+		Set newbackwardKeys = new HashSet(backwardKeys);
+		newbackwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0));
+		setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS,
+				newbackwardKeys);
 	}*/
 
 }
