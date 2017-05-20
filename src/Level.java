@@ -113,7 +113,8 @@ public class Level extends JPanel implements ActionListener {
 		
 		this.getActionMap().put(UNDO, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				undo();
+				if (!player.isAnimating())
+					undo();
 			}
 		});
 	}
@@ -211,29 +212,37 @@ public class Level extends JPanel implements ActionListener {
 			
 			this.getActionMap().put(MOVE_UP, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
-					player.setMove(1);
-					update();
+					if (!player.isAnimating()) {
+						player.setMove(1);
+						update();
+					}
 				}
 			});
 			
 			this.getActionMap().put(MOVE_DOWN, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
-					player.setMove(2);
-					update();
+					if (!player.isAnimating()) {
+						player.setMove(2);
+						update();
+					}
 				}
 			});
 			
 			this.getActionMap().put(MOVE_LEFT, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
-					player.setMove(3);
-					update();
+					if (!player.isAnimating()) {
+						player.setMove(3);
+						update();
+					}
 				}
 			});
 			
 			this.getActionMap().put(MOVE_RIGHT, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
-					player.setMove(4);
-					update();
+					if (!player.isAnimating()) {
+						player.setMove(4);
+						update();
+					}
 				}
 			});
 			
@@ -268,7 +277,7 @@ public class Level extends JPanel implements ActionListener {
 			}
 		}
 		
-		update();
+		repaint();
 	}
 	
 	@Override
