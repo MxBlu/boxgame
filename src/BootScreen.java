@@ -42,24 +42,18 @@ public class BootScreen extends JPanel implements ActionListener{
         this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), SKIP);
         
         this.getActionMap().put(SKIP, new AbstractAction() {
-			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent e) {
+				timer.stop();
 				GameMaster.changeScreens(new MenuStateTrial());	
 			}
 		});
     } 
 
     public void paintComponent(Graphics g) {
-        //paintComponent(g);
-    
-
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.pink);
-
-        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,
-                                                    alpha));
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
         g2d.drawImage(imagem, 0, 0, null);
-        
     }
 
 
@@ -71,14 +65,12 @@ public class BootScreen extends JPanel implements ActionListener{
 	            alpha = 1;
 	            timer.setDelay(2000);
 	            state = 1;
-	            
+	           
 	            imagem = new ImageIcon("logo2.png").getImage();
-	          
 	        }
 
 	        repaint();
     	} else {
-    		System.out.println("end me already");
     		timer.stop();
     		GameMaster.changeScreens(new MenuStateTrial());
     	}
