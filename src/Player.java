@@ -1,15 +1,19 @@
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+
+import javax.swing.Timer;
 
 public class Player extends Entity implements Cloneable {
 
 	private static int movementSpeed = 8;
 
 	private int tileX, tileY;
-	private int renderX, renderY;
+	
 	private Image sprite;
 	private int tileSize;
 	private int lvlWidth, lvlHeight;
@@ -17,7 +21,9 @@ public class Player extends Entity implements Cloneable {
 	private int movX;
 	private int level;
 	private boolean atNewTile = true;
-	private int currMove;
+	
+	private int renderX, renderY;
+	private boolean animating = true;
 
 	public Player(int tileX, int tileY, Image sprite, int tileSize, int lvlWidth, int lvlHeight) {
 		this.tileX = tileX;
@@ -30,6 +36,7 @@ public class Player extends Entity implements Cloneable {
 		this.level = 1;
 		//System.out.println("level state manager" + this.level);
 		this.sprite = sprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
+		this.animating = false;
 	}
 
 	/*
@@ -38,40 +45,6 @@ public class Player extends Entity implements Cloneable {
 	 * @param levelMap
 	 */
 	public void update(Tile[][] levelMap, ArrayList<Box> boxList) {
-		// Update animation
-		if (renderX < tileX * tileSize) {
-			renderX += movementSpeed;
-			if (renderX >= tileX * tileSize) {
-				renderX = tileX * tileSize;
-				atNewTile = true;
-			}
-			return;
-		} else if (renderX > tileX * tileSize) {
-			renderX -= movementSpeed;
-			if (renderX <= tileX * tileSize) {
-				renderX = tileX * tileSize;
-				atNewTile = true;
-			}
-			return;
-		} else if (renderY < tileY * tileSize) {
-			renderY += movementSpeed;
-			if (renderY > tileY * tileSize) {
-				renderY = tileY * tileSize;
-				atNewTile = true;
-			}
-			return;
-		} else if (renderY > tileY * tileSize) {
-			renderY -= movementSpeed;
-			if (renderY < tileY * tileSize) {
-				renderY = tileY * tileSize;
-				atNewTile = true;
-			}
-			return;
-		}
-
-		atNewTile = false;
-		handleInput();
-
 		int prevTileX = tileX;
 		int prevTileY = tileY;
 
@@ -82,8 +55,10 @@ public class Player extends Entity implements Cloneable {
 		// Check level boundaries
 		if (tileX >= lvlWidth || tileX < 0) {
 			tileX = prevTileX;
+			return;
 		} else if (tileY >= lvlHeight || tileY < 0) {
 			tileY = prevTileY;
+			return;
 		}
 
 		// Check collision on solid tiles
@@ -100,28 +75,69 @@ public class Player extends Entity implements Cloneable {
 				if (getBoxAt(tileX + movX, tileY + movY, boxList) != null) {
 					tileX = prevTileX;
 					tileY = prevTileY;
-				} else if (levelMap[tileY + movY][tileX + movX] == Tile.WALKABLE) {
-					box.setTilePos(tileX + movX, tileY + movY);
-					if (levelMap[tileY][tileX] == Tile.GOAL) {
-						this.level++;
-					}
-				} else if (levelMap[tileY + movY][tileX + movX] == Tile.GOAL) {
-					box.setTilePos(tileX + movX, tileY + movY);
-					if (levelMap[tileY][tileX] != Tile.GOAL) {
-						this.level--;
-					}
-					System.out.println("in condition of goal level " + this.level);
-					
-					/*if (this.level == 0) {
-						System.out.println("in condition of goal levle " + this.level);
-						
-					}*/
 				} else {
-					tileX = prevTileX;
-					tileY = prevTileY;
+					if (levelMap[tileY + movY][tileX + movX] == Tile.WALKABLE) {
+						box.setTilePos(tileX + movX, tileY + movY);
+						if (levelMap[tileY][tileX] == Tile.GOAL)
+							this.level++;
+						
+						atNewTile = true;
+						animating = true;
+					} else if (levelMap[tileY + movY][tileX + movX] == Tile.GOAL) {
+						box.setTilePos(tileX + movX, tileY + movY);
+						if (levelMap[tileY][tileX] != Tile.GOAL)
+							this.level--;
+						
+						atNewTile = true;
+						animating = true;
+					} else {
+						tileX = prevTileX;
+						tileY = prevTileY;
+					}
 				}
+				System.out.println("in condition of goal level " + this.level);
+					
+			} else {
+				atNewTile = true;
+				animating = true;
 			}
 		}
+	}
+	
+	public void updateAnimation() {
+		// Update animation
+		if (renderX < tileX * tileSize) {
+			renderX += movementSpeed;
+			if (renderX >= tileX * tileSize) {
+				renderX = tileX * tileSize;
+			}
+			return;
+		} else if (renderX > tileX * tileSize) {
+			renderX -= movementSpeed;
+			if (renderX <= tileX * tileSize) {
+				renderX = tileX * tileSize;
+			}
+			return;
+		} else if (renderY < tileY * tileSize) {
+			renderY += movementSpeed;
+			if (renderY > tileY * tileSize) {
+				renderY = tileY * tileSize;
+			}
+			return;
+		} else if (renderY > tileY * tileSize) {
+			renderY -= movementSpeed;
+			if (renderY < tileY * tileSize) {
+				renderY = tileY * tileSize;
+			}
+			return;
+		} else {
+			atNewTile = false;
+			animating = false;
+		}
+	}
+	
+	public boolean isAnimating() {
+		return animating;
 	}
 	
 	public boolean atNewTile() {
@@ -134,31 +150,6 @@ public class Player extends Entity implements Cloneable {
 		int top = (int) ((double) GameMaster.HEIGHT / 2 - (double) (lvlHeight * tileSize) / 2);
 
 		bbg.drawImage(sprite, left + renderX, top + renderY, sprite.getWidth(null), sprite.getHeight(null), null);
-	}
-
-	public void handleInput() {
-		movX = 0;
-		movY = 0;
-
-		switch (currMove) {
-		case 1:
-			
-			movY--;
-			break;
-		case 2:
-			movY++;
-			break;
-		case 3:
-			movX--;
-			break;
-		case 4:
-			movX++;
-			break;
-		case KeyEvent.VK_SPACE:
-			// Space (TODO)
-			break;
-		}
-		currMove = 0;
 	}
 	
 	public int getTileX() {
@@ -196,10 +187,24 @@ public class Player extends Entity implements Cloneable {
 
 		return null;
 	}
+	
 	public void setMove(int x){
-		currMove = x;
-	}
-	
-	
-	
+		movY = 0;
+		movX = 0;
+		
+		switch (x) {
+		case 1:
+			movY = -1;
+			break;
+		case 2:
+			movY = 1;
+			break;
+		case 3:
+			movX = -1;
+			break;
+		case 4:
+			movX = 1;
+			break;
+		}
+	}	
 }

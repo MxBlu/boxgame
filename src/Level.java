@@ -11,39 +11,39 @@ import java.util.Random;
 import java.util.Stack;
 
 import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
+import com.sun.tracing.dtrace.StabilityLevel;
 
-public class Level extends JPanel implements ActionListener{
+
+public class Level extends JPanel implements ActionListener {
 	
 	private Tile levelMap[][];
 	private ArrayList<Box> boxList;
 	private Stack<ArrayList<Entity>> prevStates;
 	
-	
-	
 	private int width; // Width of the level
 	private int height; // Height of the level
 	private int tileSize;
 	
-	private Timer timer;
 	private Image tileImgs[];
 	private Player player;
-	
-	private int currMove;
+
+	private Timer animationTimer;
 	
 	//for key input
 
-    private static final int IFW = JComponent.WHEN_IN_FOCUSED_WINDOW;
     private static final String MOVE_UP = "move up";
     private static final String MOVE_DOWN = "move down";
     private static final String MOVE_LEFT = "move left";
     private static final String MOVE_RIGHT = "move right";
-    private static final String FIRE = "move fire";
+    
+    private static final String MENU = "return menu";
+    private static final String UNDO = "undo";
 	
 	/**
 	 * Creates a new level.
@@ -54,33 +54,28 @@ public class Level extends JPanel implements ActionListener{
 	 */
 	Level(int screenWidth, int screenHeight, int tileSize, LevelGen levelGen) {
 		// 1 pixel padding so I don't need to add edge cases to generation.
-		 timer = new Timer(50, this);
-	     timer.start();
 		this.width = screenWidth/tileSize + 2;
 		this.height = screenHeight/tileSize + 2;
 		this.tileSize = tileSize;
 		prevStates = new Stack<ArrayList<Entity>>();
-		setDefaultTiles();
 		boxList = new ArrayList<Box>();
 
+		animationTimer = new Timer(GameMaster.FRAME_DELTA, this);
 		levelMap = levelGen.generate(height, width, 1);
-		this.getInputMap(IFW).put(KeyStroke.getKeyStroke("UP"),MOVE_UP);
-		this.getInputMap(IFW).put(KeyStroke.getKeyStroke("DOWN"),MOVE_DOWN);
-		this.getInputMap(IFW).put(KeyStroke.getKeyStroke("LEFT"),MOVE_LEFT);
-		this.getInputMap(IFW).put(KeyStroke.getKeyStroke("RIGHT"),MOVE_RIGHT);
 		
-	
+		setDefaultTiles();
 		makePlayer();
-		
+		placeBox();
+		setActions();
 	}
 	
 	Level(String input, int tileSize) {
 		this.tileSize = tileSize;
 		boxList = new ArrayList<Box>();
-		byte inputArray[] = input.getBytes();
 		prevStates = new Stack<ArrayList<Entity>>();
 		
 		// Get the width and height
+		byte inputArray[] = input.getBytes();
 		for (this.width = 0; inputArray[this.width] != '\n'; this.width++);
 		this.height = inputArray.length/(width + 1);
 		
@@ -97,9 +92,30 @@ public class Level extends JPanel implements ActionListener{
 		}
 		
 		setDefaultTiles();
-		
 		makePlayer();
+		setActions();
+	}
+	
+	private void setActions() {
+		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), MOVE_UP);
+		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), MOVE_DOWN);
+		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), MOVE_LEFT);
+		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), MOVE_RIGHT);
 		
+		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), MENU);
+		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("U"), UNDO);
+		
+		this.getActionMap().put(MENU, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				GameMaster.changeScreens(new MenuStateTrial());
+			}
+		});
+		
+		this.getActionMap().put(UNDO, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				undo();
+			}
+		});
 	}
 	
 	private void setDefaultTiles() {
@@ -173,8 +189,6 @@ public class Level extends JPanel implements ActionListener{
 	}
 	
 	private void makePlayer() {
-		
-		
 		int x = width/2;
 		int y = height/2;
 		
@@ -194,18 +208,38 @@ public class Level extends JPanel implements ActionListener{
 		
 		try {
 			player = new Player(x, y, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
-			this.getActionMap().put(MOVE_UP,  new PlayerAction(1, player, this));
-			this.getActionMap().put(MOVE_DOWN,  new PlayerAction(2, player, this));
-			this.getActionMap().put(MOVE_LEFT,  new PlayerAction(3, player, this));
-			this.getActionMap().put(MOVE_RIGHT,  new PlayerAction(4, player, this));
-			/*this.getActionMap(MOVE_DOWN,  );
-			this.getActionMap(MOVE_LEFT,  );
-			this.getActionMap(MOVE_RIGHT,  );*/
+			
+			this.getActionMap().put(MOVE_UP, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					player.setMove(1);
+					update();
+				}
+			});
+			
+			this.getActionMap().put(MOVE_DOWN, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					player.setMove(2);
+					update();
+				}
+			});
+			
+			this.getActionMap().put(MOVE_LEFT, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					player.setMove(3);
+					update();
+				}
+			});
+			
+			this.getActionMap().put(MOVE_RIGHT, new AbstractAction() {
+				public void actionPerformed(ActionEvent e) {
+					player.setMove(4);
+					update();
+				}
+			});
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 	
 	// someone should probably change this, since it already has something similar
@@ -233,6 +267,8 @@ public class Level extends JPanel implements ActionListener{
 				}
 			}
 		}
+		
+		update();
 	}
 	
 	@Override
@@ -265,19 +301,12 @@ public class Level extends JPanel implements ActionListener{
 		return s.toString();
 	}
 
-
-	public void init() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void update() { //KeyInput input
+	public void update() {
 		System.out.println("player.update");
 		player.update(levelMap, boxList);
 		
-		for (Box box : boxList) {
-			box.update();
-		}
+		if (player.isAnimating())
+			animationTimer.start();
 		
 		if (player.atNewTile()) {
 			// save state
@@ -295,24 +324,30 @@ public class Level extends JPanel implements ActionListener{
 				e.printStackTrace();
 			}
 			prevStates.push(newState);
-		}
-		
-		switch (KeyInput.getPressed()) {
-		case KeyEvent.VK_ESCAPE:
-			//System.out.println("ESCAPE");
-			GameMaster.changeScreens(new MenuStateTrial());	
-			return;
-		case KeyEvent.VK_U:
-			undo();
-			return;
-		}
-		
+			repaint();
+		}		
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		update();
-		repaint();
+		boolean stillAnimating = false;
+		
+		if (player.isAnimating()) {
+			stillAnimating = true;
+			player.updateAnimation();
+		}
+		
+		for (Box b : boxList) {
+			if (b.isAnimating()) {
+				stillAnimating = true;
+				b.updateAnimation();
+			}
+		}
+		
+		if (stillAnimating)
+			repaint();
+		else
+			animationTimer.stop();
 	}
 
 	

@@ -21,10 +21,9 @@ public class GameMaster{
 	public static float adj2Chance = 0.20f;
 	public static float adj3Chance = 0.50f;
 	public static float adj4Chance = 0.60f;
-
 	
 	private static JFrame frame;
-	//private static JPanel panel;
+	private static JPanel currentPanel;
 	
 
     public static void main(String[] args) {
@@ -50,7 +49,7 @@ public class GameMaster{
     
     public static void changeScreens(JPanel newScreen) {
     	frame.getContentPane().removeAll();
-		frame.getContentPane().add( newScreen);
+    	frame.getContentPane().add( newScreen);
 		frame.repaint();
 		frame.revalidate();
 		
