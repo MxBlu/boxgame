@@ -1,10 +1,12 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -16,11 +18,23 @@ public class IntermissionScreen extends JPanel implements ActionListener{
     private Image background;
     private Image menuButton;
     private Image nextButton;
+    private String time;
 
 	private JButton menu;
 	private JButton next;
 	
-	public IntermissionScreen() {
+	
+	public IntermissionScreen(String d, int moves){
+		init();
+		time = "Time: "+ d;
+	}
+	
+	public IntermissionScreen(){
+		init();
+	}
+	
+	private void init() {
+		
 		// Get the image file for the background
 		try {
 			background = ImageIO.read(getClass().getResourceAsStream("intermission.png"));
@@ -51,7 +65,7 @@ public class IntermissionScreen extends JPanel implements ActionListener{
 		menu.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				System.out.println("return to menu");
-	    		GameMaster.changeScreens(new MenuStateTrial());
+	    		GameMaster.changeScreens(new MenuScreen());
 			}
 		});
 		
@@ -92,10 +106,16 @@ public class IntermissionScreen extends JPanel implements ActionListener{
 		// Access the JPanel super class's
 		// function for painting.
 		super.paintComponent(g);
-
+		Font f = new Font("arial", Font.BOLD, 50);
+		g.setFont(f);
+		
+		
+		
 	    // Draw the background for this JPanel
 	    g.setColor(Color.BLACK);
         g.drawImage(background, 0, 0, null);
+        g.setColor(Color.WHITE);
+        g.drawString(time, GameMaster.WIDTH/3, 225);
 	}
 	
 	@Override

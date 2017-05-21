@@ -44,7 +44,7 @@ public class BootScreen extends JPanel implements ActionListener{
         this.getActionMap().put(SKIP, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				timer.stop();
-				GameMaster.changeScreens(new MenuStateTrial());	
+				GameMaster.changeScreens(new MenuScreen());	
 			}
 		});
     } 
@@ -72,7 +72,7 @@ public class BootScreen extends JPanel implements ActionListener{
 	        repaint();
     	} else {
     		timer.stop();
-    		GameMaster.changeScreens(new MenuStateTrial());
+    		GameMaster.changeScreens(new MenuScreen());
     	}
     }
 }

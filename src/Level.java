@@ -125,7 +125,7 @@ public class Level extends JPanel implements ActionListener {
 		
 		getActionMap().put(MENU, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				GameMaster.changeScreens(new MenuStateTrial());
+				GameMaster.changeScreens(new MenuScreen());
 			}
 		});
 		
@@ -334,7 +334,7 @@ public class Level extends JPanel implements ActionListener {
 	}
 
 	public void update() {
-		System.out.println("player.update");
+		//System.out.println("player.update");
 		player.update(levelMap, boxList);
 		
 //		if (player.isAnimating())
@@ -361,6 +361,7 @@ public class Level extends JPanel implements ActionListener {
 			prevStates.push(newState);
 			repaint();
 		}
+		
 	}
 
 	@Override
@@ -386,6 +387,11 @@ public class Level extends JPanel implements ActionListener {
 		
 		if (stillAnimating)
 			repaint();
+		
+		if (player.GoalCheck()){
+			GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves));
+			
+		}
 		//else
 		//	animationTimer.stop();
 	}

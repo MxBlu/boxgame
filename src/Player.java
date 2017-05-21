@@ -28,6 +28,8 @@ public class Player extends Entity implements Cloneable {
 	private int movX;
 	private boolean atNewTile = true;
 	
+	private boolean goal= false;
+	
 	private int renderX, renderY;
 	private boolean animating = true;
 
@@ -87,13 +89,22 @@ public class Player extends Entity implements Cloneable {
 				if (getBoxAt(tileX + movX, tileY + movY, boxList) != null) {
 					tileX = prevTileX;
 					tileY = prevTileY;
+					System.out.println("Box there");
 				} else {
 					if (levelMap[tileY + movY][tileX + movX] != Tile.WALL) {
+						//Temporary Goal finish for now, can configure
+						//Sets goal boolean to true, which is later called in level
+						//uses intermission screen
+						if (levelMap[tileY + movY][tileX + movX] == Tile.GOAL){
+							goal = true;
+						}
 						box.setTilePos(tileX + movX, tileY + movY);
 						
 						atNewTile = true;
 						animating = true;
+						
 					} else {
+						System.out.println("move");
 						tileX = prevTileX;
 						tileY = prevTileY;
 					}
@@ -103,6 +114,7 @@ public class Player extends Entity implements Cloneable {
 				animating = true;
 			}
 		}
+		
 		
 		//Change direction for rendering
 		if (prevTileX != tileX || prevTileY != tileY) {
@@ -116,6 +128,8 @@ public class Player extends Entity implements Cloneable {
 				renderSprite = downSprite;
 			}
 		}
+		
+		
 	}
 	
 	public void updateAnimation() {
@@ -148,6 +162,7 @@ public class Player extends Entity implements Cloneable {
 			atNewTile = false;
 			animating = false;
 		}
+		
 	}
 	
 	public boolean isAnimating() {
@@ -203,6 +218,13 @@ public class Player extends Entity implements Cloneable {
 		}
 
 		return null;
+	}
+	public boolean GoalCheck() {
+		if (goal){
+			goal = false;
+			return true;
+		}
+		return false;
 	}
 	
 	public void setMove(int x){

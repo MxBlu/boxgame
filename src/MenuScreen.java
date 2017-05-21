@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-public class MenuStateTrial extends JPanel{
+public class MenuScreen extends JPanel{
 
     private Image background;
     private Image playbutton;
@@ -33,7 +33,7 @@ public class MenuStateTrial extends JPanel{
     private static final String QUIT_MENU = "quit menu";
 	private static final String JFrame = null;
 	
-	public MenuStateTrial() {
+	public MenuScreen() {
 		//setTraversalKeys();
 		
 		// Get the image file for the background and buttons
