@@ -66,6 +66,11 @@ public class Box extends Entity implements Cloneable {
 				sprite.getHeight(null), null);
 	}
 	
+	public Box copy() {
+		Box box = new Box(this.tileX, this.tileY, this.sprite, this.tileSize, this.lvlWidth, this.lvlHeight);
+		return box;
+	}
+	
 	public Object clone() throws CloneNotSupportedException{  
 		Box box = (Box) super.clone();
 		box.tileX = tileX;
