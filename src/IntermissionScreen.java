@@ -114,8 +114,10 @@ public class IntermissionScreen extends JPanel implements ActionListener{
 	    // Draw the background for this JPanel
 	    g.setColor(Color.BLACK);
         g.drawImage(background, 0, 0, null);
-        g.setColor(Color.WHITE);
-        g.drawString(time, GameMaster.WIDTH/3, 225);
+        if (time != null){
+        	g.setColor(Color.WHITE);
+        	g.drawString(time, GameMaster.WIDTH/3, 225);
+        }
 	}
 	
 	@Override
