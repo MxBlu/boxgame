@@ -293,7 +293,7 @@ public class Level extends JPanel implements ActionListener {
 			}
 		}
 		return false;
-	}
+	} 
 	
 	private boolean isCompleted() {
 		for (Box b : boxList)
