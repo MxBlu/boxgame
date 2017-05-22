@@ -404,12 +404,10 @@ public class Level extends JPanel implements ActionListener {
 		
 		if (stillAnimating)
 			repaint();
-		else if (isCompleted()){
+		else if (isCompleted()) {
 			animationTimer.stop();
 			GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves));
 		}
-		//else
-		//	animationTimer.stop();
 	}
 
 	private void setupUI() {
