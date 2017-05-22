@@ -87,6 +87,7 @@ public class Level extends JPanel implements ActionListener {
 		setActions();
 		setupUI();
 		animationTimer.start();
+		pushCurrentState();
 	}
 	
 	Level(String input, int tileSize) {
@@ -116,6 +117,7 @@ public class Level extends JPanel implements ActionListener {
 		setActions();
 		setupUI();
 		animationTimer.start();
+		pushCurrentState();
 	}
 	
 	private void setActions() {
@@ -304,7 +306,12 @@ public class Level extends JPanel implements ActionListener {
 	} 
 	
 	private void undo() {
-		if (!prevStates.isEmpty()) {
+		//Since we can't store the state when the player starts moving
+		//as we have no way of knowing when that is at the moment, we 
+		//need to pop twice and push at the end
+		if (prevStates.size() >= 2 || (!prevStates.isEmpty() && player.isAnimating())) {
+			if (!player.isAnimating())
+				prevStates.pop();
 			ArrayList<Entity> prevState = prevStates.pop();
 			boxList = new ArrayList<Box>();
 			for (Entity e : prevState) {
@@ -312,11 +319,11 @@ public class Level extends JPanel implements ActionListener {
 					player = (Player) e;
 					System.out.println("o " + player.getTileX() + " " + player.getTileY());
 				} else {
-					boxList.add((Box)e);
+					boxList.add((Box) e);
 				}
 			}
+			pushCurrentState();
 		}
-		System.out.print(getHeight());
 		
 		repaint();
 	}
@@ -357,26 +364,12 @@ public class Level extends JPanel implements ActionListener {
 		
 //		if (player.isAnimating())
 //			animationTimer.start();
+		System.out.println("here " + prevStates.size());
 		
 		if (player.atNewTile()) {
 			moves++;
 			movesLabel.setText("Moves: " + moves);
-			
-			// save state
-			ArrayList<Entity> newState = new ArrayList<Entity>();
-			try {
-				Player newPlayer = (Player) player.clone();
-				System.out.println("n " + newPlayer.getTileX() + " " + newPlayer.getTileY());
-				newState.add(newPlayer);
-
-				for (Box b : boxList) {
-					newState.add((Entity) b.clone());
-				}
-			} catch (CloneNotSupportedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			prevStates.push(newState);
+			pushCurrentState();
 		}
 		
 	}
@@ -409,6 +402,24 @@ public class Level extends JPanel implements ActionListener {
 			animationTimer.stop();
 			GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves));
 		}
+	}
+	
+	private void pushCurrentState() {
+		// save state
+		ArrayList<Entity> newState = new ArrayList<Entity>();
+		try {
+			Player newPlayer = (Player) player.clone();
+			System.out.println("n " + newPlayer.getTileX() + " " + newPlayer.getTileY());
+			newState.add(newPlayer);
+
+			for (Box b : boxList) {
+				newState.add((Entity) b.clone());
+			}
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		prevStates.push(newState);
 	}
 
 	private void setupUI() {
