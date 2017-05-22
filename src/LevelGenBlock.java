@@ -202,6 +202,18 @@ public class LevelGenBlock implements LevelGen {
 						(levelMap[i][j - 1] == Tile.WALL && levelMap[i + 1][j] == Tile.WALL))
 					continue;
 				
+				Integer[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+				boolean flag = false;
+				
+				for (int count = 0; count < 4; count++) {
+					if (levelMap[i + directions[count][1]][j + directions[count][0]] == Tile.WALKABLE &&
+							levelMap[i + (2 * directions[count][1])][j + (2 * directions[count][0])] == Tile.WALKABLE) {
+						flag = true;
+					}
+				}
+				if (!flag)
+					continue;
+				
 				levelMap[i][j] = Tile.GOAL;
 				break;
 			}

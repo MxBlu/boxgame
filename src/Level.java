@@ -193,7 +193,7 @@ public class Level implements GameState {
 		List<State> tempList = null;
 		int depth = 1;
 		
-		while (depth < 10) {
+		while (depth < 15) {
 			if (prevTempList == null) {
 				prevTempList = new ArrayList<State>(startList);
 				tempList = prevTempList;
@@ -237,13 +237,13 @@ public class Level implements GameState {
 		
 	}
 	
-	private List<State> deepen (List<State> prevResults, List<State> prevTempList, int depth, List<List<Integer>> boxGoals) {
+	private List<State> deepen (List<State> prevResults, List<State> tempList, int depth, List<List<Integer>> boxGoals) {
 		System.out.println(prevResults.size());
 		List<State> resultList = expand(prevResults, boxGoals);
 		//List<State> tempList = new ArrayList<State>();
 		System.out.println("resultListSize " + resultList.size());
-		resultList.removeAll(prevTempList);
-			System.out.println("tempListSize " + prevTempList.size());
+		resultList.removeAll(tempList);
+			System.out.println("tempListSize " + tempList.size());
 			System.out.println("resultListSize " + resultList.size());
 		
 		return resultList;
