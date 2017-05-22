@@ -92,12 +92,6 @@ public class Player extends Entity implements Cloneable {
 					System.out.println("Box there");
 				} else {
 					if (levelMap[tileY + movY][tileX + movX] != Tile.WALL) {
-						//Temporary Goal finish for now, can configure
-						//Sets goal boolean to true, which is later called in level
-						//uses intermission screen
-						if (levelMap[tileY + movY][tileX + movX] == Tile.GOAL){
-							goal = true;
-						}
 						box.setTilePos(tileX + movX, tileY + movY);
 						
 						atNewTile = true;
@@ -218,13 +212,6 @@ public class Player extends Entity implements Cloneable {
 		}
 
 		return null;
-	}
-	public boolean GoalCheck() {
-		if (goal){
-			goal = false;
-			return true;
-		}
-		return false;
 	}
 	
 	public void setMove(int x){

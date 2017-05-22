@@ -49,6 +49,8 @@ public class Level extends JPanel implements ActionListener {
 	private JLabel timerLabel;
 	private long startTime;
 	
+	private boolean isPaused;
+	
 	//for key input
     private static final String MOVE_UP = "move up";
     private static final String MOVE_DOWN = "move down";
@@ -76,6 +78,7 @@ public class Level extends JPanel implements ActionListener {
 		animationTimer = new Timer(GameMaster.FRAME_DELTA, this);
 		levelMap = levelGen.generate(height, width, 1);
 		startTime = System.currentTimeMillis();
+		isPaused = false;
 		
 		setDefaultTiles();
 		makePlayer();
@@ -125,13 +128,19 @@ public class Level extends JPanel implements ActionListener {
 		
 		getActionMap().put(MENU, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				GameMaster.changeScreens(new MenuScreen());
+				if (isPaused) {
+					isPaused = false;
+					animationTimer.start();
+				} else {
+					isPaused = true;
+					animationTimer.stop();
+				}
 			}
 		});
 		
 		getActionMap().put(UNDO, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				if (!player.isAnimating())
+				if (!player.isAnimating() && !isPaused)
 					undo();
 			}
 		});
@@ -232,7 +241,7 @@ public class Level extends JPanel implements ActionListener {
 			
 			this.getActionMap().put(MOVE_UP, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
-					if (!player.isAnimating()) {
+					if (!player.isAnimating() && !isPaused) {
 						player.setMove(1);
 						update();
 					}
@@ -241,7 +250,7 @@ public class Level extends JPanel implements ActionListener {
 
 			this.getActionMap().put(MOVE_DOWN, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
-					if (!player.isAnimating()) {
+					if (!player.isAnimating() && !isPaused) {
 						System.out.print("none " + Thread.currentThread().getId());
 						player.setMove(2);
 						update();
@@ -251,7 +260,7 @@ public class Level extends JPanel implements ActionListener {
 
 			this.getActionMap().put(MOVE_LEFT, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
-					if (!player.isAnimating()) {
+					if (!player.isAnimating() && !isPaused) {
 						System.out.print("none " + Thread.currentThread().getId());
 						player.setMove(3);
 						update();
@@ -261,7 +270,7 @@ public class Level extends JPanel implements ActionListener {
 
 			this.getActionMap().put(MOVE_RIGHT, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
-					if (!player.isAnimating()) {
+					if (!player.isAnimating() && !isPaused) {
 						player.setMove(4);
 						update();
 					}
@@ -283,6 +292,14 @@ public class Level extends JPanel implements ActionListener {
 			}
 		}
 		return false;
+	}
+	
+	private boolean isCompleted() {
+		for (Box b : boxList)
+			if (levelMap[b.getTileY()][b.getTileX()] != Tile.GOAL)
+				return false;
+		
+		return true;
 	}
 	
 	private void undo() {
@@ -387,10 +404,9 @@ public class Level extends JPanel implements ActionListener {
 		
 		if (stillAnimating)
 			repaint();
-		
-		if (player.GoalCheck()){
+		else if (isCompleted()){
+			animationTimer.stop();
 			GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves));
-			
 		}
 		//else
 		//	animationTimer.stop();
