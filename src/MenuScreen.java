@@ -26,12 +26,10 @@ public class MenuScreen extends JPanel{
 	private JButton play;
 	private JButton credits;
 	private JButton highScore;
-	//private JPanel gamePanel;
 	
     private static final String MOVE_UP = "move up";
     private static final String MOVE_DOWN = "move down";
     private static final String QUIT_MENU = "quit menu";
-	private static final String JFrame = null;
 	
 	public MenuScreen() {
 		//setTraversalKeys();
@@ -75,7 +73,6 @@ public class MenuScreen extends JPanel{
 		// to the JPanel that holds the game. 
 		play.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				System.out.println("change thing");
 				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 40, new LevelGenBlock()));
 			}
 		});
@@ -85,7 +82,7 @@ public class MenuScreen extends JPanel{
 		// game master to change to credits screen.
 		credits.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				System.out.println("change screen");
+				GameMaster.changeScreens(new SelectScreen());
 			}
 		});
 		

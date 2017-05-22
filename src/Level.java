@@ -21,15 +21,11 @@ import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-
-import com.sun.xml.internal.bind.v2.runtime.reflect.Lister.Pack;
 
 public class Level extends JPanel implements ActionListener {
 	
@@ -48,9 +44,12 @@ public class Level extends JPanel implements ActionListener {
 	private JPanel uiPanel;
 	private JLabel movesLabel;
 	private JLabel timerLabel;
+
 	private JLayeredPane pause;
 	private long startTime;
-	
+
+	private long time;
+
 	private boolean isPaused;
 	
 	//for key input
@@ -79,7 +78,7 @@ public class Level extends JPanel implements ActionListener {
 
 		animationTimer = new Timer(GameMaster.FRAME_DELTA, this);
 		levelMap = levelGen.generate(height, width, 1);
-		startTime = 0;
+		time = 0;
 		isPaused = false;
 		
 		setDefaultTiles();
@@ -88,12 +87,18 @@ public class Level extends JPanel implements ActionListener {
 		setActions();
 		setupUI();
 		animationTimer.start();
+		pushCurrentState();
 	}
 	
 	Level(String input, int tileSize) {
 		this.tileSize = tileSize;
 		boxList = new ArrayList<Box>();
 		prevStates = new Stack<ArrayList<Entity>>();
+		
+		animationTimer = new Timer(GameMaster.FRAME_DELTA, this);
+		time = 0;
+		isPaused = false;
+		setDefaultTiles();
 		
 		// Get the width and height
 		byte inputArray[] = input.getBytes();
@@ -104,19 +109,29 @@ public class Level extends JPanel implements ActionListener {
 		int sIndex = 0;
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				if (inputArray[sIndex++] == Tile.BOX.getIntRep())
+				if (inputArray[sIndex] - '0' == Tile.BOX.getIntRep()) {
 					boxList.add(new Box(j, i, tileImgs[2], tileSize, width, height));
-				else
-					levelMap[i][j] = Tile.getTile(inputArray[sIndex] - '0');
+					levelMap[i][j] = Tile.WALKABLE;
+				} else if (inputArray[sIndex] - '0' == Tile.PLAYER.getIntRep()) {
+					try {
+						player = new Player(i, j, ImageIO.read(getClass().getResourceAsStream("player.png")), ImageIO.read(getClass().getResourceAsStream("player_up.png")), ImageIO.read(getClass().getResourceAsStream("player_right.png")), tileSize, width, height);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					levelMap[i][j] = Tile.WALKABLE;
+				} else if (inputArray[sIndex] != '\n') {
+					levelMap[i][j] = Tile.getTile(inputArray[sIndex] - '0');	
+				}
+				sIndex++;
 			}
 			sIndex++;
 		}
 		
-		setDefaultTiles();
 		makePlayer();
 		setActions();
 		setupUI();
 		animationTimer.start();
+		pushCurrentState();
 	}
 	
 	private void setActions() {
@@ -257,7 +272,6 @@ public class Level extends JPanel implements ActionListener {
 			this.getActionMap().put(MOVE_DOWN, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
 					if (!player.isAnimating() && !isPaused) {
-						System.out.print("none " + Thread.currentThread().getId());
 						player.setMove(2);
 						update();
 					}
@@ -267,7 +281,6 @@ public class Level extends JPanel implements ActionListener {
 			this.getActionMap().put(MOVE_LEFT, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
 					if (!player.isAnimating() && !isPaused) {
-						System.out.print("none " + Thread.currentThread().getId());
 						player.setMove(3);
 						update();
 					}
@@ -298,7 +311,7 @@ public class Level extends JPanel implements ActionListener {
 			}
 		}
 		return false;
-	}
+	}  
 	
 	private boolean isCompleted() {
 		for (Box b : boxList)
@@ -306,22 +319,26 @@ public class Level extends JPanel implements ActionListener {
 				return false;
 		
 		return true;
-	}
+	} 
 	
 	private void undo() {
-		if (!prevStates.isEmpty()) {
+		//Since we can't store the state when the player starts moving
+		//as we have no way of knowing when that is at the moment, we 
+		//need to pop twice and push at the end
+		if (prevStates.size() >= 2 || (!prevStates.isEmpty() && player.isAnimating())) {
+			if (!player.isAnimating())
+				prevStates.pop();
 			ArrayList<Entity> prevState = prevStates.pop();
 			boxList = new ArrayList<Box>();
 			for (Entity e : prevState) {
 				if (e.getClass() == Player.class) {
 					player = (Player) e;
-					System.out.println("o " + player.getTileX() + " " + player.getTileY());
 				} else {
-					boxList.add((Box)e);
+					boxList.add((Box) e);
 				}
 			}
+			pushCurrentState();
 		}
-		System.out.print(getHeight());
 		
 		repaint();
 	}
@@ -366,22 +383,7 @@ public class Level extends JPanel implements ActionListener {
 		if (player.atNewTile()) {
 			moves++;
 			movesLabel.setText("Moves: " + moves);
-			
-			// save state
-			ArrayList<Entity> newState = new ArrayList<Entity>();
-			try {
-				Player newPlayer = (Player) player.clone();
-				System.out.println("n " + newPlayer.getTileX() + " " + newPlayer.getTileY());
-				newState.add(newPlayer);
-
-				for (Box b : boxList) {
-					newState.add((Entity) b.clone());
-				}
-			} catch (CloneNotSupportedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			prevStates.push(newState);
+			pushCurrentState();
 		}
 		
 	}
@@ -403,14 +405,35 @@ public class Level extends JPanel implements ActionListener {
 		}
 		
 		// Update time label
-		timerLabel.setText("Time: " + (startTime += GameMaster.FRAME_DELTA));
+		time += GameMaster.FRAME_DELTA;
+		Date date = new Date(time);
+		DateFormat dateFormat = new SimpleDateFormat("mm:ss:SSS");
+		timerLabel.setText("Time: " + dateFormat.format(date));
 		
 		if (stillAnimating)
 			repaint();
 		else if (isCompleted()) {
 			animationTimer.stop();
-			GameMaster.changeScreens(new IntermissionScreen("" + startTime, moves));
+			GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves));
 		}
+	}
+	
+	private void pushCurrentState() {
+		// save state
+		ArrayList<Entity> newState = new ArrayList<Entity>();
+		try {
+			Player newPlayer = (Player) player.clone();
+			System.out.println("n " + newPlayer.getTileX() + " " + newPlayer.getTileY());
+			newState.add(newPlayer);
+
+			for (Box b : boxList) {
+				newState.add((Entity) b.clone());
+			}
+		} catch (CloneNotSupportedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		prevStates.push(newState);
 	}
 
 	private void setupUI() {
@@ -430,7 +453,7 @@ public class Level extends JPanel implements ActionListener {
 		
 		uiPanel = new JPanel(new BorderLayout());
 		uiPanel.setPreferredSize(new Dimension(GameMaster.WIDTH, 80));
-		uiPanel.setBounds(new Rectangle(new Point(0, (int) (GameMaster.PANEL_HEIGHT - uiPanel.getPreferredSize().getHeight())), uiPanel.getPreferredSize()));
+		uiPanel.setBounds(new Rectangle(new Point(0, (int) (GameMaster.HEIGHT - uiPanel.getPreferredSize().getHeight())), uiPanel.getPreferredSize()));
 		uiPanel.setBackground(new Color(58, 58, 58));
 		
 		uiPanel.add(movesLabel, BorderLayout.WEST);

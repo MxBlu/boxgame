@@ -188,8 +188,8 @@ public class Player extends Entity implements Cloneable {
 		player.atNewTile = atNewTile;
 		player.tileX = tileX;
 		player.tileY = tileY;
-		player.renderX = renderX;
-		player.renderY = renderY;
+		player.renderX = tileX * tileSize;;
+		player.renderY = tileY * tileSize;
 		player.downSprite = downSprite;
 		player.upSprite = upSprite;
 		player.rightSprite = rightSprite;
@@ -197,8 +197,8 @@ public class Player extends Entity implements Cloneable {
 		player.tileSize = tileSize;
 		player.lvlWidth = lvlWidth;
 		player.lvlHeight = lvlHeight;
-		player.movX = movX;
-		player.movY = movY;
+		player.movX = 0;
+		player.movY = 0;
 		player.renderSprite = renderSprite;
 		return player;
 	} 
