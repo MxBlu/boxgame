@@ -301,7 +301,7 @@ public class Level extends JPanel implements ActionListener {
 				return false;
 		
 		return true;
-	}
+	} 
 	
 	private void undo() {
 		if (!prevStates.isEmpty()) {
