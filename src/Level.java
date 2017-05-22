@@ -4,6 +4,7 @@ import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
@@ -20,6 +21,7 @@ public class Level implements GameState {
 	private int width; // Width of the level
 	private int height; // Height of the level
 	private int tileSize;
+	private List<List<Integer>> playerSpaces;
 	
 	private Image tileImgs[];
 	private Player player;
@@ -154,10 +156,15 @@ public class Level implements GameState {
 	
 	private void makeFarthestState(int level) {
 		// places boxes on the goals
+		List<List<Integer>> boxGoals = new ArrayList<List<Integer>>();
 		for (int x = 0; x < width; x++) {
 			for (int y = 0 ; y < height; y++) {
 				if (levelMap[y][x] == Tile.GOAL)
 					boxList.add(new Box(x, y, tileImgs[2], tileSize, width, height));
+					List<Integer> boxGoal = new ArrayList<Integer>();
+					boxGoal.add(x);
+					boxGoal.add(y);
+					boxGoals.add(boxGoal);
 				if (boxList.size() == level) break;
 			}
 			if (boxList.size() == level) break;
@@ -182,43 +189,67 @@ public class Level implements GameState {
 		startList.add(startState);
 		List<State> resultList = new ArrayList<State>(startList);
 		List<State> prevList = null;
+		List<State> prevTempList = null;
+		List<State> tempList = null;
 		int depth = 1;
 		
-		while (true) {
+		while (depth < 10) {
+			if (prevTempList == null) {
+				prevTempList = new ArrayList<State>(startList);
+				tempList = prevTempList;
+			}
+			for (int k = 0; k < prevTempList.size(); k++) {
+				if (!(tempList.contains(prevTempList.get(k)))) {
+					tempList.add(prevTempList.get(k).copy());
+				}
+			}
 			prevList = new ArrayList<State>();
 			for (int i = 0; i < resultList.size(); i++) {
 				prevList.add(resultList.get(i).copy());
 			}
-			resultList = deepen(startList, resultList, depth);
+			resultList = deepen(resultList, tempList, depth, boxGoals);
 			if (resultList.size() == 0) break;
+			prevTempList = expand(prevTempList, boxGoals);
 			depth++;
 			System.out.println("depth " + depth);
 		}
 		
-		this.boxList = new ArrayList<Box>(prevList.get(prevList.size() - 1).getBoxList());
+		boolean flag = false;
+		int randBox = 0;
+		int i = 0;
+		while (!flag && i < 30) {
+			i++;
+			System.out.println("forever");
+			flag = true;
+			randBox = r.nextInt(prevList.size());
+			this.boxList = new ArrayList<Box>(prevList.get(randBox).getBoxList());
+			for (int l = 0; l < boxList.size(); l++) {
+				if (levelMap[boxList.get(l).getTileY()][boxList.get(l).getTileX()] == Tile.GOAL) {
+					flag = false;
+				}
+			}
+		}
+		if (i == 30) {
+			System.out.println("Error");
+		}
+		
+		this.playerSpaces = prevList.get(randBox).getPlayerSpaces();
 		
 	}
 	
-	private List<State> deepen (List<State> startList, List<State> prevResults, int depth) {
+	private List<State> deepen (List<State> prevResults, List<State> prevTempList, int depth, List<List<Integer>> boxGoals) {
 		System.out.println(prevResults.size());
-		List<State> resultList = expand(prevResults);
-		List<State> tempList = new ArrayList<State>();
-		for (int i = 0; i < startList.size(); i++) {
-			tempList.add(startList.get(i).copy());
-		}
-		
-		for (int i = 1; i <= depth; i++) {
+		List<State> resultList = expand(prevResults, boxGoals);
+		//List<State> tempList = new ArrayList<State>();
+		System.out.println("resultListSize " + resultList.size());
+		resultList.removeAll(prevTempList);
+			System.out.println("tempListSize " + prevTempList.size());
 			System.out.println("resultListSize " + resultList.size());
-			System.out.println("tempListSize " + tempList.size());
-			resultList.removeAll(tempList);
-			System.out.println("resultListSize " + resultList.size());
-			tempList = expand(tempList);
-		}
 		
 		return resultList;
 	}
 	
-	private List<State> expand(List<State> states) {
+	private List<State> expand(List<State> states, List<List<Integer>> boxGoals) {
 		Integer[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
 		
 		List<State> newStates = new ArrayList<State>();
@@ -233,7 +264,9 @@ public class Level implements GameState {
 					//System.out.println("Can reach box");
 					for (int i = 0; i < 4; i++) {
 						Box box = stateBoxList.get(boxNum);
-						if (!(checkBoxList(box.getTileX() + directions[i][0], box.getTileY() + directions [i][1], stateBoxList))) {
+						if (!(checkBoxList(box.getTileX() + directions[i][0], box.getTileY() + directions [i][1], stateBoxList)) &&
+								!((boxGoals.get(boxNum).get(0) == (box.getTileX() + directions[i][0])) && 
+								(boxGoals.get(boxNum).get(1) == (box.getTileY() + directions[i][1])))) {
 							box.setTilePos(box.getTileX() + directions[i][0], box.getTileY() + directions[i][1]);
 							int newPlayerX = box.getTileX() + directions[i][0];
 							int newPlayerY = box.getTileY() + directions[i][1];
@@ -255,12 +288,15 @@ public class Level implements GameState {
 							if (flag) {
 								//System.out.print("ENTERED flag");
 								List<Box> copyBoxList = new ArrayList<Box>();
-								for (i = 0; i < stateBoxList.size(); i++) {
-									copyBoxList.add(stateBoxList.get(i).copy());
+								for (int j = 0; j < stateBoxList.size(); j++) {
+									copyBoxList.add(stateBoxList.get(j).copy());
 								}
 								State newState = new State(newPlayerX, newPlayerY, copyBoxList,
 															levelMap, height, width);
-								newStates.add(newState);
+								if (!(newStates.contains(newState))) {
+									//System.out.println("Did add");
+									newStates.add(newState);
+								}
 							}
 							
 							box.setTilePos(box.getTileX() - directions[i][0], box.getTileY() - directions[i][1]);
@@ -287,6 +323,7 @@ public class Level implements GameState {
 	}
 	
 	private void makePlayer() {
+		/*
 		int x = width/2;
 		int y = height/2;
 		
@@ -303,9 +340,12 @@ public class Level implements GameState {
 				break;
 			}
 		}
+		*/
 		
 		try {
-			player = new Player(x, y, ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
+			Random r = new Random();
+			List<Integer> playerSpace = playerSpaces.get(r.nextInt(playerSpaces.size()));
+			player = new Player(playerSpace.get(0), playerSpace.get(1), ImageIO.read(getClass().getResourceAsStream("player.png")), tileSize, width, height);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

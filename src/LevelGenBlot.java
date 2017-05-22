@@ -85,8 +85,8 @@ public class LevelGenBlot implements LevelGen {
 		int x = Math.abs(xRand.nextInt())%(width-1)+1;
 		int y = Math.abs(yRand.nextInt())%(height-1)+1;
 		
-		for (int i = 0; i < level; i++) {
-			while(levelMap[y][x]!= Tile.WALKABLE || (x!= width/2 && y != height/2)){
+		while (true) {
+			while(levelMap[y][x] != Tile.WALKABLE || (x!= width/2 && y != height/2)){
 				xRand = new Random();
 				yRand = new Random();
 				x = Math.abs(xRand.nextInt())%(width-1) +1;
@@ -94,8 +94,20 @@ public class LevelGenBlot implements LevelGen {
 				//System.out.println("fails on "+ x + " " + y);
 				
 			}
+			
+			Integer[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+			boolean flag = false;
+			for (int i = 0; i < 4; i++) {
+				if (levelMap[y + directions[i][1]][x + directions[i][0]] == Tile.WALKABLE &&
+						levelMap[y + (2 * directions[i][1])][x + (2 * directions[i][0])] == Tile.WALKABLE) {
+					flag = true;
+				}
+			}
+			if (flag) {
+				levelMap[y][x] = Tile.GOAL;
+				break;
+			}
 		}
-		levelMap[y][x] = Tile.GOAL;
 		
 		return levelMap;
 	}
