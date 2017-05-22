@@ -84,8 +84,8 @@ public class Box extends Entity implements Cloneable {
 		Box box = (Box) super.clone();
 		box.tileX = tileX;
 		box.tileY = tileY;
-		box.renderX = renderX;
-		box.renderY = renderY;
+		box.renderX = tileX * tileSize;
+		box.renderY = tileY * tileSize;
 		box.sprite = sprite;
 		box.tileSize = tileSize;
 		box.lvlWidth = lvlWidth;

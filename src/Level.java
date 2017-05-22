@@ -407,7 +407,7 @@ public class Level extends JPanel implements ActionListener {
 			repaint();
 		else if (isCompleted()) {
 			animationTimer.stop();
-			GameMaster.changeScreens(new IntermissionScreen("" + time, moves));
+			GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves));
 		}
 	}
 
