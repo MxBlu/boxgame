@@ -23,6 +23,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -47,6 +48,7 @@ public class Level extends JPanel implements ActionListener {
 	private JPanel uiPanel;
 	private JLabel movesLabel;
 	private JLabel timerLabel;
+	private JLayeredPane pause;
 	private long startTime;
 	
 	private boolean isPaused;
@@ -134,6 +136,10 @@ public class Level extends JPanel implements ActionListener {
 				} else {
 					isPaused = true;
 					animationTimer.stop();
+					
+					add(new PauseScreen());
+					repaint();
+					revalidate();
 				}
 			}
 		});
@@ -431,6 +437,10 @@ public class Level extends JPanel implements ActionListener {
 		uiPanel.add(timerLabel);
 		
 		add(uiPanel);
+	}
+	
+	public void unPause(){
+		isPaused = false;
 	}
 	
 }
