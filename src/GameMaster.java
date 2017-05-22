@@ -50,6 +50,10 @@ public class GameMaster{
         frame.setResizable(false);
         frame.setVisible(true);
         frame.setFocusable(true);
+        //Need to adjust the width/height so it includes the window border
+        int widthWithBorder = WIDTH  + (frame.getWidth()  - frame.getContentPane().getWidth()); 
+        int heightWithBorder = HEIGHT + (frame.getHeight() - frame.getContentPane().getHeight());
+        frame.setSize(widthWithBorder, heightWithBorder);
         /*panel = new JPanel(new CardLayout());
         frame.add(panel);*/
     }

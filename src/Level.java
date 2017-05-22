@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -413,7 +414,7 @@ public class Level extends JPanel implements ActionListener {
 		
 		uiPanel = new JPanel(new BorderLayout());
 		uiPanel.setPreferredSize(new Dimension(GameMaster.WIDTH, 80));
-		uiPanel.setBounds(new Rectangle(new Point(0, (int) (GameMaster.PANEL_HEIGHT - uiPanel.getPreferredSize().getHeight())), uiPanel.getPreferredSize()));
+		uiPanel.setBounds(new Rectangle(new Point(0, (int) (GameMaster.HEIGHT - uiPanel.getPreferredSize().getHeight())), uiPanel.getPreferredSize()));
 		uiPanel.setBackground(new Color(58, 58, 58));
 		
 		uiPanel.add(movesLabel, BorderLayout.WEST);
