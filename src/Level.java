@@ -48,7 +48,7 @@ public class Level extends JPanel implements ActionListener {
 	private JPanel uiPanel;
 	private JLabel movesLabel;
 	private JLabel timerLabel;
-	private long startTime;
+	private long time;
 	
 	private boolean isPaused;
 	
@@ -78,7 +78,7 @@ public class Level extends JPanel implements ActionListener {
 
 		animationTimer = new Timer(GameMaster.FRAME_DELTA, this);
 		levelMap = levelGen.generate(height, width, 1);
-		startTime = 0;
+		time = 0;
 		isPaused = false;
 		
 		setDefaultTiles();
@@ -398,13 +398,16 @@ public class Level extends JPanel implements ActionListener {
 		}
 		
 		// Update time label
-		timerLabel.setText("Time: " + (startTime += GameMaster.FRAME_DELTA));
+		time += GameMaster.FRAME_DELTA;
+		Date date = new Date(time);
+		DateFormat dateFormat = new SimpleDateFormat("mm:ss:SSS");
+		timerLabel.setText("Time: " + dateFormat.format(date));
 		
 		if (stillAnimating)
 			repaint();
 		else if (isCompleted()) {
 			animationTimer.stop();
-			GameMaster.changeScreens(new IntermissionScreen("" + startTime, moves));
+			GameMaster.changeScreens(new IntermissionScreen("" + time, moves));
 		}
 	}
 
