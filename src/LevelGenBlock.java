@@ -158,7 +158,10 @@ public class LevelGenBlock implements LevelGen {
 			if (amtPicked[0] > ((numRegions % 2 == 0) ? numRegions/2 : (numRegions + 1)/2))
 				continue;
 			
-			if (checkConnectedness(levelMap, height, width))
+			if (!checkConnectedness(levelMap, height, width))
+				continue;
+			
+			if ((float) getNumWalkable(levelMap, height, width)/(float) 81 <= 0.6f)
 				break;
 		}
 		
@@ -243,6 +246,15 @@ public class LevelGenBlock implements LevelGen {
 		}
 		
 		return levelMap;
+	}
+
+	private int getNumWalkable(Tile[][] levelMap, int height, int width) {
+		int numWalkable = 0;
+		for (int i = 0; i < height; i++)
+			for (int j = 0; j < width; j++)
+				if (levelMap[i][j] == Tile.WALKABLE)
+					numWalkable++;
+		return numWalkable;
 	}
 
 	private boolean checkConnectedness(Tile[][] levelMap, int height, int width) {
