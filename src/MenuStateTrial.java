@@ -16,43 +16,34 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-public class MenuScreen extends JPanel{
+public class MenuStateTrial extends JPanel{
 
     private Image background;
     private Image playbutton;
-    private Image playpreset;
     private Image creditsbutton;
     private Image highscoresbutton;
-    private Image backbutton;
-    private Image quitbutton;
 
 	private JButton play;
-	private JButton playPreset;
 	private JButton credits;
 	private JButton highScore;
-	private JButton back;
-	private JButton quit;
 
-	
 	private JPanel difficultyPanel;
 	private Boolean difficultyShow;
 	
     private static final String MOVE_UP = "move up";
     private static final String MOVE_DOWN = "move down";
     private static final String QUIT_MENU = "quit menu";
+	private static final String JFrame = null;
 	
-	public MenuScreen() {
+	public MenuStateTrial() {
 		//setTraversalKeys();
 		
 		// Get the image file for the background and buttons
 		try {
 			background = ImageIO.read(getClass().getResourceAsStream("menu.png"));
 			playbutton = ImageIO.read(getClass().getResourceAsStream("playbutton.png"));
-			playpreset = ImageIO.read(getClass().getResourceAsStream("playpresetbutton.png"));
-			backbutton = ImageIO.read(getClass().getResourceAsStream("back.png"));
 			creditsbutton = ImageIO.read(getClass().getResourceAsStream("creditsbutton.png"));
 			highscoresbutton = ImageIO.read(getClass().getResourceAsStream("highscoresbutton.png"));
-			quitbutton = ImageIO.read(getClass().getResourceAsStream("quitbutton.png"));
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -60,41 +51,27 @@ public class MenuScreen extends JPanel{
 		
 		difficultyPanel = new DifficultyPanel(); 
 		difficultyShow = false;
-		
 		// Initialize JButtons
 		// Give them names, dimension, and images. Also
 		// add tool tips on mouse over to assist the user.
 		play = new JButton();
 		play.setIcon(new ImageIcon(playbutton));
+		play.setToolTipText("Click this to begin the game!");
 		play.setBorderPainted(false);
 		play.setContentAreaFilled(false);
 		
-		playPreset = new JButton();
-		playPreset.setIcon(new ImageIcon(playpreset));
-		playPreset.setBorderPainted(false);
-		playPreset.setContentAreaFilled(false);
-		
 		credits = new JButton();
 		credits.setIcon(new ImageIcon(creditsbutton));
+		credits.setToolTipText("Click this to see who made the game!");
 		credits.setBorderPainted(false);
 		credits.setOpaque(false);
 		credits.setContentAreaFilled(false);
 
 		highScore = new JButton();
 		highScore.setIcon(new ImageIcon(highscoresbutton));
+		highScore.setToolTipText("Click this to everyone's highest scores!");
 		highScore.setBorderPainted(false);
 		highScore.setContentAreaFilled(false);
-		
-		back = new JButton();
-		back.setIcon(new ImageIcon(backbutton));
-		back.setToolTipText("Back button");
-		back.setBorderPainted(false);
-		back.setContentAreaFilled(false);
-		
-		quit = new JButton();
-		quit.setIcon(new ImageIcon(quitbutton));
-		quit.setBorderPainted(false);
-		quit.setContentAreaFilled(false);
 
 		// Play button action listener
 		// When play button is clicked, call the game master
@@ -102,13 +79,8 @@ public class MenuScreen extends JPanel{
 		// to the JPanel that holds the game. 
 		play.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				toggleDifficulty();
-			}
-		});
-		
-		playPreset.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent e){
-				GameMaster.changeScreens(new SelectScreen());
+				System.out.println("change thing");
+				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 40, new LevelGenBlock()));
 			}
 		});
 		
@@ -118,6 +90,7 @@ public class MenuScreen extends JPanel{
 		credits.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				System.out.println("change screen");
+				toggleDifficulty();
 			}
 		});
 		
@@ -127,19 +100,26 @@ public class MenuScreen extends JPanel{
 			}
 		});
 	
-		back.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent e){
-				toggleDifficulty();
-			}
-		});
-		
-		quit.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent e){
-				quitMenu();
-			}
-		});
-	
-		setButtonLayout();
+		// Set the layout of this JPanel
+		// We can use one of the preset layouts from
+		// JPanel's API to arrange the layout and 
+		// positions of where components appear in this
+		// JPanel. This is a better alternative opposed
+		// to manually hard coding pixel perfect coordinates
+		// where each button should appear. 
+		setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+
+		// Add the buttons to the JPanel
+		// gridx and gridy are part of JPanel's layout
+		// API, and lets us organise the location of the buttons.
+		c.gridx = 2;
+		c.gridy = 1;
+		add(play,c);
+		c.gridy = 2;
+		add(credits,c);
+		c.gridy = 3;
+		add(highScore,c);
 		
 		// Set the JPanels attributes and revalidate.
 		revalidate();
@@ -199,59 +179,23 @@ public class MenuScreen extends JPanel{
 		}
 	}
 	
-	private void quitMenu() {
-		((JFrame)SwingUtilities.getWindowAncestor(this)).dispose();
-	}
-	
-	private void setButtonLayout() {
-		// Set the layout of this JPanel
-		// We can use one of the preset layouts from
-		// JPanel's API to arrange the layout and 
-		// positions of where components appear in this
-		// JPanel. This is a better alternative opposed
-		// to manually hard coding pixel perfect coordinates
-		// where each button should appear. 
-		setLayout(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-
-		// Add the buttons to the JPanel
-		// gridx and gridy are part of JPanel's layout
-		// API, and lets us organise the location of the buttons.
-		c.gridx = 2;
-		c.gridy = 1;
-		add(play,c);
-		c.gridy = 2;
-		add(playPreset,c);
-		c.gridy = 3;
-		add(credits,c);
-		c.gridy = 4;
-		add(highScore,c);
-		c.gridx = 3;
-		c.gridy = 4;
-		add(quit,c);
-	}
-	
 	public void toggleDifficulty() {
 		if (difficultyShow) {
 			difficultyShow = false;
 			remove(difficultyPanel);
-			remove(back);
-			setButtonLayout();
 		} else {
 			difficultyShow = true;
-			add(back);
 			add(difficultyPanel);
-			remove(play);
-			remove(playPreset);
-			remove(credits);
-			remove(highScore);
-			remove(quit);
-
 		}
 		
 		revalidate();
 		repaint();
 	}
+	
+	private void quitMenu() {
+		((JFrame)SwingUtilities.getWindowAncestor(this)).dispose();
+	}
+	
 	/*private void setTraversalKeys() {
 		Set forwardKeys = getFocusTraversalKeys(
 			    KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS);
