@@ -470,9 +470,4 @@ public class Level extends JPanel implements ActionListener {
 		
 		add(uiPanel);
 	}
-	
-	public void unPause(){
-		isPaused = false;
-	}
-	
 }
