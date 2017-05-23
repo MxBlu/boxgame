@@ -40,6 +40,8 @@ public class MenuScreen extends JPanel{
     private static final String MOVE_UP = "move up";
     private static final String MOVE_DOWN = "move down";
     private static final String QUIT_MENU = "quit menu";
+	private static final Object MOVE_LEFT = "move left";
+	private static final Object MOVE_RIGHT = "move right";
 	
 	public MenuScreen() {
 		//setTraversalKeys();
@@ -149,10 +151,36 @@ public class MenuScreen extends JPanel{
 	    // Keyinput
 	    getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), MOVE_UP);
 		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), MOVE_DOWN);
+		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("LEFT"), MOVE_LEFT);
+		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("RIGHT"), MOVE_RIGHT);
 		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), QUIT_MENU);
 		getActionMap().put(MOVE_UP, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				handleUp();
+			}
+		});
+		
+		getActionMap().put(MOVE_DOWN, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				handleDown();
+			}
+		});
+		
+		getActionMap().put(MOVE_UP, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				handleUp();
+			}
+		});
+		
+		getActionMap().put(MOVE_LEFT, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				highScore.requestFocus();
+			}
+		});
+		
+		getActionMap().put(MOVE_RIGHT, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				quit.requestFocus();
 			}
 		});
 		
@@ -181,6 +209,8 @@ public class MenuScreen extends JPanel{
 	
 	private void handleDown() {
 		if (play.isFocusOwner()) {
+			playPreset.requestFocus();
+		} else if (playPreset.isFocusOwner()) { 
 			credits.requestFocus();
 		} else if (credits.isFocusOwner()) {
 			highScore.requestFocus();
@@ -193,6 +223,8 @@ public class MenuScreen extends JPanel{
 		if (highScore.isFocusOwner()) {
 			credits.requestFocus();
 		} else if (credits.isFocusOwner()) {
+			playPreset.requestFocus();
+		} else if (playPreset.isFocusOwner()) { 
 			play.requestFocus();
 		} else if (!play.isFocusOwner()) {
 			highScore.requestFocus();
