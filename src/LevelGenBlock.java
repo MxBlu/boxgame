@@ -113,20 +113,18 @@ public class LevelGenBlock implements LevelGen {
 	}
 	
 	@Override
-	public Tile[][] generate(int height, int width, int level) {
+	public Tile[][] generate(int height, int width, int difficulty) {
 		if (height % 3 != 2 || width % 3 != 2)
 			System.out.println("Generated map size not ideal");
 		
 		Tile[][] levelMap = new Tile[height][width];
-
-		// needs enough empty space? might not be necessary
 		
 		Random r = new Random();
 		
-		int workingHeight = 3 * (2 + level);//(height - 2) - ((height - 2) % 3);
+		int workingHeight = 9;
 		int hStart = (height - workingHeight)/2;
 		
-		int workingWidth = 3 * (2 + level);//(width - 2) - ((width - 2) % 3);
+		int workingWidth = 9;
 		int wStart = (width - workingWidth)/2;
 		
 		int numRegions = (workingHeight/3) * (workingWidth/3);
@@ -178,7 +176,7 @@ public class LevelGenBlock implements LevelGen {
 			}
 		}
 		
-		for (int l = 0; l < level; l++) {
+		for (int l = 0; l < difficulty; l++) {
 			while (true) {
 				int i = 0;
 				int j = 0;
@@ -200,6 +198,8 @@ public class LevelGenBlock implements LevelGen {
 				break;
 			}
 		}
+		
+		// Get 
 		
 		System.out.println("Final");
 		for (int i = 0; i < height; i++) {

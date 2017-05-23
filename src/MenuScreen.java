@@ -200,7 +200,7 @@ public class MenuScreen extends JPanel{
 	}
 	
 	private void quitMenu() {
-		((JFrame)SwingUtilities.getWindowAncestor(this)).dispose();
+		System.exit(0);
 	}
 	
 	private void setButtonLayout() {

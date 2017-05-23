@@ -24,16 +24,16 @@ public class IntermissionScreen extends JPanel implements ActionListener{
 	private JButton next;
 	
 	
-	public IntermissionScreen(String d, int moves){
-		init();
+	public IntermissionScreen(String d, int moves, int difficulty){
+		init(difficulty);
 		time = "Time: "+ d;
 	}
 	
 	public IntermissionScreen(){
-		init();
+		init(1);
 	}
 	
-	private void init() {
+	private void init(int difficulty) {
 		
 		// Get the image file for the background
 		try {
@@ -73,7 +73,7 @@ public class IntermissionScreen extends JPanel implements ActionListener{
 		next.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				System.out.println("next level load");
-				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 40, new LevelGenBlock()));
+				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 40, difficulty, new LevelGenBlock()));
 			}
 		});
 		

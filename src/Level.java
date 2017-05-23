@@ -36,6 +36,7 @@ public class Level extends JPanel implements ActionListener {
 	private int width; // Width of the level
 	private int height; // Height of the level
 	private int tileSize;
+	private int difficulty;
 	
 	private Image tileImgs[];
 	private Player player;
@@ -68,11 +69,12 @@ public class Level extends JPanel implements ActionListener {
 	 * @param screenHeight Screen height in pixels.
 	 * @param tileSize Width/Height of a tile in pixels.
 	 */
-	Level(int screenWidth, int screenHeight, int tileSize, LevelGen levelGen) {
+	Level(int screenWidth, int screenHeight, int tileSize, int difficulty, LevelGen levelGen) {
 		// 1 pixel padding so I don't need to add edge cases to generation.
 		this.width = screenWidth/tileSize + 2;
 		this.height = screenHeight/tileSize + 2;
 		this.tileSize = tileSize;
+		this.difficulty = difficulty;
 		prevStates = new Stack<ArrayList<Entity>>();
 		boxList = new ArrayList<Box>();
 
@@ -84,7 +86,10 @@ public class Level extends JPanel implements ActionListener {
 		
 		setDefaultTiles();
 		makePlayer();
-		placeBox();
+		
+		for (int i = 0; i < difficulty; i++)
+			placeBox();
+		
 		setActions();
 		setupUI();
 		animationTimer.start();
@@ -418,7 +423,7 @@ public class Level extends JPanel implements ActionListener {
 			repaint();
 		else if (isCompleted()) {
 			animationTimer.stop();
-			GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves));
+			GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves, difficulty));
 		}
 	}
 	
