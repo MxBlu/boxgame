@@ -45,7 +45,7 @@ public class Level extends JPanel implements ActionListener {
 	private JLabel movesLabel;
 	private JLabel timerLabel;
 
-	private JLayeredPane pause;
+	private JPanel pausePanel;
 	private long startTime;
 
 	private long time;
@@ -80,6 +80,7 @@ public class Level extends JPanel implements ActionListener {
 		levelMap = levelGen.generate(height, width, 1);
 		time = 0;
 		isPaused = false;
+		pausePanel = new PauseScreen();
 		
 		setDefaultTiles();
 		makePlayer();
@@ -145,17 +146,7 @@ public class Level extends JPanel implements ActionListener {
 		
 		getActionMap().put(MENU, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				if (isPaused) {
-					isPaused = false;
-					animationTimer.start();
-				} else {
-					isPaused = true;
-					animationTimer.stop();
-					
-					add(new PauseScreen());
-					repaint();
-					revalidate();
-				}
+				togglePaused();
 			}
 		});
 		
@@ -213,6 +204,21 @@ public class Level extends JPanel implements ActionListener {
 		//movesLabel.paint(bbg);
 	}
 	
+	public void togglePaused() {
+		if (isPaused) {
+			isPaused = false;
+			animationTimer.start();
+			remove(pausePanel);
+		} else {
+			isPaused = true;
+			animationTimer.stop();
+			add(pausePanel);
+		}
+		
+		revalidate();
+		repaint();
+	}
+	
 	public int getTileSize() {
 		return tileSize;
 	}
@@ -256,10 +262,8 @@ public class Level extends JPanel implements ActionListener {
 				break;
 			}
 		}
-		
 		try {
 			player = new Player(x, y, ImageIO.read(getClass().getResourceAsStream("player.png")), ImageIO.read(getClass().getResourceAsStream("player_up.png")), ImageIO.read(getClass().getResourceAsStream("player_right.png")), tileSize, width, height);
-			
 			this.getActionMap().put(MOVE_UP, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
 					if (!player.isAnimating() && !isPaused) {

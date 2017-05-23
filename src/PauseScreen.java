@@ -30,8 +30,8 @@ public class PauseScreen extends JPanel{
 		// Next level button action listener
 		Resume.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				System.out.println("next level load");
-				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 40, new LevelGenBlock()));
+				Level l = (Level) getParent();
+				l.togglePaused();
 			}
 		});
 		
