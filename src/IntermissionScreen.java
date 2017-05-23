@@ -13,7 +13,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-public class IntermissionScreen extends JPanel implements ActionListener{
+public class IntermissionScreen extends JPanel {
 
     private Image background;
     private Image menuButton;
@@ -120,10 +120,6 @@ public class IntermissionScreen extends JPanel implements ActionListener{
         }
 	}
 	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+
 
 }

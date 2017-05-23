@@ -1,6 +1,8 @@
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -15,6 +17,8 @@ import javax.swing.JPanel;
 
 public class PauseScreen extends JPanel{
 	
+	
+	private Image Background;
 	private JButton Menu;
 	private JButton Resume;
 	Image menuButton;
@@ -24,13 +28,14 @@ public class PauseScreen extends JPanel{
 	public PauseScreen() {
 		
 		try{
+			Background = ImageIO.read(getClass().getResourceAsStream("pausescreen.png"));
 			menuButton = ImageIO.read(getClass().getResourceAsStream("menubutton.png"));
 		}
 			catch(Exception e) {
 			e.printStackTrace();
 		}
 		
-		setPreferredSize(new Dimension(200,200));
+		//setPreferredSize(new Dimension(200,200));
 		setBackground(Color.black);
 		Menu = new JButton();
 		Menu.setIcon(new ImageIcon(menuButton));
@@ -66,6 +71,17 @@ public class PauseScreen extends JPanel{
 		System.out.println("pause screen");
 		setVisible(true);
 		setBounds(200, 100, 2*GameMaster.WIDTH/3, 2*GameMaster.HEIGHT/3);
+	}
+	
+	public void paintComponent(Graphics g) {
+		// Access the JPanel super class's
+		// function for painting.
+
+		
+	    // Draw the background for this JPanel
+	    //g.setColor(Color.BLACK);
+        g.drawImage(Background, 0, 0, null);
+     
 	}
 
 }
