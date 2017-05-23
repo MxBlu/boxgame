@@ -14,6 +14,9 @@ import javax.swing.Timer;
 public class Player extends Entity implements Cloneable {
 	
 	private static int movementSpeed = 12;
+	
+	private static final String WALL_COLLISION = "wall collision";
+	private static final String BOX_PUSH = "box push";
 
 	private int tileX, tileY;
 	
@@ -22,6 +25,7 @@ public class Player extends Entity implements Cloneable {
 	private Image rightSprite;
 	private Image leftSprite;
 	private Image renderSprite;
+	private AudioManager audioSource;
 	private int tileSize;
 	private int lvlWidth, lvlHeight;
 	private int movY;
@@ -43,6 +47,7 @@ public class Player extends Entity implements Cloneable {
 		this.lvlHeight = lvlHeight;
 		this.downSprite = downSprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
 		this.rightSprite = rightSprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
+		this.audioSource = new AudioManager();
 		//Mirror rightSprite for leftSprite
 		AffineTransform tx = AffineTransform.getScaleInstance(-1.0,1.0);
 	    tx.translate(-rightSprite.getWidth(null), 0);
@@ -51,6 +56,9 @@ public class Player extends Entity implements Cloneable {
 		this.upSprite = upSprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
 		renderSprite = downSprite;
 		animating = false;
+		
+		audioSource.addSound("wall_collision.wav", WALL_COLLISION);
+		audioSource.addSound("box_push_2.wav", BOX_PUSH);
 	}
 
 	/*
@@ -80,6 +88,7 @@ public class Player extends Entity implements Cloneable {
 		Tile tile = levelMap[tileY][tileX];
 		if (tile == Tile.WALL) {
 			// Against wall
+			audioSource.playSound(WALL_COLLISION, 1.0f);
 			tileX = prevTileX;
 			tileY = prevTileY;
 		} else {
@@ -87,6 +96,7 @@ public class Player extends Entity implements Cloneable {
 			Box box = getBoxAt(tileX, tileY, boxList);
 			if (box != null) {
 				if (getBoxAt(tileX + movX, tileY + movY, boxList) != null) {
+					audioSource.playSound(WALL_COLLISION, 1.0f);
 					tileX = prevTileX;
 					tileY = prevTileY;
 					System.out.println("Box there");
@@ -94,10 +104,12 @@ public class Player extends Entity implements Cloneable {
 					if (levelMap[tileY + movY][tileX + movX] != Tile.WALL) {
 						box.setTilePos(tileX + movX, tileY + movY);
 						
+						audioSource.playSound(BOX_PUSH, 1.0f);
 						atNewTile = true;
 						animating = true;
 						
 					} else {
+						audioSource.playSound(WALL_COLLISION, 1.0f);
 						System.out.println("move");
 						tileX = prevTileX;
 						tileY = prevTileY;

@@ -11,9 +11,11 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public class AudioManager  {
 	
 	private HashMap<String, Clip> soundClips;
+	private Clip currentClip;
 	
 	public AudioManager() {
 		soundClips = new HashMap<String, Clip>();
+		currentClip = null;
 	}
 	
 	public boolean addSound(String filePath) {
@@ -58,6 +60,11 @@ public class AudioManager  {
 			}
 		}
 		
+		// Stop what's currently playing
+		if (currentClip != null)
+			currentClip.stop();
+		currentClip = clip;
+		
 		//Set the volume of the clip
 		FloatControl gainCon = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 		gainCon.setValue(20.0f * (float) Math.log10(volume));
@@ -67,6 +74,13 @@ public class AudioManager  {
 		clip.setFramePosition(0);
 		
 		clip.start();
+	}
+	
+	public void stopSound() {
+		if (currentClip != null)
+			currentClip.stop();
+		
+		currentClip = null;
 	}
 	
 }

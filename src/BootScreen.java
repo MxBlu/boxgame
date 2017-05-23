@@ -32,17 +32,23 @@ public class BootScreen extends JPanel implements ActionListener{
 	
     private float alpha = 0.0f;
     private int state = 0;
+    private AudioManager audioSource;
 
     public BootScreen( ) {
     	//main = m;
         imagem = new ImageIcon("logo.png").getImage();
         timer = new Timer(GameMaster.FRAME_DELTA, this);
         timer.start();
+        
+        audioSource = new AudioManager();
+        audioSource.playSound("intro_sound.wav", 1.0f);
+        
         this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), SKIP);
         this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), SKIP);
         
         this.getActionMap().put(SKIP, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
+				audioSource.stopSound();
 				timer.stop();
 				GameMaster.changeScreens(new MenuScreen());	
 			}
@@ -71,6 +77,7 @@ public class BootScreen extends JPanel implements ActionListener{
 
 	        repaint();
     	} else {
+    		audioSource.stopSound();
     		timer.stop();
     		GameMaster.changeScreens(new MenuScreen());
     	}
