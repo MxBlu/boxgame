@@ -41,6 +41,8 @@ public class StateManager {
 	}
 	
 	public static void setLevel(){
-		Level++;
+		if (Level != 5) {
+			Level++;
+		}
 	}
 }

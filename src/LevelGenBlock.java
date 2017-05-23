@@ -214,6 +214,22 @@ public class LevelGenBlock implements LevelGen {
 				if (!flag)
 					continue;
 				
+				flag = false;
+				for (int count = 0; count < 4; count++) {
+					if ((level == 4 || level == 5) && l == 2) {
+						if (levelMap[i + directions[count][1]][j + directions[count][0]] == Tile.GOAL) {
+							flag = true;
+						}
+					} else {
+						if (levelMap[i + directions[count][1]][j + directions[count][0]] == Tile.WALL ||
+								levelMap[i + directions[count][1]][j + directions[count][0]] == Tile.GOAL) {
+							flag = true;
+						}
+					}
+				}
+				if (!flag)
+					continue;
+				
 				levelMap[i][j] = Tile.GOAL;
 				break;
 			}

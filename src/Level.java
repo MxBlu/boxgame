@@ -4,7 +4,6 @@ import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
@@ -48,7 +47,12 @@ public class Level implements GameState {
 		for (int i = 0; i < StateManager.getLevel(); i++)
 			placeBox();
 		*/
-		makeFarthestState(StateManager.getLevel());
+		while(!(makeFarthestState(StateManager.getLevel()))) {
+			levelMap = levelGen.generate(height, width, StateManager.getLevel());
+			this.playerSpaces = null;
+			this.boxList = new ArrayList<Box>();
+			System.out.println("RESTART");
+		}
 		
 		
 		makePlayer();
@@ -154,7 +158,7 @@ public class Level implements GameState {
 	}
 	*/
 	
-	private void makeFarthestState(int level) {
+	private boolean makeFarthestState(int level) {
 		// places boxes on the goals
 		List<List<Integer>> boxGoals = new ArrayList<List<Integer>>();
 		for (int x = 0; x < width; x++) {
@@ -184,16 +188,19 @@ public class Level implements GameState {
 			break;
 		}
 		
-		State startState = new State(x, y, new ArrayList<Box>(boxList), levelMap, height, width);
+		State startState = new State(x, y, new ArrayList<Box>(boxList), levelMap, height, width, null, -1, -1);
 		List<State> startList = new ArrayList<State>();
 		startList.add(startState);
 		List<State> resultList = new ArrayList<State>(startList);
 		List<State> prevList = null;
 		List<State> prevTempList = null;
-		List<State> tempList = null;
+		List<State> tempList = new ArrayList<State>();
+		
+		Integer depthLimit[] = {100, 25, 17, 12, 10, 8};
+		
 		int depth = 1;
 		
-		while (depth < 15) {
+		while (depth < depthLimit[level] && resultList.size() < 4000) {
 			if (prevTempList == null) {
 				prevTempList = new ArrayList<State>(startList);
 				tempList = prevTempList;
@@ -215,25 +222,62 @@ public class Level implements GameState {
 		}
 		
 		boolean flag = false;
-		int randBox = 0;
-		int i = 0;
-		while (!flag && i < 30) {
-			i++;
+		int randState = 0;
+		int k = 0;
+		List<Integer> possibleStates = new ArrayList<Integer>();
+		for (int i = 0; i < 30 && k < 100; i++) {
 			System.out.println("forever");
 			flag = true;
-			randBox = r.nextInt(prevList.size());
-			this.boxList = new ArrayList<Box>(prevList.get(randBox).getBoxList());
+			randState = r.nextInt(prevList.size());
+			List<Box> tempBoxList = new ArrayList<Box>(prevList.get(randState).getBoxList());
 			for (int l = 0; l < boxList.size(); l++) {
-				if (levelMap[boxList.get(l).getTileY()][boxList.get(l).getTileX()] == Tile.GOAL) {
+				if (levelMap[tempBoxList.get(l).getTileY()][tempBoxList.get(l).getTileX()] == Tile.GOAL) {
 					flag = false;
 				}
 			}
-		}
-		if (i == 30) {
-			System.out.println("Error");
+			if (flag) {
+				System.out.println(prevList.get(randState).getNumBoxLines());
+				possibleStates.add(randState);
+			} else {
+				i--;
+			}
+			k++;
 		}
 		
-		this.playerSpaces = prevList.get(randBox).getPlayerSpaces();
+		
+		if (possibleStates.size() == 0) {
+			/*
+			this.boxList = new ArrayList<Box>(prevList.get(randState).getBoxList());
+			this.playerSpaces = prevList.get(randState).getPlayerSpaces();
+			System.out.print("ErrorBoxList");
+			return;
+			*/
+			return false;
+		}
+		
+		
+		int pos = 0;
+		int currMaxBoxLines = -1;
+		for (int j = 0; j < possibleStates.size(); j++) {
+			//System.out.println(prevList.get(possibleStates.get(j)).getNumBoxLines());
+			if (currMaxBoxLines == -1) {
+				this.boxList = new ArrayList<Box>(prevList.get(possibleStates.get(j)).getBoxList());
+				currMaxBoxLines = prevList.get(possibleStates.get(j)).getNumBoxLines();
+			} else {
+				if (currMaxBoxLines < prevList.get(possibleStates.get(j)).getNumBoxLines()) {
+					this.boxList = new ArrayList<Box>(prevList.get(possibleStates.get(j)).getBoxList());
+					currMaxBoxLines = prevList.get(possibleStates.get(j)).getNumBoxLines();
+					pos = j;
+				}
+			}
+		}
+		//if (i == 30) {
+		//	System.out.println("Error");
+		//}
+		
+		System.out.println("currMaxBoxLines " + currMaxBoxLines);
+		this.playerSpaces = prevList.get(possibleStates.get(pos)).getPlayerSpaces();
+		return true;
 		
 	}
 	
@@ -292,10 +336,11 @@ public class Level implements GameState {
 									copyBoxList.add(stateBoxList.get(j).copy());
 								}
 								State newState = new State(newPlayerX, newPlayerY, copyBoxList,
-															levelMap, height, width);
+															levelMap, height, width, curr, i, boxNum);
 								if (!(newStates.contains(newState))) {
 									//System.out.println("Did add");
 									newStates.add(newState);
+									//System.out.println("newState numBoxLines " + newState.getNumBoxLines());
 								}
 							}
 							
