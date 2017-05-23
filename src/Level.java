@@ -1,10 +1,14 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -20,12 +24,14 @@ import java.util.Stack;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
+import javax.swing.border.EmptyBorder;
 
 public class Level extends JPanel implements ActionListener {
 	
@@ -45,8 +51,11 @@ public class Level extends JPanel implements ActionListener {
 	private JPanel uiPanel;
 	private JLabel movesLabel;
 	private JLabel timerLabel;
+	private JButton Pause;
+	private JButton Undo;
 
 	private JPanel pausePanel;
+	private JPanel uiButtonsPanel;
 	private long startTime;
 
 	private long time;
@@ -61,6 +70,7 @@ public class Level extends JPanel implements ActionListener {
     
     private static final String MENU = "return menu";
     private static final String UNDO = "undo";
+    
 	
 	/**
 	 * Creates a new level.
@@ -465,8 +475,38 @@ public class Level extends JPanel implements ActionListener {
 		uiPanel.setBounds(new Rectangle(new Point(0, (int) (GameMaster.HEIGHT - uiPanel.getPreferredSize().getHeight())), uiPanel.getPreferredSize()));
 		uiPanel.setBackground(new Color(58, 58, 58));
 		
+		Pause = new JButton("Pause");
+		Pause.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent e){
+				togglePaused();			
+				}
+		});
+		//Pause.setBorder(new EmptyBorder(10, 10, 10, 10));
+		
+		Undo = new JButton("Undo");
+		Undo.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent e){
+				if (!player.isAnimating() && !isPaused)
+					undo();
+			}
+		});
+		//Undo.setBorder(new EmptyBorder(10, 10, 10, 10));
+		uiButtonsPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets = new Insets(10,10,10,10);
+		c.gridy = 1;
+		uiButtonsPanel.add(Pause, c);
+		c.gridx = 2;
+		uiButtonsPanel.add(Undo, c);
+		uiButtonsPanel.setOpaque(false);
+		uiButtonsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		
+	
 		uiPanel.add(movesLabel, BorderLayout.WEST);
 		uiPanel.add(timerLabel);
+		uiPanel.add(uiButtonsPanel, BorderLayout.EAST);
+		
+		
 		
 		add(uiPanel);
 	}

@@ -1,5 +1,8 @@
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,10 +53,16 @@ public class PauseScreen extends JPanel{
 				l.togglePaused();
 			}
 		});
+		setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 1;
+		c.gridy = 1;
+		add(Menu,c);
+		c.gridx = 2;
+		add(Resume,c);
 		
+
 		
-		add(Menu);
-		add(Resume);
 		System.out.println("pause screen");
 		setVisible(true);
 		setBounds(200, 100, 2*GameMaster.WIDTH/3, 2*GameMaster.HEIGHT/3);
