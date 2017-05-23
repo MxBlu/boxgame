@@ -19,30 +19,37 @@ public class PauseScreen extends JPanel{
 	
 	
 	private Image Background;
+	private Image menuButton;
+	private Image resumeButton;
+
 	private JButton Menu;
 	private JButton Resume;
-	Image menuButton;
-	
-	
+
 	
 	public PauseScreen() {
 		
 		try{
 			Background = ImageIO.read(getClass().getResourceAsStream("pausescreen.png"));
-			menuButton = ImageIO.read(getClass().getResourceAsStream("menubutton.png"));
+			menuButton = ImageIO.read(getClass().getResourceAsStream("returntomenu.png"));
+			resumeButton = ImageIO.read(getClass().getResourceAsStream("resumebutton.png"));
 		}
 			catch(Exception e) {
 			e.printStackTrace();
 		}
 		
-		//setPreferredSize(new Dimension(200,200));
 		setBackground(Color.black);
+		setOpaque(false);
+
 		Menu = new JButton();
 		Menu.setIcon(new ImageIcon(menuButton));
 		Menu.setBorderPainted(false);
 		Menu.setContentAreaFilled(false);
 		
-		Resume = new JButton("Resume");
+		Resume = new JButton();
+		Resume.setIcon(new ImageIcon(resumeButton));
+		Resume.setBorderPainted(false);
+		Resume.setContentAreaFilled(false);
+		
 		// Return to menu button action listener
 		Menu.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
@@ -62,12 +69,10 @@ public class PauseScreen extends JPanel{
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 1;
 		c.gridy = 1;
-		add(Menu,c);
-		c.gridx = 2;
 		add(Resume,c);
-		
+		c.gridy = 2;
+		add(Menu,c);
 
-		
 		System.out.println("pause screen");
 		setVisible(true);
 		setBounds(200, 100, 2*GameMaster.WIDTH/3, 2*GameMaster.HEIGHT/3);
@@ -76,7 +81,7 @@ public class PauseScreen extends JPanel{
 	public void paintComponent(Graphics g) {
 		// Access the JPanel super class's
 		// function for painting.
-
+		super.paintComponent(g);
 		
 	    // Draw the background for this JPanel
 	    //g.setColor(Color.BLACK);
