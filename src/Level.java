@@ -104,6 +104,8 @@ public class Level extends JPanel implements ActionListener {
 		setupUI();
 		animationTimer.start();
 		pushCurrentState();
+		
+		System.out.println(this);
 	}
 	
 	Level(String input, int tileSize) {
@@ -367,7 +369,7 @@ public class Level extends JPanel implements ActionListener {
 		StringBuilder s = new StringBuilder(height * (width + 1));
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				if (player.getTileX() == i && player.getTileY() == j) {
+				if (player.getTileX() == j && player.getTileY() == i) {
 					s.append(Tile.PLAYER.getIntRep());
 					continue;
 				}
@@ -510,9 +512,4 @@ public class Level extends JPanel implements ActionListener {
 		
 		add(uiPanel);
 	}
-	
-	public void unPause(){
-		isPaused = false;
-	}
-	
 }
