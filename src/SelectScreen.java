@@ -61,7 +61,7 @@ public class SelectScreen extends JPanel{
 	public SelectScreen() {
 		// Get the image file for the background and buttons
 		try {
-			background = ImageIO.read(getClass().getResourceAsStream("menu.png"));
+			background = ImageIO.read(getClass().getResourceAsStream("levelselectmenu.png"));
 		}
 		catch(Exception e) {
 			e.printStackTrace();
