@@ -16,6 +16,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -202,11 +203,15 @@ public class LevelCreatorScreen extends JPanel{
 	
 	
 	public void paintComponent(Graphics g) {
-		Graphics2D bbg = (Graphics2D) g;
-		
-		
 		int left = (int) ((double) GameMaster.WIDTH/2 - (double) (width * tileSize)/2);
 		int top = (int) ((double) GameMaster.HEIGHT/2 - (double) (height * tileSize)/2);
+		paintMap(g, left, top);
+		
+		super.paintComponent(g);
+	}
+	
+	private void paintMap(Graphics g, int left, int top) {
+		Graphics2D bbg = (Graphics2D) g;
 		
 		//Paint all as walkables first to "clear the screen"
 		for (int i = 0; i < height; i++) {
@@ -225,8 +230,6 @@ public class LevelCreatorScreen extends JPanel{
 				}
 			}
 		}
-		
-		super.paintComponent(bbg);
 	}
 	
 	private void setTile(int gridX, int gridY, Tile tile) {
@@ -433,7 +436,7 @@ public class LevelCreatorScreen extends JPanel{
 		}
 		levelString += "\n";
 		//Save level picture
-		levelString += "level1-1.png\n";
+		levelString += "levelc-" + slot + ".png\n";
 		//Save default highscore
 		levelString += "None set";
 		
@@ -446,6 +449,16 @@ public class LevelCreatorScreen extends JPanel{
 			e.printStackTrace();
 		}
 		
+		//Render an image of the map and write it out
+		BufferedImage image = new BufferedImage(width * tileSize, height * tileSize, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = image.getGraphics();
+		paintMap(g, 0, 0);
+		try {
+			ImageIO.write(image, "png", new File("levels/levelc-" + slot + ".png"));
+		} catch (IOException ex) {
+//			Logger.getLogger(CustomApp.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
 		JOptionPane.showMessageDialog(null, "Saved successfully to slot " + slot);
 		
 	}

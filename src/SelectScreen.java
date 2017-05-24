@@ -236,7 +236,8 @@ public class SelectScreen extends JPanel{
 		
 		JButton newButton = new JButton();
 		
-		Image btnImage = ImageIO.read(getClass().getResourceAsStream("levels/" + imageLocation));
+		
+		Image btnImage = ImageIO.read(new File("levels/" + imageLocation));
 		newButton.setIcon(new ImageIcon(btnImage.getScaledInstance(LEVEL_BUTTON_WIDTH, LEVEL_BUTTON_HEIGHT, java.awt.Image.SCALE_SMOOTH)));
 		newButton.setToolTipText("Click to start level!");
 		newButton.setBorderPainted(false);
