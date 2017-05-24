@@ -43,14 +43,18 @@ public class SelectScreen extends JPanel{
 			GameMaster.changeScreens(new Level(levelString, 40));
 		}
 	}
-
-    private Image background;
-    private GridBagConstraints c;
     
     private static final String MOVE_UP = "move up";
     private static final String MOVE_DOWN = "move down";
     private static final String QUIT_MENU = "quit menu";
+    
+    private final int BUTTONS_PER_LINE = 3;
+    private final int LEVEL_BUTTON_WIDTH = 100;
+    private final int LEVEL_BUTTON_HEIGHT = 100;
 	
+    private Image background;
+    private GridBagConstraints c;
+    
 	public SelectScreen() {
 		// Get the image file for the background and buttons
 		try {
@@ -60,26 +64,8 @@ public class SelectScreen extends JPanel{
 			e.printStackTrace();
 		}		
 
-		// Set the layout of this JPanel
-		// We can use one of the preset layouts from
-		// JPanel's API to arrange the layout and 
-		// positions of where components appear in this
-		// JPanel. This is a better alternative opposed
-		// to manually hard coding pixel perfect coordinates
-		// where each button should appear. 
 		setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
-
-		// Add the buttons to the JPanel
-		// gridx and gridy are part of JPanel's layout
-		// API, and lets us organise the location of the buttons.
-		//c.gridx = 2;
-		//c.gridy = 1;
-		//add(play,c);
-		//c.gridy = 2;
-		//add(credits,c);
-		//c.gridy = 3;
-		//add(highScore,c);
 		
 		// Set the JPanels attributes and revalidate.
 		revalidate();
@@ -104,10 +90,29 @@ public class SelectScreen extends JPanel{
 		
 		getActionMap().put(QUIT_MENU, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				quitMenu();
+				back();
 			}
 		});
 		
+		JButton back = new JButton();
+		try {
+			back.setIcon(new ImageIcon(ImageIO.read(getClass().getResourceAsStream("back.png"))));
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		}
+		back.setToolTipText("Back button");
+		back.setBorderPainted(false);
+		back.setContentAreaFilled(false);
+		back.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent e){
+				back();
+			}
+		});
+		add(back, c);
+		
+		JPanel buttonsPanel = new JPanel();
+		buttonsPanel.setOpaque(false);
+		buttonsPanel.setLayout(new GridBagLayout());
 		
 		File levelsFolder = new File("levels");
 		File[] filesList = levelsFolder.listFiles();
@@ -116,7 +121,7 @@ public class SelectScreen extends JPanel{
 			if (file.isFile()) {
 				if (file.getName().startsWith("level1") && file.getName().endsWith(".txt")) {
 					try {
-						setUpButton(file);
+						setUpButton(file, buttonsPanel);
 					} catch (FileNotFoundException e1) {
 						e1.printStackTrace();
 					} catch (IOException e1) {
@@ -125,6 +130,9 @@ public class SelectScreen extends JPanel{
 				}
 			}
 		}
+		
+		c.gridy = 0;
+		add(buttonsPanel, c);
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -146,8 +154,12 @@ public class SelectScreen extends JPanel{
 	private void quitMenu() {
 		((JFrame) SwingUtilities.getWindowAncestor(this)).dispose();
 	}
+	
+	private void back() {
+		GameMaster.changeScreens(new MenuScreen());
+	}
 
-	private void setUpButton(File file) throws FileNotFoundException, IOException {
+	private void setUpButton(File file, JPanel panel) throws FileNotFoundException, IOException {
 		Scanner sc = new Scanner(new FileReader(file));
 		String levelString = "";
 		
@@ -173,14 +185,13 @@ public class SelectScreen extends JPanel{
 		GridBagConstraints levelPanelCon = new GridBagConstraints();
 		
 		JButton newButton = new JButton();
-		int buttonWidth = 100;
-		int buttonHeight = 100;
+		
 		Image btnImage = ImageIO.read(getClass().getResourceAsStream("levels/" + imageLocation));
-		newButton.setIcon(new ImageIcon(btnImage.getScaledInstance(buttonWidth, buttonHeight, java.awt.Image.SCALE_SMOOTH)));
+		newButton.setIcon(new ImageIcon(btnImage.getScaledInstance(LEVEL_BUTTON_WIDTH, LEVEL_BUTTON_HEIGHT, java.awt.Image.SCALE_SMOOTH)));
 		newButton.setToolTipText("Click to start level!");
 		newButton.setBorderPainted(false);
 		newButton.setContentAreaFilled(false);
-		newButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
+		newButton.setPreferredSize(new Dimension(LEVEL_BUTTON_WIDTH, LEVEL_BUTTON_HEIGHT));
 		newButton.addActionListener(new lvlBtnListener(levelString));
 		
 		JLabel highScoreLabel = new JLabel("Highscore: " + highScore);
@@ -188,7 +199,10 @@ public class SelectScreen extends JPanel{
 		btnPanel.add(newButton, levelPanelCon);
 		levelPanelCon.gridy = 1;
 		btnPanel.add(highScoreLabel, levelPanelCon);
-		add(btnPanel, c);
+		
+		c.gridy = panel.getComponents().length / BUTTONS_PER_LINE;
+		
+		panel.add(btnPanel, c);
 	}
 
 }
