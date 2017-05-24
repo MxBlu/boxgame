@@ -52,8 +52,8 @@ public class Level extends JPanel implements ActionListener {
 	private JPanel uiPanel;
 	private JLabel movesLabel;
 	private JLabel timerLabel;
-	private JButton Pause;
-	private JButton Undo;
+	private HoverButton Pause;
+	private HoverButton Undo;
 	private Image pauseButton;
 	private Image undoButton;
 	private Image pauseHover;
@@ -502,7 +502,7 @@ public class Level extends JPanel implements ActionListener {
 		
 		getImages();
 		
-		Pause = new JButton();
+		Pause = new HoverButton();
 		Pause.setIcon(new ImageIcon(pauseButton));
 		Pause.setContentAreaFilled(false);
 		Pause.setBorderPainted(false);
@@ -523,7 +523,7 @@ public class Level extends JPanel implements ActionListener {
 		});
 		//Pause.setBorder(new EmptyBorder(10, 10, 10, 10));
 		
-		Undo = new JButton();
+		Undo = new HoverButton();
 		Undo.setIcon(new ImageIcon(undoButton));
 		Undo.setContentAreaFilled(false);
 		Undo.setBorderPainted(false);
