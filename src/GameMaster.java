@@ -27,6 +27,8 @@ public class GameMaster{
     public static float adj3Chance = 0.50f;
     public static float adj4Chance = 0.60f;
     private static Image cursor;
+    private static Image hover;
+   
     private static AudioManager audio;
     private static Boolean audioPlaying;
     // JFrame which holds all of the game's
@@ -55,13 +57,12 @@ public class GameMaster{
     	
     	try {
 			cursor = ImageIO.read(GameMaster.class.getClassLoader().getResourceAsStream("pointer.png"));
-			
+			hover = ImageIO.read(GameMaster.class.getClassLoader().getResourceAsStream("hand.png"));
 
 		}
 		catch(Exception e) {
 			e.printStackTrace();
 		}	
-    	
     	
         // Initialize the settings and attributes
         // for our JFrame. This class, GameMaster
@@ -74,10 +75,7 @@ public class GameMaster{
         frame.setResizable(false);
         frame.setVisible(true);
         frame.setFocusable(true);
-        Toolkit toolkit = Toolkit.getDefaultToolkit();
-    	Point cursorHotSpot = new Point(0,0);
-        Cursor customCursor = toolkit.createCustomCursor(cursor, cursorHotSpot, "Cursor");
-        frame.setCursor(customCursor);
+        toggleCursorPointer();
         //Need to adjust the width/height so it includes the window border
         int widthWithBorder = WIDTH  + (frame.getWidth()  - frame.getContentPane().getWidth()); 
         int heightWithBorder = HEIGHT + (frame.getHeight() - frame.getContentPane().getHeight());
@@ -109,6 +107,34 @@ public class GameMaster{
     public static boolean isPlaying(){
     	return audioPlaying;
     }
+    
+    public static void toggleCursorHover(){
+    	
+    	Toolkit toolkit = Toolkit.getDefaultToolkit();
+     	Point cursorHotSpot = new Point(0,0);
+     	Cursor customCursor= null;
+     
+     	customCursor = toolkit.createCustomCursor(hover, cursorHotSpot, "Cursor");
+     		
+        frame.setCursor(customCursor);
+ 
+    	
+    }
+    
+    public static void toggleCursorPointer(){
+    	
+    	Toolkit toolkit = Toolkit.getDefaultToolkit();
+     	Point cursorHotSpot = new Point(0,0);
+     	Cursor customCursor= null;
+     	
+     	customCursor = toolkit.createCustomCursor(cursor, cursorHotSpot, "Cursor");
+   
+        frame.setCursor(customCursor);
+ 
+    	
+    }
+    
+   
     
 }
     

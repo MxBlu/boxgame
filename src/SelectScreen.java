@@ -59,6 +59,8 @@ public class SelectScreen extends JPanel{
     private JPanel levelsPanel;
     
 	public SelectScreen() {
+		GameMaster.toggleCursorPointer();
+
 		// Get the image file for the background and buttons
 		try {
 			background = ImageIO.read(getClass().getResourceAsStream("levelselectmenu.png"));
@@ -97,7 +99,7 @@ public class SelectScreen extends JPanel{
 			}
 		});
 		
-		JButton back = new JButton();
+		HoverButton back = new HoverButton();
 		try {
 			back.setIcon(new ImageIcon(ImageIO.read(getClass().getResourceAsStream("back.png"))));
 		} catch (IOException e2) {
@@ -155,7 +157,7 @@ public class SelectScreen extends JPanel{
 		
 		lvlPnlCon.gridy = 1;
 
-		JButton world1But = new JButton();
+		HoverButton world1But = new HoverButton();
 		world1But.setText("World 1");
 		world1But.setToolTipText("World 1");
 		world1But.setBorderPainted(false);
@@ -167,7 +169,7 @@ public class SelectScreen extends JPanel{
 		});
 		levelsPanel.add(world1But, lvlPnlCon);
 		
-		JButton world2But = new JButton();
+		HoverButton world2But = new HoverButton();
 		world2But.setText("World 2");
 		world2But.setToolTipText("World 2");
 		world2But.setBorderPainted(false);
@@ -179,7 +181,7 @@ public class SelectScreen extends JPanel{
 		});
 		levelsPanel.add(world2But, lvlPnlCon);
 		
-		JButton world3But = new JButton();
+		HoverButton world3But = new HoverButton();
 		world3But.setText("World 3");
 		world3But.setToolTipText("World 3");
 		world3But.setBorderPainted(false);
@@ -234,7 +236,7 @@ public class SelectScreen extends JPanel{
 		btnPanel.setLayout(new GridBagLayout());
 		GridBagConstraints levelPanelCon = new GridBagConstraints();
 		
-		JButton newButton = new JButton();
+		HoverButton newButton = new HoverButton();
 		
 		
 		Image btnImage = ImageIO.read(new File("levels/" + imageLocation));

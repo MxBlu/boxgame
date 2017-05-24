@@ -26,12 +26,12 @@ public class MenuScreen extends JPanel{
     private Image backbutton;
     private Image quitbutton;
 
-	private JButton play;
-	private JButton playPreset;
-	private JButton credits;
-	private JButton levelcreator;
-	private JButton back;
-	private JButton quit;
+	private HoverButton play;
+	private HoverButton playPreset;
+	private HoverButton credits;
+	private HoverButton levelcreator;
+	private HoverButton back;
+	private HoverButton quit;
 
 	private JPanel difficultyPanel;
 	private Boolean difficultyShow;
@@ -43,6 +43,8 @@ public class MenuScreen extends JPanel{
 	private static final Object MOVE_RIGHT = "move right";
 	
 	public MenuScreen() {
+		GameMaster.toggleCursorPointer();
+
 		//setTraversalKeys();
 		if (!GameMaster.isPlaying()){
 			GameMaster.playMusic();
@@ -68,34 +70,34 @@ public class MenuScreen extends JPanel{
 		// Initialize JButtons
 		// Give them names, dimension, and images. Also
 		// add tool tips on mouse over to assist the user.
-		play = new JButton();
+		play = new HoverButton();
 		play.setIcon(new ImageIcon(playbutton));
 		play.setBorderPainted(false);
 		play.setContentAreaFilled(false);
 		
-		playPreset = new JButton();
+		playPreset = new HoverButton();
 		playPreset.setIcon(new ImageIcon(playpreset));
 		playPreset.setBorderPainted(false);
 		playPreset.setContentAreaFilled(false);
 		
-		credits = new JButton();
+		credits = new HoverButton();
 		credits.setIcon(new ImageIcon(creditsbutton));
 		credits.setBorderPainted(false);
 		credits.setOpaque(false);
 		credits.setContentAreaFilled(false);
 
-		levelcreator = new JButton();
+		levelcreator = new HoverButton();
 		levelcreator.setIcon(new ImageIcon(levelcreatorbutton));
 		levelcreator.setBorderPainted(false);
 		levelcreator.setContentAreaFilled(false);
 		
-		back = new JButton();
+		back = new HoverButton();
 		back.setIcon(new ImageIcon(backbutton));
 		back.setToolTipText("Back button");
 		back.setBorderPainted(false);
 		back.setContentAreaFilled(false);
 		
-		quit = new JButton();
+		quit = new HoverButton();
 		quit.setIcon(new ImageIcon(quitbutton));
 		quit.setBorderPainted(false);
 		quit.setContentAreaFilled(false);

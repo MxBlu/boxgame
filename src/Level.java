@@ -52,8 +52,8 @@ public class Level extends JPanel implements ActionListener {
 	private JPanel uiPanel;
 	private JLabel movesLabel;
 	private JLabel timerLabel;
-	private JButton Pause;
-	private JButton Undo;
+	private HoverButton Pause;
+	private HoverButton Undo;
 	private Image pauseButton;
 	private Image undoButton;
 	private Image pauseHover;
@@ -87,7 +87,8 @@ public class Level extends JPanel implements ActionListener {
 	Level(int screenWidth, int screenHeight, int tileSize, int difficulty, LevelGen levelGen) {
 		// 1 pixel padding so I don't need to add edge cases to generation.
 		
-		
+		GameMaster.toggleCursorPointer();
+
 		this.width = screenWidth/tileSize + 2;
 		this.height = screenHeight/tileSize + 2;
 		this.tileSize = tileSize;
@@ -114,6 +115,8 @@ public class Level extends JPanel implements ActionListener {
 	}
 	
 	Level(String input, int tileSize) {
+		GameMaster.toggleCursorPointer();
+
 		this.tileSize = tileSize;
 		boxList = new ArrayList<Box>();
 		prevStates = new Stack<ArrayList<Entity>>();
@@ -499,7 +502,7 @@ public class Level extends JPanel implements ActionListener {
 		
 		getImages();
 		
-		Pause = new JButton();
+		Pause = new HoverButton();
 		Pause.setIcon(new ImageIcon(pauseButton));
 		Pause.setContentAreaFilled(false);
 		Pause.setBorderPainted(false);
@@ -520,7 +523,7 @@ public class Level extends JPanel implements ActionListener {
 		});
 		//Pause.setBorder(new EmptyBorder(10, 10, 10, 10));
 		
-		Undo = new JButton();
+		Undo = new HoverButton();
 		Undo.setIcon(new ImageIcon(undoButton));
 		Undo.setContentAreaFilled(false);
 		Undo.setBorderPainted(false);
