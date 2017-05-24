@@ -1,3 +1,5 @@
+import java.awt.Image;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -12,6 +14,7 @@ import sun.awt.windows.WPrinterJob;
 public class LevelGenBlock implements LevelGen {
 
 	LevelGenPattern patterns[];
+	List<Box> boxList;
 	
 	public LevelGenBlock() {
 		patterns = new LevelGenPattern[17];
@@ -119,7 +122,7 @@ public class LevelGenBlock implements LevelGen {
 	}
 	
 	@Override
-	public Tile[][] generate(int height, int width, int level) {
+	public Tile[][] generate(int height, int width, int level, int tileSize, Image tileImgs[]) {
 		if (height % 3 != 2 || width % 3 != 2)
 			System.out.println("Generated map size not ideal");
 		

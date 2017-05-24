@@ -12,6 +12,7 @@ public class State {
 	private int boxNum;
 	private int pullDir;
 	private int numBoxLines;
+	private double minPathLength;
 	
 	public State (int x, int y, List<Box> boxList, Tile[][] levelMap, int height, int width, State prevState,
 					int currPullDir, int currBoxNum) {
@@ -22,17 +23,19 @@ public class State {
 		if (prevState == null) {
 			this.boxNum = -1;
 			this.pullDir = -1;
-			this.numBoxLines = 1;
+			this.numBoxLines = 2;
+			this.minPathLength = 0;
 		} else {
 			if (prevState.boxNum != -1) {
-				//System.out.println("Prev box lines " + prevState.numBoxLines);
 				this.numBoxLines = prevState.getNumBoxLines();
 				if (!(prevState.boxNum == currBoxNum && prevState.pullDir == currPullDir)) {
 					(this.numBoxLines)++;
-					//System.out.println("Incremented box lines " + this.numBoxLines);
-					//System.out.println("Prev box lines " + prevState.numBoxLines);
 				}
 			}
+			
+			this.minPathLength = prevState.minPathLength + 
+									Math.sqrt(Math.pow(this.playerX - prevState.playerX, 2) +
+												Math.pow(this.playerY - prevState.playerY, 2));
 			this.boxNum = currBoxNum;
 			this.pullDir = currPullDir;
 		}
@@ -55,6 +58,10 @@ public class State {
 	
 	public int getNumBoxLines() {
 		return numBoxLines;
+	}
+	
+	public double getMinPathLength() {
+		return this.minPathLength;
 	}
 	
 	public int getPlayerX() {
@@ -141,7 +148,8 @@ public class State {
 			newStates[3] = new IntPair(curr.i, curr.j + 1);
 			
 			for (int i = 0; i < 4; i++) {
-				if (closed.contains(newStates[i]) || open.contains(newStates[i]) || intMap[newStates[i].i][newStates[i].j] != 0)
+				if (closed.contains(newStates[i]) || open.contains(newStates[i]) ||
+						intMap[newStates[i].i][newStates[i].j] != 0)
 					continue;
 				
 				open.add(newStates[i]);
@@ -160,24 +168,7 @@ public class State {
 		}
 		return false;
 	}
-	
-	@Override
-	public boolean equals(Object o) {
-		if (o instanceof State) {
-			State other = (State) o;
-			if (!(this.playerSpaces.size() == other.getPlayerSpaces().size()))
-				return false;
-			for (int i = 0; i < boxList.size(); i++) {
-				if (!(this.boxList.get(i).getTileX() == other.getBoxList().get(i).getTileX() &&
-						this.boxList.get(i).getTileY() == other.getBoxList().get(i).getTileY())){
-					return false;
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-	
+
 	public State copy() {
 		List<Box> copyBoxList = new ArrayList<Box>();
 		for (int i = 0; i < boxList.size(); i++) {
@@ -194,5 +185,22 @@ public class State {
 		
 		return new State(this.playerX, this.playerY, copyBoxList, copyPlayerSpaces,
 				this.boxNum, this.pullDir, this.numBoxLines);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof State) {
+			State other = (State) o;
+			if (!(this.playerSpaces.size() == other.getPlayerSpaces().size()))
+				return false;
+			for (int i = 0; i < boxList.size(); i++) {
+				if (!(this.boxList.get(i).getTileX() == other.getBoxList().get(i).getTileX() &&
+						this.boxList.get(i).getTileY() == other.getBoxList().get(i).getTileY())){
+					return false;
+				}
+			}
+			return true;
+		}
+		return false;
 	}
 }

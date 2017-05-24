@@ -20,10 +20,10 @@ public class Level implements GameState {
 	private int width; // Width of the level
 	private int height; // Height of the level
 	private int tileSize;
-	private List<List<Integer>> playerSpaces;
 	
 	private Image tileImgs[];
 	private Player player;
+	private FurthestStateGen furthestState;
 	
 	/**
 	 * Creates a new level.
@@ -41,21 +41,19 @@ public class Level implements GameState {
 		setDefaultTiles();
 		boxList = new ArrayList<Box>();
 
-		levelMap = levelGen.generate(height, width, StateManager.getLevel());
+		levelMap = levelGen.generate(height, width, StateManager.getLevel(), tileSize, tileImgs);
+		this.furthestState = new FurthestStateGen(width, height, tileSize, StateManager.getLevel(),
+													levelMap, tileImgs);
 		
-		/*
-		for (int i = 0; i < StateManager.getLevel(); i++)
-			placeBox();
-		*/
-		while(!(makeFarthestState(StateManager.getLevel()))) {
-			levelMap = levelGen.generate(height, width, StateManager.getLevel());
-			this.playerSpaces = null;
-			this.boxList = new ArrayList<Box>();
+		while(furthestState.getPlayerSpaces() == null) {
 			System.out.println("RESTART");
+			levelMap = levelGen.generate(height, width, StateManager.getLevel(), tileSize, tileImgs);
+			furthestState = new FurthestStateGen(width, height, tileSize, StateManager.getLevel(),
+													levelMap, tileImgs);
 		}
 		
-		
-		makePlayer();
+		boxList = furthestState.getBoxList();
+		makePlayer(furthestState.getPlayerSpaces());
 		
 	}
 	
@@ -83,7 +81,7 @@ public class Level implements GameState {
 		
 		setDefaultTiles();
 		
-		makePlayer();
+		makePlayer(furthestState.getPlayerSpaces());
 		
 	}
 	
@@ -134,259 +132,7 @@ public class Level implements GameState {
 		return tileSize;
 	}
 	
-	/*
-	private void placeBox() {
-		Random r = new Random();
-		
-		while (true) {
-			int x = r.nextInt(width);
-			int y = r.nextInt(height);
-			
-			if (levelMap[y][x] == Tile.WALL || levelMap[y][x] == Tile.GOAL ||
-					checkBoxList(x, y) == true) {
-				continue;
-			}
-			if (	(levelMap[y + 1][x] == Tile.WALL && levelMap[y][x + 1] == Tile.WALL) ||
-					(levelMap[y][x + 1] == Tile.WALL && levelMap[y - 1][x] == Tile.WALL) ||
-					(levelMap[y - 1][x] == Tile.WALL && levelMap[y][x - 1] == Tile.WALL) ||
-					(levelMap[y][x - 1] == Tile.WALL && levelMap[y + 1][x] == Tile.WALL))
-				continue;
-			
-			boxList.add(new Box(x, y, tileImgs[2], tileSize, width, height));
-			break;
-		}
-	}
-	*/
-	
-	private boolean makeFarthestState(int level) {
-		// places boxes on the goals
-		List<List<Integer>> boxGoals = new ArrayList<List<Integer>>();
-		for (int x = 0; x < width; x++) {
-			for (int y = 0 ; y < height; y++) {
-				if (levelMap[y][x] == Tile.GOAL)
-					boxList.add(new Box(x, y, tileImgs[2], tileSize, width, height));
-					List<Integer> boxGoal = new ArrayList<Integer>();
-					boxGoal.add(x);
-					boxGoal.add(y);
-					boxGoals.add(boxGoal);
-				if (boxList.size() == level) break;
-			}
-			if (boxList.size() == level) break;
-		}
-		
-		// place the player on a walkable tile, where it can access
-		Random r = new Random();
-		int x, y;
-		x = y = 0;
-		
-		while (true) {
-			x = r.nextInt(width);
-			y = r.nextInt(height);
-			
-			if (levelMap[y][x] == Tile.WALL || checkBoxList(x, y, this.boxList))
-				continue;
-			break;
-		}
-		
-		State startState = new State(x, y, new ArrayList<Box>(boxList), levelMap, height, width, null, -1, -1);
-		List<State> startList = new ArrayList<State>();
-		startList.add(startState);
-		List<State> resultList = new ArrayList<State>(startList);
-		List<State> prevList = null;
-		List<State> prevTempList = null;
-		List<State> tempList = new ArrayList<State>();
-		
-		Integer depthLimit[] = {100, 25, 17, 12, 10, 8};
-		
-		int depth = 1;
-		
-		while (depth < depthLimit[level] && resultList.size() < 4000) {
-			if (prevTempList == null) {
-				prevTempList = new ArrayList<State>(startList);
-				tempList = prevTempList;
-			}
-			for (int k = 0; k < prevTempList.size(); k++) {
-				if (!(tempList.contains(prevTempList.get(k)))) {
-					tempList.add(prevTempList.get(k).copy());
-				}
-			}
-			prevList = new ArrayList<State>();
-			for (int i = 0; i < resultList.size(); i++) {
-				prevList.add(resultList.get(i).copy());
-			}
-			resultList = deepen(resultList, tempList, depth, boxGoals);
-			if (resultList.size() == 0) break;
-			prevTempList = expand(prevTempList, boxGoals);
-			depth++;
-			System.out.println("depth " + depth);
-		}
-		
-		boolean flag = false;
-		int randState = 0;
-		int k = 0;
-		List<Integer> possibleStates = new ArrayList<Integer>();
-		for (int i = 0; i < 30 && k < 100; i++) {
-			System.out.println("forever");
-			flag = true;
-			randState = r.nextInt(prevList.size());
-			List<Box> tempBoxList = new ArrayList<Box>(prevList.get(randState).getBoxList());
-			for (int l = 0; l < boxList.size(); l++) {
-				if (levelMap[tempBoxList.get(l).getTileY()][tempBoxList.get(l).getTileX()] == Tile.GOAL) {
-					flag = false;
-				}
-			}
-			if (flag) {
-				System.out.println(prevList.get(randState).getNumBoxLines());
-				possibleStates.add(randState);
-			} else {
-				i--;
-			}
-			k++;
-		}
-		
-		
-		if (possibleStates.size() == 0) {
-			/*
-			this.boxList = new ArrayList<Box>(prevList.get(randState).getBoxList());
-			this.playerSpaces = prevList.get(randState).getPlayerSpaces();
-			System.out.print("ErrorBoxList");
-			return;
-			*/
-			return false;
-		}
-		
-		
-		int pos = 0;
-		int currMaxBoxLines = -1;
-		for (int j = 0; j < possibleStates.size(); j++) {
-			//System.out.println(prevList.get(possibleStates.get(j)).getNumBoxLines());
-			if (currMaxBoxLines == -1) {
-				this.boxList = new ArrayList<Box>(prevList.get(possibleStates.get(j)).getBoxList());
-				currMaxBoxLines = prevList.get(possibleStates.get(j)).getNumBoxLines();
-			} else {
-				if (currMaxBoxLines < prevList.get(possibleStates.get(j)).getNumBoxLines()) {
-					this.boxList = new ArrayList<Box>(prevList.get(possibleStates.get(j)).getBoxList());
-					currMaxBoxLines = prevList.get(possibleStates.get(j)).getNumBoxLines();
-					pos = j;
-				}
-			}
-		}
-		//if (i == 30) {
-		//	System.out.println("Error");
-		//}
-		
-		System.out.println("currMaxBoxLines " + currMaxBoxLines);
-		this.playerSpaces = prevList.get(possibleStates.get(pos)).getPlayerSpaces();
-		return true;
-		
-	}
-	
-	private List<State> deepen (List<State> prevResults, List<State> tempList, int depth, List<List<Integer>> boxGoals) {
-		System.out.println(prevResults.size());
-		List<State> resultList = expand(prevResults, boxGoals);
-		//List<State> tempList = new ArrayList<State>();
-		System.out.println("resultListSize " + resultList.size());
-		resultList.removeAll(tempList);
-			System.out.println("tempListSize " + tempList.size());
-			System.out.println("resultListSize " + resultList.size());
-		
-		return resultList;
-	}
-	
-	private List<State> expand(List<State> states, List<List<Integer>> boxGoals) {
-		Integer[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
-		
-		List<State> newStates = new ArrayList<State>();
-		
-		for (ListIterator<State> it = states.listIterator(); it.hasNext();) {
-			State curr = it.next();
-			List<Box> stateBoxList = curr.getBoxList();
-			
-			for (int boxNum = 0; boxNum < boxList.size(); boxNum++) {
-				//System.out.println(stateBoxList.get(boxNum));
-				if (canReachBox(curr, stateBoxList.get(boxNum))) {
-					//System.out.println("Can reach box");
-					for (int i = 0; i < 4; i++) {
-						Box box = stateBoxList.get(boxNum);
-						if (!(checkBoxList(box.getTileX() + directions[i][0], box.getTileY() + directions [i][1], stateBoxList)) &&
-								!((boxGoals.get(boxNum).get(0) == (box.getTileX() + directions[i][0])) && 
-								(boxGoals.get(boxNum).get(1) == (box.getTileY() + directions[i][1])))) {
-							box.setTilePos(box.getTileX() + directions[i][0], box.getTileY() + directions[i][1]);
-							int newPlayerX = box.getTileX() + directions[i][0];
-							int newPlayerY = box.getTileY() + directions[i][1];
-							boolean flag = true;
-							//System.out.println(box.getTileX()  + " " + box.getTileY());
-							//System.out.println(stateBoxList.get(boxNum).getTileX() + " " + stateBoxList.get(boxNum).getTileY());
-							if (!canReachBox(curr, box)) 
-								flag = false;
-							//if player is on a box or on a wall
-							// if box is on a wall or another box
-							//System.out.println("1" + flag);
-							if (levelMap[newPlayerY][newPlayerX] == Tile.WALL ||
-									checkBoxList(newPlayerX, newPlayerY, stateBoxList) ||
-									levelMap[box.getTileY()][box.getTileX()] == Tile.WALL) {
-									flag = false;
-							}
-							
-							//System.out.println("2" + flag);
-							if (flag) {
-								//System.out.print("ENTERED flag");
-								List<Box> copyBoxList = new ArrayList<Box>();
-								for (int j = 0; j < stateBoxList.size(); j++) {
-									copyBoxList.add(stateBoxList.get(j).copy());
-								}
-								State newState = new State(newPlayerX, newPlayerY, copyBoxList,
-															levelMap, height, width, curr, i, boxNum);
-								if (!(newStates.contains(newState))) {
-									//System.out.println("Did add");
-									newStates.add(newState);
-									//System.out.println("newState numBoxLines " + newState.getNumBoxLines());
-								}
-							}
-							
-							box.setTilePos(box.getTileX() - directions[i][0], box.getTileY() - directions[i][1]);
-						}
-					}
-				}
-			}
-		}
-		
-		return newStates;
-	}
-	
-	private boolean canReachBox (State state, Box box) {
-		Integer[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
-		boolean flag = false;
-		
-		for (int i = 0; i < 4 ; i++) {
-			box.setTilePos(box.getTileX() + directions[i][0], box.getTileY() + directions[i][1]);
-			if (state.accessCoords(box.getTileX(), box.getTileY())) flag = true;
-			box.setTilePos(box.getTileX() - directions[i][0], box.getTileY() - directions[i][1]);
-			if (flag) break;
-		}
-		return flag;
-	}
-	
-	private void makePlayer() {
-		/*
-		int x = width/2;
-		int y = height/2;
-		
-		if (levelMap[y][x] == Tile.WALL || checkBoxList(x, y, this.boxList) == true) {
-			Random r = new Random();
-				
-			while (true) {
-				x = r.nextInt(width);
-				y = r.nextInt(height);
-				
-				if (levelMap[y][x] == Tile.WALL || checkBoxList(x, y, this.boxList) == true)
-					continue;
-
-				break;
-			}
-		}
-		*/
-		
+	private void makePlayer(List<List<Integer>> playerSpaces) {	
 		try {
 			Random r = new Random();
 			List<Integer> playerSpace = playerSpaces.get(r.nextInt(playerSpaces.size()));
@@ -395,19 +141,6 @@ public class Level implements GameState {
 			e.printStackTrace();
 		}
 
-	}
-	
-	// someone should probably change this, since it already has something similar
-	// in class Player... :v
-	private boolean checkBoxList(int x, int y, List<Box> boxList1) {
-		for (int i = 0; i < boxList1.size(); i++) {
-			Box box = boxList1.get(i);
-			if (box.getTileX() == x && box.getTileY() == y) {
-				return true;
-			}
-		}
-		//System.out.println("false");
-		return false;
 	}
 	
 	private void undo() {
