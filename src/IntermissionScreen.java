@@ -21,8 +21,8 @@ public class IntermissionScreen extends JPanel {
     private String time;
     private String movesString;
 
-	private JButton menu;
-	private JButton next;
+	private HoverButton menu;
+	private HoverButton next;
 	
 	
 	public IntermissionScreen(String d, int moves, int difficulty){
@@ -36,7 +36,8 @@ public class IntermissionScreen extends JPanel {
 	}
 	
 	private void init(int difficulty) {
-		
+		GameMaster.toggleCursorPointer();
+
 		// Get the image file for the background
 		try {
 			background = ImageIO.read(getClass().getResourceAsStream("intermission.png"));
@@ -50,13 +51,13 @@ public class IntermissionScreen extends JPanel {
 		
 		// Initialize JButtons
 		// Give them names, dimension, and images.
-		menu = new JButton();
+		menu = new HoverButton();
 		menu.setIcon(new ImageIcon(menuButton));
 		menu.setToolTipText("Click this to return to the menu");
 		menu.setBorderPainted(false);
 		menu.setContentAreaFilled(false);
 		
-		next = new JButton();
+		next = new HoverButton();
 		next.setIcon(new ImageIcon(nextButton));
 		next.setToolTipText("Click this to play another level!");
 		next.setBorderPainted(false);

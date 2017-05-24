@@ -22,12 +22,13 @@ public class PauseScreen extends JPanel{
 	private Image menuButton;
 	private Image resumeButton;
 
-	private JButton Menu;
-	private JButton Resume;
+	private HoverButton Menu;
+	private HoverButton Resume;
 
 	
 	public PauseScreen() {
-		
+		GameMaster.toggleCursorPointer();
+
 		try{
 			Background = ImageIO.read(getClass().getResourceAsStream("pausescreen.png"));
 			menuButton = ImageIO.read(getClass().getResourceAsStream("returntomenu.png"));
@@ -40,12 +41,12 @@ public class PauseScreen extends JPanel{
 		setBackground(Color.black);
 		setOpaque(false);
 
-		Menu = new JButton();
+		Menu = new HoverButton();
 		Menu.setIcon(new ImageIcon(menuButton));
 		Menu.setBorderPainted(false);
 		Menu.setContentAreaFilled(false);
 		
-		Resume = new JButton();
+		Resume = new HoverButton();
 		Resume.setIcon(new ImageIcon(resumeButton));
 		Resume.setBorderPainted(false);
 		Resume.setContentAreaFilled(false);

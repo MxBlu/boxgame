@@ -87,7 +87,8 @@ public class Level extends JPanel implements ActionListener {
 	Level(int screenWidth, int screenHeight, int tileSize, int difficulty, LevelGen levelGen) {
 		// 1 pixel padding so I don't need to add edge cases to generation.
 		
-		
+		GameMaster.toggleCursorPointer();
+
 		this.width = screenWidth/tileSize + 2;
 		this.height = screenHeight/tileSize + 2;
 		this.tileSize = tileSize;
@@ -114,6 +115,8 @@ public class Level extends JPanel implements ActionListener {
 	}
 	
 	Level(String input, int tileSize) {
+		GameMaster.toggleCursorPointer();
+
 		this.tileSize = tileSize;
 		boxList = new ArrayList<Box>();
 		prevStates = new Stack<ArrayList<Entity>>();

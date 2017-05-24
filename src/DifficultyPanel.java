@@ -20,12 +20,12 @@ public class DifficultyPanel extends JPanel{
     private Image medium;
     private Image hard;
     
-	private JButton Easy;
-	private JButton Medium;
-	private JButton Hard;
+	private HoverButton Easy;
+	private HoverButton Medium;
+	private HoverButton Hard;
 	
 	public DifficultyPanel() {
-		
+		GameMaster.toggleCursorPointer();
 		// Get the image file for the background and buttons
 		try {
 			background = ImageIO.read(getClass().getResourceAsStream("difficultySelect.png"));
@@ -41,17 +41,17 @@ public class DifficultyPanel extends JPanel{
 		setBackground(Color.black);
 		setOpaque(false);
 		
-		Easy = new JButton();
+		Easy = new HoverButton();
 		Easy.setIcon(new ImageIcon(easy));
 		Easy.setBorderPainted(false);
 		Easy.setContentAreaFilled(false);
 		
-		Medium = new JButton();
+		Medium = new HoverButton();
 		Medium.setIcon(new ImageIcon(medium));
 		Medium.setBorderPainted(false);
 		Medium.setContentAreaFilled(false);
 		
-		Hard = new JButton();
+		Hard = new HoverButton();
 		Hard.setIcon(new ImageIcon(hard));
 		Hard.setBorderPainted(false);
 		Hard.setContentAreaFilled(false);
