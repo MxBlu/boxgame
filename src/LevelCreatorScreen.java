@@ -15,9 +15,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -275,14 +278,14 @@ public class LevelCreatorScreen extends JPanel{
 		uiPanel.revalidate();
 		
 		for (int i = 0; i < 6; i++) {
-			JButton tileButton = new JButton("Slot " + i);
+			JButton tileButton = new JButton("Slot " + (i+1));
 			//tileButton.setIcon(new ImageIcon(tileImgs[1]));
 			//tileButton.setPreferredSize(new Dimension(tileImgs[1].getWidth(null), tileImgs[1].getHeight(null)));
 //			tileButton.setIcon(new ImageIcon(tileImgs[i]));
 	//		tileButton.setPreferredSize(new Dimension(tileImgs[i].getWidth(null), tileImgs[i].getHeight(null)));
 			//tileButton.setBorderPainted(false);
 		//	tileButton.addActionListener(new tileBtnListener(Tile.getTile(i)));
-			tileButton.addActionListener(new loadSlotListener(i));
+			tileButton.addActionListener(new loadSlotListener(i+1));
 			uiPanel.add(tileButton);
 		}
 		
@@ -304,14 +307,14 @@ public class LevelCreatorScreen extends JPanel{
 		uiPanel.revalidate();
 		
 		for (int i = 0; i < 6; i++) {
-			JButton tileButton = new JButton("Slot " + i);
+			JButton tileButton = new JButton("Slot " + (i+1));
 			//tileButton.setIcon(new ImageIcon(tileImgs[1]));
 			//tileButton.setPreferredSize(new Dimension(tileImgs[1].getWidth(null), tileImgs[1].getHeight(null)));
 //			tileButton.setIcon(new ImageIcon(tileImgs[i]));
 	//		tileButton.setPreferredSize(new Dimension(tileImgs[i].getWidth(null), tileImgs[i].getHeight(null)));
 			//tileButton.setBorderPainted(false);
 		//	tileButton.addActionListener(new tileBtnListener(Tile.getTile(i)));
-			tileButton.addActionListener(new saveSlotListener(i));
+			tileButton.addActionListener(new saveSlotListener(i+1));
 			uiPanel.add(tileButton);
 		}
 		
@@ -356,6 +359,42 @@ public class LevelCreatorScreen extends JPanel{
 	}
 	
 	private void loadLevel(int slot) {
+		setUpTilesPanel();
+		
+		try {
+			Scanner sc = new Scanner(new FileReader(new File("levels/levelc-" + slot + ".txt")));
+			String levelString = "";
+			
+			width = 0;
+			height = 0;
+			
+			while (sc.hasNextLine()) {
+				String lineString = sc.nextLine();
+				Scanner lsScanner = new Scanner(lineString);
+				if (!lsScanner.hasNext()) {
+					break;
+				}
+
+				width = lineString.length();
+				levelString += lineString + "\n";
+				height++;
+
+			}
+			
+			levelMap = new Tile[width][height];
+			
+			for (int j = 0; j < height; j++) {
+				for (int i = 0; i < width; i++) {
+					levelMap[i][j] =  Tile.getTile(levelString.charAt(i+ (j*width) + j) - '0');
+				}
+			}
+			
+			repaint();
+			
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "File not found");
+			e.printStackTrace();
+		}
 		
 	}
 	
