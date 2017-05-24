@@ -1,10 +1,14 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -16,7 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-public class MenuScreen extends JPanel{
+public class LevelCreatorScreen extends JPanel{
 
     private Image background;
     private Image playbutton;
@@ -32,7 +36,13 @@ public class MenuScreen extends JPanel{
 	private JButton highScore;
 	private JButton back;
 	private JButton quit;
-
+	
+	private Tile levelMap[][];
+	private Image tileImgs[];
+	private int width = 17;
+	private int height = 17;
+	private int tileSize = 40;
+	private Tile curPlaceTile = Tile.WALKABLE;
 	
 	private JPanel difficultyPanel;
 	private Boolean difficultyShow;
@@ -43,8 +53,21 @@ public class MenuScreen extends JPanel{
 	private static final Object MOVE_LEFT = "move left";
 	private static final Object MOVE_RIGHT = "move right";
 	
-	public MenuScreen() {
+	public LevelCreatorScreen() {
 		//setTraversalKeys();
+		
+		levelMap = new Tile[width][height];
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				levelMap[i][j] = Tile.WALL;
+			}
+		}
+		
+		levelMap[4][5] = Tile.WALKABLE;
+		levelMap[4][8] = Tile.WALKABLE;
+		
+		//levelMap[20][20] = Tile.WALL;
+		setDefaultTiles();
 		
 		// Get the image file for the background and buttons
 		try {
@@ -140,8 +163,50 @@ public class MenuScreen extends JPanel{
 				quitMenu();
 			}
 		});
+		
+		addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				//Convert click coords to grid coords
+				int xCord = e.getX() - (GameMaster.WIDTH / 2);
+				int yCord = e.getY() - (GameMaster.HEIGHT / 2);
+				xCord += (tileSize * width) / 2;
+				yCord += (tileSize * width) / 2;
+				xCord /= tileSize;
+				yCord /= tileSize;
+				
+				if (xCord < width && yCord < height && xCord >= 0 && yCord >= 0) {
+					levelMap[xCord][yCord] = curPlaceTile;
+				}
+				repaint();
+			}
+		});
 	
-		setButtonLayout();
+		//setButtonLayout();
 		
 		// Set the JPanels attributes and revalidate.
 		revalidate();
@@ -197,14 +262,50 @@ public class MenuScreen extends JPanel{
 		});
 	}
 	
+	private void setDefaultTiles() {
+		tileImgs = new Image[4];
+		
+		try {
+			tileImgs[0] = ImageIO.read(getClass().getResourceAsStream("ground_solid.png")).getScaledInstance(tileSize,
+					tileSize, Image.SCALE_DEFAULT);
+			tileImgs[1] = ImageIO.read(getClass().getResourceAsStream("ground_empty.png")).getScaledInstance(tileSize,
+					tileSize, Image.SCALE_DEFAULT);
+			//todo remove [2]
+			tileImgs[2] = ImageIO.read(getClass().getResourceAsStream("box.png")).getScaledInstance(tileSize,
+					tileSize, Image.SCALE_DEFAULT);
+			tileImgs[3] = ImageIO.read(getClass().getResourceAsStream("goal.png")).getScaledInstance(tileSize,
+					tileSize, Image.SCALE_DEFAULT);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 	public void paintComponent(Graphics g) {
-		// Access the JPanel super class's
-		// function for painting.
-		super.paintComponent(g);
-
-	    // Draw the background for this JPanel
-	    g.setColor(Color.BLACK);
-        g.drawImage(background, 0, 0, null);
+		Graphics2D bbg = (Graphics2D) g;
+		
+		int tileSize = 40;
+		
+		int left = (int) ((double) GameMaster.WIDTH/2 - (double) (width * tileSize)/2);
+		int top = (int) ((double) GameMaster.HEIGHT/2 - (double) (height * tileSize)/2);
+		
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) { 
+				if (tileImgs[levelMap[i][j].getIntRep()] != null) {
+					bbg.drawImage(tileImgs[levelMap[j][i].getIntRep()], left + j * tileSize, top + i * tileSize, null);
+				} else {
+					bbg.setColor(new Color(levelMap[j][i].getIntRep() * 127));
+					bbg.fillRect(left + j * tileSize, top + i * tileSize, tileSize, tileSize);
+				}
+			}
+		}
+		
+		//for (Box box : boxList) {
+		//	box.draw(bbg);
+		//}
+		
+		//player.paintComponent(bbg);
+		//super.paintComponent(bbg);
 	}
 	
 	private void handleDown() {
@@ -257,10 +358,10 @@ public class MenuScreen extends JPanel{
 		c.gridy = 3;
 		add(credits,c);
 		c.gridy = 4;
-		add(highScore,c);
+		//add(highScore,c);
 		c.gridx = 3;
 		c.gridy = 4;
-		add(quit,c);
+		//add(quit,c);
 	}
 	
 	public void toggleDifficulty() {
