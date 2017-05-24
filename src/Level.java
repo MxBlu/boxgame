@@ -24,6 +24,7 @@ import java.util.Stack;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -53,7 +54,11 @@ public class Level extends JPanel implements ActionListener {
 	private JLabel timerLabel;
 	private JButton Pause;
 	private JButton Undo;
-
+	private Image pauseButton;
+	private Image undoButton;
+	private Image pauseHover;
+	private Image undoHover;
+	
 	private JPanel pausePanel;
 	private JPanel uiButtonsPanel;
 	private long startTime;
@@ -81,6 +86,8 @@ public class Level extends JPanel implements ActionListener {
 	 */
 	Level(int screenWidth, int screenHeight, int tileSize, int difficulty, LevelGen levelGen) {
 		// 1 pixel padding so I don't need to add edge cases to generation.
+		
+		
 		this.width = screenWidth/tileSize + 2;
 		this.height = screenHeight/tileSize + 2;
 		this.tileSize = tileSize;
@@ -189,6 +196,19 @@ public class Level extends JPanel implements ActionListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	private void getImages(){
+		try {
+			
+			pauseButton = ImageIO.read(getClass().getResourceAsStream("pause.png"));
+			undoButton = ImageIO.read(getClass().getResourceAsStream("undo.png"));
+			pauseHover = ImageIO.read(getClass().getResourceAsStream("pause2.png"));
+			undoHover = ImageIO.read(getClass().getResourceAsStream("undo2.png"));
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}	
+		
 	}
 	
 	public void setTile(Tile t, Image tileImage) {
@@ -476,7 +496,23 @@ public class Level extends JPanel implements ActionListener {
 		uiPanel.setBounds(new Rectangle(new Point(0, (int) (GameMaster.HEIGHT - uiPanel.getPreferredSize().getHeight())), uiPanel.getPreferredSize()));
 		uiPanel.setBackground(new Color(58, 58, 58));
 		
-		Pause = new JButton("Pause");
+		
+		getImages();
+		
+		Pause = new JButton();
+		Pause.setIcon(new ImageIcon(pauseButton));
+		Pause.setContentAreaFilled(false);
+		Pause.setBorderPainted(false);
+		Pause.addMouseListener(new java.awt.event.MouseAdapter() {
+			  
+		    public void mouseEntered(java.awt.event.MouseEvent evt) {
+		    	Pause.setIcon(new ImageIcon(pauseHover));
+		    }
+		    public void mouseExited(java.awt.event.MouseEvent evt) {
+		    	Pause.setIcon(new ImageIcon(pauseButton));
+		    }
+		});
+		
 		Pause.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				togglePaused();			
@@ -484,17 +520,32 @@ public class Level extends JPanel implements ActionListener {
 		});
 		//Pause.setBorder(new EmptyBorder(10, 10, 10, 10));
 		
-		Undo = new JButton("Undo");
+		Undo = new JButton();
+		Undo.setIcon(new ImageIcon(undoButton));
+		Undo.setContentAreaFilled(false);
+		Undo.setBorderPainted(false);
+		
+		Undo.addMouseListener(new java.awt.event.MouseAdapter() {
+		  
+		    public void mouseEntered(java.awt.event.MouseEvent evt) {
+		    	Undo.setIcon(new ImageIcon(undoHover));
+		    }
+		    public void mouseExited(java.awt.event.MouseEvent evt) {
+		    	Undo.setIcon(new ImageIcon(undoButton));
+		    }
+		});
+		
 		Undo.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				if (!player.isAnimating() && !isPaused)
 					undo();
 			}
 		});
+		
 		//Undo.setBorder(new EmptyBorder(10, 10, 10, 10));
 		uiButtonsPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
-		c.insets = new Insets(10,10,10,10);
+		c.insets = new Insets(5,5,5,5);
 		c.gridy = 1;
 		uiButtonsPanel.add(Pause, c);
 		c.gridx = 2 ;
