@@ -15,7 +15,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -24,6 +26,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
@@ -42,6 +45,32 @@ public class LevelCreatorScreen extends JPanel{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			curPlaceTile = tile;
+		}
+	}
+	
+	class loadSlotListener implements ActionListener {
+		private int slot;
+		
+		public loadSlotListener(int slot) {
+			this.slot = slot;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			loadLevel(slot);
+		}
+	}
+	
+	class saveSlotListener implements ActionListener {
+		private int slot;
+		
+		public saveSlotListener(int slot) {
+			this.slot = slot;
+		}
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			saveLevel(slot);
 		}
 	}
 	
@@ -198,63 +227,171 @@ public class LevelCreatorScreen extends JPanel{
 		setOpaque(false);
 		setLayout(null);
 
-		/*movesLabel = new JLabel("Moves: " + moves);
-		Font font = new Font("Arial", Font.PLAIN, 35);
-		movesLabel.setFont(font);
-		movesLabel.setForeground(Color.WHITE);
-		movesLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
-		
-		timerLabel = new JLabel("Time: 0:00:000");
-		timerLabel.setFont(font);
-		timerLabel.setForeground(Color.WHITE);
-		timerLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));*/
-		
 		uiPanel = new JPanel(new GridBagLayout());
 		uiPanel.setPreferredSize(new Dimension(GameMaster.WIDTH, 80));
 		uiPanel.setBounds(new Rectangle(new Point(0, (int) (GameMaster.HEIGHT - uiPanel.getPreferredSize().getHeight())), uiPanel.getPreferredSize()));
 		uiPanel.setBackground(new Color(58, 58, 58));
 		
-		/*Pause = new JButton("Pause");
-		Pause.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent e){
-				togglePaused();			
-				}
-		});
-		//Pause.setBorder(new EmptyBorder(10, 10, 10, 10));
+		setUpTilesPanel();
 		
-		Undo = new JButton("Undo");
-		Undo.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent e){
-				if (!player.isAnimating() && !isPaused)
-					undo();
-			}
-		});
-		//Undo.setBorder(new EmptyBorder(10, 10, 10, 10));
-		uiButtonsPanel = new JPanel(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.insets = new Insets(10,10,10,10);
-		c.gridy = 1;
-		uiButtonsPanel.add(Pause, c);
-		c.gridx = 2 ;
-		uiButtonsPanel.add(Undo, c);
-		uiButtonsPanel.setOpaque(false);
-		uiButtonsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		
+		add(uiPanel);
+	}
 	
-		uiPanel.add(movesLabel, BorderLayout.WEST);
-		uiPanel.add(timerLabel);
-		uiPanel.add(uiButtonsPanel, BorderLayout.EAST);*/
+	private void setUpTilesPanel() {
+		uiPanel.removeAll();
+		uiPanel.revalidate();
 		
 		for (int i = 0; i < Tile.values().length; i++) {
 			JButton tileButton = new JButton();
 			tileButton.setIcon(new ImageIcon(tileImgs[i]));
 			tileButton.setPreferredSize(new Dimension(tileImgs[i].getWidth(null), tileImgs[i].getHeight(null)));
-			tileButton.setBorderPainted(false);
+			//tileButton.setBorderPainted(false);
 			tileButton.addActionListener(new tileBtnListener(Tile.getTile(i)));
 			uiPanel.add(tileButton);
 		}
 		
-		add(uiPanel);
+		JButton loadButton = new JButton("Load");
+		loadButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setUpLoadPanel();
+			}
+		});
+		uiPanel.add(loadButton);
+		
+		JButton saveButton = new JButton("Save");
+		saveButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setUpSavePanel();
+			}
+		});
+		uiPanel.add(saveButton);
+		repaint();
+	}
+	
+	private void setUpLoadPanel() {
+		uiPanel.removeAll();
+		uiPanel.revalidate();
+		
+		for (int i = 0; i < 6; i++) {
+			JButton tileButton = new JButton("Slot " + i);
+			//tileButton.setIcon(new ImageIcon(tileImgs[1]));
+			//tileButton.setPreferredSize(new Dimension(tileImgs[1].getWidth(null), tileImgs[1].getHeight(null)));
+//			tileButton.setIcon(new ImageIcon(tileImgs[i]));
+	//		tileButton.setPreferredSize(new Dimension(tileImgs[i].getWidth(null), tileImgs[i].getHeight(null)));
+			//tileButton.setBorderPainted(false);
+		//	tileButton.addActionListener(new tileBtnListener(Tile.getTile(i)));
+			tileButton.addActionListener(new loadSlotListener(i));
+			uiPanel.add(tileButton);
+		}
+		
+		JButton backButton = new JButton("Back");
+		backButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setUpTilesPanel();
+			}
+		});
+		backButton.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+		uiPanel.add(backButton);
+		
+		repaint();
+	}
+	
+	private void setUpSavePanel() {
+		uiPanel.removeAll();
+		uiPanel.revalidate();
+		
+		for (int i = 0; i < 6; i++) {
+			JButton tileButton = new JButton("Slot " + i);
+			//tileButton.setIcon(new ImageIcon(tileImgs[1]));
+			//tileButton.setPreferredSize(new Dimension(tileImgs[1].getWidth(null), tileImgs[1].getHeight(null)));
+//			tileButton.setIcon(new ImageIcon(tileImgs[i]));
+	//		tileButton.setPreferredSize(new Dimension(tileImgs[i].getWidth(null), tileImgs[i].getHeight(null)));
+			//tileButton.setBorderPainted(false);
+		//	tileButton.addActionListener(new tileBtnListener(Tile.getTile(i)));
+			tileButton.addActionListener(new saveSlotListener(i));
+			uiPanel.add(tileButton);
+		}
+		
+		JButton backButton = new JButton("Back");
+		backButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setUpTilesPanel();
+			}
+		});
+		backButton.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+		uiPanel.add(backButton);
+		
+		repaint();
+	}
+	
+	private boolean isValidLevel() {
+		int boxCount = 0;
+		int goalCount = 0;
+		int playerCount = 0;
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				if (levelMap[i][j] == Tile.BOX) {
+					boxCount++;
+				} else if (levelMap[i][j] == Tile.GOAL) {
+					goalCount++;
+				} else if (levelMap[i][j] == Tile.PLAYER) {
+					playerCount++;
+				}
+			}
+		}
+		
+		if (!(boxCount == goalCount && boxCount > 0)) {
+			return false;
+		}
+		
+		if (playerCount != 1) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private void loadLevel(int slot) {
+		
+	}
+	
+	private void saveLevel(int slot) {
+		setUpTilesPanel();
+		
+		if (!isValidLevel()) {
+			JOptionPane.showMessageDialog(null, "Invalid Level");
+			return;
+		}
+		
+		String levelString = "";
+		//Save level map
+		for (int j = 0; j < height; j++) {
+			for (int i = 0; i < width; i++) {
+				levelString += (char)(((char) levelMap[i][j].getIntRep()) + '0');
+			}
+			levelString += "\n";
+		}
+		levelString += "\n";
+		//Save level picture
+		levelString += "level1-1.png\n";
+		//Save default highscore
+		levelString += "None set";
+		
+		//Write out to the file
+		try {
+			PrintWriter out = new PrintWriter("levels/levelc-" + slot + ".txt");
+			out.write(levelString);
+			out.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		JOptionPane.showMessageDialog(null, "Saved successfully to slot " + slot);
+		
 	}
 
 }
