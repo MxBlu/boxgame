@@ -246,6 +246,7 @@ public class SelectScreen extends JPanel{
 		newButton.addActionListener(new lvlBtnListener(levelString));
 		
 		JLabel highScoreLabel = new JLabel("Highscore: " + highScore);
+		highScoreLabel.setForeground(Color.WHITE);
 
 		btnPanel.add(newButton, levelPanelCon);
 		levelPanelCon.gridy = 1;
