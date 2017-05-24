@@ -66,6 +66,7 @@ public class Level extends JPanel implements ActionListener {
 	private long time;
 
 	private boolean isPaused;
+	private boolean isPremade;
 	
 	//for key input
     private static final String MOVE_UP = "move up";
@@ -114,7 +115,7 @@ public class Level extends JPanel implements ActionListener {
 		pushCurrentState();
 	}
 	
-	Level(String input, int tileSize) {
+	Level(String input, int tileSize, boolean premadeFlag) {
 		GameMaster.toggleCursorPointer();
 
 		this.tileSize = tileSize;
@@ -126,6 +127,16 @@ public class Level extends JPanel implements ActionListener {
 		isPaused = false;
 		pausePanel = new PauseScreen();
 		setDefaultTiles();
+		
+		// premadeFlag is set to true if it is passed
+		// in from SelectScreen. This means a level is
+		// premade. We set an internal boolean isPremade
+		// to true, to alter the intermission screen
+		// appropriately upon level completion. 
+		isPremade = false;
+		if (premadeFlag == true) {
+			isPremade = true;
+		}
 		
 		// Get the width and height
 		byte inputArray[] = input.getBytes();
@@ -457,7 +468,7 @@ public class Level extends JPanel implements ActionListener {
 			repaint();
 		else if (isCompleted()) {
 			animationTimer.stop();
-			GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves, difficulty));
+			GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves, difficulty, isPremade));
 		}
 	}
 	

@@ -24,8 +24,10 @@ public class IntermissionScreen extends JPanel {
 	private HoverButton menu;
 	private HoverButton next;
 	
+	private boolean isPremade;
 	
-	public IntermissionScreen(String d, int moves, int difficulty){
+	public IntermissionScreen(String d, int moves, int difficulty, boolean premadeFlag){
+		isPremade = premadeFlag;
 		init(difficulty);
 		time = "Time: " + d;
 		movesString = "Moves: " + moves;
@@ -68,7 +70,11 @@ public class IntermissionScreen extends JPanel {
 		menu.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				System.out.println("return to menu");
-	    		GameMaster.changeScreens(new MenuScreen());
+				if (isPremade == false) {
+		    		GameMaster.changeScreens(new MenuScreen());
+				} else {
+		    		GameMaster.changeScreens(new SelectScreen());
+				}
 			}
 		});
 		
@@ -97,7 +103,9 @@ public class IntermissionScreen extends JPanel {
 		c.gridy = 1;
 		add(menu,c);
 		c.gridx = 2;
-		add(next,c);
+		if (isPremade == false) {
+			add(next,c);
+		}
 		
 		// Set the JPanels attributes and revalidate.
 		revalidate();
