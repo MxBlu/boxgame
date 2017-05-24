@@ -27,7 +27,8 @@ public class GameMaster{
     public static float adj3Chance = 0.50f;
     public static float adj4Chance = 0.60f;
     private static Image cursor;
-
+    private static AudioManager audio;
+    private static Boolean audioPlaying;
     // JFrame which holds all of the game's
     // JPanels and their contents. 
     private static JFrame frame;
@@ -47,6 +48,10 @@ public class GameMaster{
     }
     
     private static void initScreen(){
+    	audio = new AudioManager();
+    	audioPlaying = false;
+       
+    	
     	
     	try {
 			cursor = ImageIO.read(GameMaster.class.getClassLoader().getResourceAsStream("cursor.gif"));
@@ -97,8 +102,13 @@ public class GameMaster{
         
     }
     
+    public static void playMusic(){
+    	 audio.playSound("song.wav", 1.0f);
+    }
     
-    
+    public static boolean isPlaying(){
+    	return audioPlaying;
+    }
     
 }
     

@@ -44,6 +44,9 @@ public class MenuScreen extends JPanel{
 	
 	public MenuScreen() {
 		//setTraversalKeys();
+		if (!GameMaster.isPlaying()){
+			GameMaster.playMusic();
+		}
 		
 		// Get the image file for the background and buttons
 		try {
