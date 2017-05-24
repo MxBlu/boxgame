@@ -29,6 +29,8 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
+import javafx.scene.text.Font;
+
 public class SelectScreen extends JPanel{
 	
 	class lvlBtnListener implements ActionListener {
@@ -54,6 +56,7 @@ public class SelectScreen extends JPanel{
 	
     private Image background;
     private GridBagConstraints c;
+    private JPanel levelsPanel;
     
 	public SelectScreen() {
 		// Get the image file for the background and buttons
@@ -110,29 +113,10 @@ public class SelectScreen extends JPanel{
 		});
 		add(back, c);
 		
-		JPanel buttonsPanel = new JPanel();
-		buttonsPanel.setOpaque(false);
-		buttonsPanel.setLayout(new GridBagLayout());
-		
-		File levelsFolder = new File("levels");
-		File[] filesList = levelsFolder.listFiles();
-
-		for (File file : filesList) {
-			if (file.isFile()) {
-				if (file.getName().startsWith("level1") && file.getName().endsWith(".txt")) {
-					try {
-						setUpButton(file, buttonsPanel);
-					} catch (FileNotFoundException e1) {
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-				}
-			}
-		}
-		
+		levelsPanel = new JPanel();
+		setUpLevelsPanel();
 		c.gridy = 0;
-		add(buttonsPanel, c);
+		add(levelsPanel, c);
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -158,8 +142,74 @@ public class SelectScreen extends JPanel{
 	private void back() {
 		GameMaster.changeScreens(new MenuScreen());
 	}
+	
+	private void setUpLevelsPanel() {
+		GridBagConstraints lvlPnlCon = new GridBagConstraints();
+		levelsPanel.setOpaque(false);
+		levelsPanel.setLayout(new GridBagLayout());
+		
+		JLabel worldLabel = new JLabel("World 1");
+		worldLabel.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 40));
+		lvlPnlCon.gridy = 0;
+		levelsPanel.add(worldLabel, lvlPnlCon);
+		
+		lvlPnlCon.gridy = 1;
 
-	private void setUpButton(File file, JPanel panel) throws FileNotFoundException, IOException {
+		JButton world1But = new JButton();
+		world1But.setText("World 1");
+		world1But.setToolTipText("World 1");
+		world1But.setBorderPainted(false);
+		//world1But.setContentAreaFilled(false);
+		world1But.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent e){
+				back();
+			}
+		});
+		levelsPanel.add(world1But, lvlPnlCon);
+		
+		JButton world2But = new JButton();
+		world2But.setText("World 2");
+		world2But.setToolTipText("World 2");
+		world2But.setBorderPainted(false);
+		//world1But.setContentAreaFilled(false);
+		world2But.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent e){
+				back();
+			}
+		});
+		levelsPanel.add(world2But, lvlPnlCon);
+		
+		JButton world3But = new JButton();
+		world3But.setText("World 3");
+		world3But.setToolTipText("World 3");
+		world3But.setBorderPainted(false);
+		//world1But.setContentAreaFilled(false);
+		world3But.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent e){
+				back();
+			}
+		});
+		levelsPanel.add(world3But, lvlPnlCon);
+		
+		File levelsFolder = new File("levels");
+		File[] filesList = levelsFolder.listFiles();
+
+		for (File file : filesList) {
+			if (file.isFile()) {
+				if (file.getName().startsWith("level1") && file.getName().endsWith(".txt")) {
+					try {
+						setUpLvlButton(file, levelsPanel, lvlPnlCon);
+					} catch (FileNotFoundException e1) {
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+
+	private void setUpLvlButton(File file, JPanel panel, GridBagConstraints con) throws FileNotFoundException, IOException {
 		Scanner sc = new Scanner(new FileReader(file));
 		String levelString = "";
 		
@@ -200,9 +250,9 @@ public class SelectScreen extends JPanel{
 		levelPanelCon.gridy = 1;
 		btnPanel.add(highScoreLabel, levelPanelCon);
 		
-		c.gridy = panel.getComponents().length / BUTTONS_PER_LINE;
+		con.gridy = ((panel.getComponents().length - 4) / BUTTONS_PER_LINE) + 2;
 		
-		panel.add(btnPanel, c);
+		panel.add(btnPanel, con);
 	}
 
 }
