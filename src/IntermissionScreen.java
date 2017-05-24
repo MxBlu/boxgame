@@ -19,6 +19,7 @@ public class IntermissionScreen extends JPanel {
     private Image menuButton;
     private Image nextButton;
     private String time;
+    private String movesString;
 
 	private JButton menu;
 	private JButton next;
@@ -26,7 +27,8 @@ public class IntermissionScreen extends JPanel {
 	
 	public IntermissionScreen(String d, int moves, int difficulty){
 		init(difficulty);
-		time = "Time: "+ d;
+		time = "Time: " + d;
+		movesString = "Moves: " + moves;
 	}
 	
 	public IntermissionScreen(){
@@ -107,16 +109,17 @@ public class IntermissionScreen extends JPanel {
 		// function for painting.
 		super.paintComponent(g);
 		Font f = new Font("arial", Font.BOLD, 50);
-		g.setFont(f);
-		
-		
+		g.setFont(f);		
 		
 	    // Draw the background for this JPanel
 	    g.setColor(Color.BLACK);
         g.drawImage(background, 0, 0, null);
         if (time != null){
-        	g.setColor(Color.WHITE);
-        	g.drawString(time, GameMaster.WIDTH/3, 225);
+        	g.setColor(Color.CYAN);
+        	g.drawString(time, GameMaster.WIDTH/3, 215);
+        	g.setColor(Color.ORANGE);
+        	g.drawString(movesString, GameMaster.WIDTH/3, 265);
+
         }
 	}
 	

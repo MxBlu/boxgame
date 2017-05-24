@@ -22,18 +22,17 @@ public class MenuScreen extends JPanel{
     private Image playbutton;
     private Image playpreset;
     private Image creditsbutton;
-    private Image highscoresbutton;
+    private Image levelcreatorbutton;
     private Image backbutton;
     private Image quitbutton;
 
 	private JButton play;
 	private JButton playPreset;
 	private JButton credits;
-	private JButton highScore;
+	private JButton levelcreator;
 	private JButton back;
 	private JButton quit;
 
-	
 	private JPanel difficultyPanel;
 	private Boolean difficultyShow;
 	
@@ -53,7 +52,7 @@ public class MenuScreen extends JPanel{
 			playpreset = ImageIO.read(getClass().getResourceAsStream("playpresetbutton.png"));
 			backbutton = ImageIO.read(getClass().getResourceAsStream("back.png"));
 			creditsbutton = ImageIO.read(getClass().getResourceAsStream("creditsbutton.png"));
-			highscoresbutton = ImageIO.read(getClass().getResourceAsStream("highscoresbutton.png"));
+			levelcreatorbutton = ImageIO.read(getClass().getResourceAsStream("levelcreatorbutton.png"));
 			quitbutton = ImageIO.read(getClass().getResourceAsStream("quitbutton.png"));
 		}
 		catch(Exception e) {
@@ -82,10 +81,10 @@ public class MenuScreen extends JPanel{
 		credits.setOpaque(false);
 		credits.setContentAreaFilled(false);
 
-		highScore = new JButton();
-		highScore.setIcon(new ImageIcon(highscoresbutton));
-		highScore.setBorderPainted(false);
-		highScore.setContentAreaFilled(false);
+		levelcreator = new JButton();
+		levelcreator.setIcon(new ImageIcon(levelcreatorbutton));
+		levelcreator.setBorderPainted(false);
+		levelcreator.setContentAreaFilled(false);
 		
 		back = new JButton();
 		back.setIcon(new ImageIcon(backbutton));
@@ -123,7 +122,7 @@ public class MenuScreen extends JPanel{
 			}
 		});
 		
-		highScore.addActionListener(new ActionListener(){
+		levelcreator.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				GameMaster.changeScreens(new LevelCreatorScreen(15, 15, 40));
 			}
@@ -174,7 +173,7 @@ public class MenuScreen extends JPanel{
 		
 		getActionMap().put(MOVE_LEFT, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				highScore.requestFocus();
+				levelcreator.requestFocus();
 			}
 		});
 		
@@ -213,21 +212,21 @@ public class MenuScreen extends JPanel{
 		} else if (playPreset.isFocusOwner()) { 
 			credits.requestFocus();
 		} else if (credits.isFocusOwner()) {
-			highScore.requestFocus();
-		} else if (!highScore.isFocusOwner()) {
+			levelcreator.requestFocus();
+		} else if (!levelcreator.isFocusOwner()) {
 			play.requestFocus();
 		}
 	}
 	
 	private void handleUp() {
-		if (highScore.isFocusOwner()) {
+		if (levelcreator.isFocusOwner()) {
 			credits.requestFocus();
 		} else if (credits.isFocusOwner()) {
 			playPreset.requestFocus();
 		} else if (playPreset.isFocusOwner()) { 
 			play.requestFocus();
 		} else if (!play.isFocusOwner()) {
-			highScore.requestFocus();
+			levelcreator.requestFocus();
 		}
 	}
 	
@@ -257,7 +256,7 @@ public class MenuScreen extends JPanel{
 		c.gridy = 3;
 		add(credits,c);
 		c.gridy = 4;
-		add(highScore,c);
+		add(levelcreator,c);
 		c.gridx = 3;
 		c.gridy = 4;
 		add(quit,c);
@@ -276,7 +275,7 @@ public class MenuScreen extends JPanel{
 			remove(play);
 			remove(playPreset);
 			remove(credits);
-			remove(highScore);
+			remove(levelcreator);
 			remove(quit);
 
 		}
