@@ -24,6 +24,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -168,7 +169,9 @@ public class SelectScreen extends JPanel{
 		JPanel btnPanel = new JPanel();
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
 		btnPanel.setOpaque(false);
-
+		btnPanel.setLayout(new GridBagLayout());
+		GridBagConstraints levelPanelCon = new GridBagConstraints();
+		
 		JButton newButton = new JButton();
 		int buttonWidth = 100;
 		int buttonHeight = 100;
@@ -179,8 +182,12 @@ public class SelectScreen extends JPanel{
 		newButton.setContentAreaFilled(false);
 		newButton.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
 		newButton.addActionListener(new lvlBtnListener(levelString));
+		
+		JLabel highScoreLabel = new JLabel("Highscore: " + highScore);
 
-		btnPanel.add(newButton);
+		btnPanel.add(newButton, levelPanelCon);
+		levelPanelCon.gridy = 1;
+		btnPanel.add(highScoreLabel, levelPanelCon);
 		add(btnPanel, c);
 	}
 
