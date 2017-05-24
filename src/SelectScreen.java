@@ -196,7 +196,7 @@ public class SelectScreen extends JPanel{
 
 		for (File file : filesList) {
 			if (file.isFile()) {
-				if (file.getName().startsWith("level1") && file.getName().endsWith(".txt")) {
+				if (file.getName().startsWith("levelc") && file.getName().endsWith(".txt")) {
 					try {
 						setUpLvlButton(file, levelsPanel, lvlPnlCon);
 					} catch (FileNotFoundException e1) {

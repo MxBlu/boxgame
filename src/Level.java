@@ -114,6 +114,7 @@ public class Level extends JPanel implements ActionListener {
 		animationTimer = new Timer(GameMaster.FRAME_DELTA, this);
 		time = 0;
 		isPaused = false;
+		pausePanel = new PauseScreen();
 		setDefaultTiles();
 		
 		// Get the width and height

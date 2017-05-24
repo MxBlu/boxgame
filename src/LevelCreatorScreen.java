@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -104,29 +105,46 @@ public class LevelCreatorScreen extends JPanel{
 		
 		setDefaultTiles();
 		
-		addMouseListener(new MouseListener() {
+		addMouseMotionListener(new MouseMotionListener() {
 			
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void mouseMoved(MouseEvent e) {
 				// TODO Auto-generated method stub
 				
+			}
+			
+			@Override
+			public void mouseDragged(MouseEvent e) {
+				//Convert click coords to grid coords
+				int xCord = e.getX() - (GameMaster.WIDTH / 2);
+				int yCord = e.getY() - (GameMaster.HEIGHT / 2);
+				xCord += (tileSize * width) / 2;
+				yCord += (tileSize * width) / 2;
+				xCord /= tileSize;
+				yCord /= tileSize;
+				
+				if (xCord < width && yCord < height && xCord >= 0 && yCord >= 0) {
+					setTile(xCord, yCord, curPlaceTile);
+				}
+				repaint();
+			}
+		});
+		
+		addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
 			}
 			
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
 			}
 			
 			@Override
 			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
 			}
 			
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
 			}
 			
 			@Override
@@ -157,7 +175,7 @@ public class LevelCreatorScreen extends JPanel{
 		
 		getActionMap().put(QUIT_MENU, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
-				GameMaster.changeScreens(new MenuScreen());
+				exitScreen();
 			}
 		});
 	}
@@ -244,7 +262,7 @@ public class LevelCreatorScreen extends JPanel{
 		uiPanel.removeAll();
 		uiPanel.revalidate();
 		
-		for (int i = 0; i < Tile.values().length; i++) {
+		for (int i = 0; i < Tile.values().length-2; i++) {
 			JButton tileButton = new JButton();
 			tileButton.setIcon(new ImageIcon(tileImgs[i]));
 			tileButton.setPreferredSize(new Dimension(tileImgs[i].getWidth(null), tileImgs[i].getHeight(null)));
@@ -270,6 +288,17 @@ public class LevelCreatorScreen extends JPanel{
 			}
 		});
 		uiPanel.add(saveButton);
+		
+		JButton backButton = new JButton("Back");
+		backButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				exitScreen();
+			}
+		});
+		backButton.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+		uiPanel.add(backButton);
+		
 		repaint();
 	}
 	
@@ -279,12 +308,6 @@ public class LevelCreatorScreen extends JPanel{
 		
 		for (int i = 0; i < 6; i++) {
 			JButton tileButton = new JButton("Slot " + (i+1));
-			//tileButton.setIcon(new ImageIcon(tileImgs[1]));
-			//tileButton.setPreferredSize(new Dimension(tileImgs[1].getWidth(null), tileImgs[1].getHeight(null)));
-//			tileButton.setIcon(new ImageIcon(tileImgs[i]));
-	//		tileButton.setPreferredSize(new Dimension(tileImgs[i].getWidth(null), tileImgs[i].getHeight(null)));
-			//tileButton.setBorderPainted(false);
-		//	tileButton.addActionListener(new tileBtnListener(Tile.getTile(i)));
 			tileButton.addActionListener(new loadSlotListener(i+1));
 			uiPanel.add(tileButton);
 		}
@@ -308,12 +331,6 @@ public class LevelCreatorScreen extends JPanel{
 		
 		for (int i = 0; i < 6; i++) {
 			JButton tileButton = new JButton("Slot " + (i+1));
-			//tileButton.setIcon(new ImageIcon(tileImgs[1]));
-			//tileButton.setPreferredSize(new Dimension(tileImgs[1].getWidth(null), tileImgs[1].getHeight(null)));
-//			tileButton.setIcon(new ImageIcon(tileImgs[i]));
-	//		tileButton.setPreferredSize(new Dimension(tileImgs[i].getWidth(null), tileImgs[i].getHeight(null)));
-			//tileButton.setBorderPainted(false);
-		//	tileButton.addActionListener(new tileBtnListener(Tile.getTile(i)));
 			tileButton.addActionListener(new saveSlotListener(i+1));
 			uiPanel.add(tileButton);
 		}
@@ -433,4 +450,8 @@ public class LevelCreatorScreen extends JPanel{
 		
 	}
 
+	private void exitScreen() {
+		GameMaster.changeScreens(new MenuScreen());
+	}
+	
 }
