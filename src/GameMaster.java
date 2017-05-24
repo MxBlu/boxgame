@@ -49,7 +49,7 @@ public class GameMaster{
     private static void initScreen(){
     	
     	try {
-			cursor = ImageIO.read(GameMaster.class.getClassLoader().getResourceAsStream("cursor.gif"));
+			cursor = ImageIO.read(GameMaster.class.getClassLoader().getResourceAsStream("pointer.png"));
 			
 
 		}
