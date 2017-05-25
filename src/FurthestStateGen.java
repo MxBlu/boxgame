@@ -245,7 +245,7 @@ public class FurthestStateGen {
 		
 		System.out.println("currMaxBoxLines " + currScore);
 		System.out.println("currMaxBoxLines " + currDiffScore);
-		System.out.println("currMaxBoxLines " + stateList.get(pos).getMinPathLength());
+		System.out.println("currMaxBoxLines " + stateList.get(possibleStates.get(pos)).getMinPathLength());
 		// sets the current ideal state's playerSpaces
 		this.playerSpaces = stateList.get(possibleStates.get(pos)).getPlayerSpaces();
 	}
