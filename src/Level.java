@@ -222,7 +222,7 @@ public class Level extends JPanel implements ActionListener {
 
 			String imageLocation = sc.nextLine();
 			String highScoreString = sc.nextLine();
-			if (!highScoreString.equals("None set")) {
+			if (!highScoreString.equals("None")) {
 				highScore = Integer.parseInt(highScoreString);
 			}
 		} catch (FileNotFoundException e) {
