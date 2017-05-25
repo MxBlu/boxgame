@@ -1,11 +1,13 @@
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.Date;
 
 import javax.imageio.ImageIO;
@@ -117,8 +119,10 @@ public class IntermissionScreen extends JPanel {
 		// Access the JPanel super class's
 		// function for painting.
 		super.paintComponent(g);
-		Font f = new Font("arial", Font.BOLD, 50);
-		g.setFont(f);		
+		
+		try {
+			g.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("VCR_OSD_MONO.ttf")).deriveFont(Font.BOLD, 50));
+		} catch (FontFormatException | IOException e) {	e.printStackTrace();}		
 		
 	    // Draw the background for this JPanel
 	    g.setColor(Color.BLACK);
