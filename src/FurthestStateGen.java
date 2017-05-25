@@ -191,8 +191,9 @@ public class FurthestStateGen {
 			
 			// checks if any of the boxes on tempBoxList are on the goal
 			if (!goalCheck) {
-				// check if the calculated score is above 3000 (value determined through experimentation)
-				if (6 < calculateDifficulty(resultList.get(randState))) {
+				// check if the calculated level score is above 5000 and a difficulty
+				// score of 6.5 (value determined through experimentation)
+				if (5500 < calculateScore(resultList.get(randState)) && 6.5 < calculateDifficulty(resultList.get(randState))) {
 					currScore = true;
 				}
 				// adds the state's index onto possibleStates
@@ -233,7 +234,7 @@ public class FurthestStateGen {
 				double newDiffScore = calculateDifficulty(stateList.get(possibleStates.get(j)));
 				
 				// compares the scores with the current set scores
-				if ((currDiffScore < newDiffScore) ||(currDiffScore == newDiffScore && currScore < newScore)) {
+				if (currDiffScore < newDiffScore) {
 					// sets state's boxList as the current ideal boxList
 					this.boxList = new ArrayList<Box>(stateList.get(possibleStates.get(j)).getBoxList());
 					currScore = newScore;
@@ -245,7 +246,7 @@ public class FurthestStateGen {
 		
 		System.out.println("currMaxBoxLines " + currScore);
 		System.out.println("currMaxBoxLines " + currDiffScore);
-		System.out.println("currMaxBoxLines " + stateList.get(possibleStates.get(pos)).getMinPathLength());
+		System.out.println("currMaxBoxLines " + stateList.get(pos).getMinPathLength());
 		// sets the current ideal state's playerSpaces
 		this.playerSpaces = stateList.get(possibleStates.get(pos)).getPlayerSpaces();
 	}
@@ -280,7 +281,7 @@ public class FurthestStateGen {
 		int numBoxLines = state.getNumBoxLines();
 		
 		// calculates based of boxLines and the length of the state's minimum action path
-		double diffScore = numBoxLines * Math.log10(numBoxLines) - (numBoxLines/state.getMinPathLength());
+		double diffScore = numBoxLines * Math.log10(numBoxLines) + Math.log10(20) - (numBoxLines/state.getMinPathLength());
 		
 		return diffScore;
 	}
