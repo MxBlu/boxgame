@@ -110,9 +110,11 @@ public class FurthestStateGen {
 		List<State> prevTempList = null;
 		List<State> tempList = new ArrayList<State>();
 		
-		Integer depthLimit[] = {100, 25, 17, 12, 10, 9};
+		Integer depthLimit[] = {100, 25, 17, 12, 12, 11};
 		
-		for (int depth = 1; depth < depthLimit[level] && resultList.size() < 3000; depth++) {
+		for (int depth = 1; depth < depthLimit[level] &&
+				(((level > 3) && (resultList.size() < 1200)) ||
+					((level < 4) && (resultList.size() < 3000))); depth++) {
 			if (prevTempList == null) {
 				prevTempList = new ArrayList<State>(startList);
 				tempList = prevTempList;
@@ -144,6 +146,7 @@ public class FurthestStateGen {
 		boolean flag = false;
 		int randState = 0;
 		int k = 0;
+		boolean currScore = false;
 		Random r = new Random();
 		
 		List<Integer> possibleStates = new ArrayList<Integer>();
@@ -158,6 +161,9 @@ public class FurthestStateGen {
 				}
 			}
 			if (flag) {
+				if (2900 < calculateScore(resultList.get(randState))) {
+					currScore = true;
+				}
 				System.out.println(resultList.get(randState).getNumBoxLines());
 				possibleStates.add(randState);
 			} else {
@@ -167,7 +173,7 @@ public class FurthestStateGen {
 		}
 		
 		
-		if (possibleStates.size() == 0) {
+		if (possibleStates.size() == 0 || (!(currScore) && ((boxList.size() == 4) || (boxList.size() == 5)))) {
 			return null;
 		}
 		
@@ -189,6 +195,7 @@ public class FurthestStateGen {
 				double newDiffScore = calculateDifficulty(stateList.get(possibleStates.get(j)));
 				if ((currScore < newScore) || ((currScore == newScore) && (currDiffScore < newDiffScore))) {
 					this.boxList = new ArrayList<Box>(stateList.get(possibleStates.get(j)).getBoxList());
+					System.out.println("DIFFSCORE " + newDiffScore);
 					currScore = newScore;
 					currDiffScore = newDiffScore;
 					pos = j;
@@ -220,7 +227,7 @@ public class FurthestStateGen {
 	
 	private double calculateDifficulty(State state) {
 		int numBoxLines = state.getNumBoxLines();
-		double diffScore = numBoxLines * Math.log(numBoxLines) - (numBoxLines/state.getMinPathLength());
+		double diffScore = 100*(numBoxLines * Math.log10(numBoxLines)) - (numBoxLines/state.getMinPathLength());
 		
 		return diffScore;
 	}

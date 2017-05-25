@@ -41,7 +41,7 @@ public class Level extends JPanel implements ActionListener {
 	public static final int MEDIUM = 1;
 	public static final int HARD = 2;
 	
-	private static final Integer diffLevels[][] = { {1}, {2}, {3}};
+	private static final Integer diffLevels[][] = { {1}, {2, 3}, {4, 5}};
 	
 	private Tile levelMap[][];
 	private ArrayList<Box> boxList;
