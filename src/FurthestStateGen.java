@@ -192,7 +192,7 @@ public class FurthestStateGen {
 			// checks if any of the boxes on tempBoxList are on the goal
 			if (!goalCheck) {
 				// check if the calculated score is above 3000 (value determined through experimentation)
-				if (7 < calculateDifficulty(resultList.get(randState))) {
+				if (6 < calculateDifficulty(resultList.get(randState))) {
 					currScore = true;
 				}
 				// adds the state's index onto possibleStates
