@@ -113,7 +113,7 @@ public class LevelGenBlock implements LevelGen {
 	}
 	
 	@Override
-	public Tile[][] generate(int height, int width, int difficulty) {
+	public Tile[][] generate(int height, int width, int numGoals) {
 		if (height % 3 != 2 || width % 3 != 2)
 			System.out.println("Generated map size not ideal");
 		
@@ -150,7 +150,10 @@ public class LevelGenBlock implements LevelGen {
 			if (amtPicked[0] > ((numRegions % 2 == 0) ? numRegions/2 : (numRegions + 1)/2))
 				continue;
 			
-			if (checkConnectedness(levelMap, height, width))
+			if (!checkConnectedness(levelMap, height, width))
+				continue;
+			
+			if ((float) getNumWalkable(levelMap, height, width)/(float) 81 <= 0.6f)
 				break;
 		}
 		
@@ -176,7 +179,7 @@ public class LevelGenBlock implements LevelGen {
 			}
 		}
 		
-		for (int l = 0; l < difficulty; l++) {
+		for (int l = 0; l < numGoals; l++) {
 			while (true) {
 				int i = 0;
 				int j = 0;
@@ -194,6 +197,34 @@ public class LevelGenBlock implements LevelGen {
 						(levelMap[i][j - 1] == Tile.WALL && levelMap[i + 1][j] == Tile.WALL))
 					continue;
 				
+				Integer[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+				boolean flag = false;
+				
+				for (int count = 0; count < 4; count++) {
+					if (levelMap[i + directions[count][1]][j + directions[count][0]] == Tile.WALKABLE &&
+							levelMap[i + (2 * directions[count][1])][j + (2 * directions[count][0])] == Tile.WALKABLE) {
+						flag = true;
+					}
+				}
+				if (!flag)
+					continue;
+				
+				flag = false;
+				for (int count = 0; count < 4; count++) {
+					if ((numGoals == 4 || numGoals == 5) && l == 2) {
+						if (levelMap[i + directions[count][1]][j + directions[count][0]] == Tile.GOAL) {
+							flag = true;
+						}
+					} else {
+						if (levelMap[i + directions[count][1]][j + directions[count][0]] == Tile.WALL ||
+								levelMap[i + directions[count][1]][j + directions[count][0]] == Tile.GOAL) {
+							flag = true;
+						}
+					}
+				}
+				if (!flag)
+					continue;
+				
 				levelMap[i][j] = Tile.GOAL;
 				break;
 			}
@@ -209,6 +240,15 @@ public class LevelGenBlock implements LevelGen {
 		}
 		
 		return levelMap;
+	}
+	
+	private int getNumWalkable(Tile[][] levelMap, int height, int width) {
+		int numWalkable = 0;
+		for (int i = 0; i < height; i++)
+			for (int j = 0; j < width; j++)
+				if (levelMap[i][j] == Tile.WALKABLE)
+					numWalkable++;
+		return numWalkable;
 	}
 
 	private boolean checkConnectedness(Tile[][] levelMap, int height, int width) {

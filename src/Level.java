@@ -18,6 +18,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.Stack;
 
@@ -44,6 +45,7 @@ public class Level extends JPanel implements ActionListener {
 	private int height; // Height of the level
 	private int tileSize;
 	private int difficulty;
+	private FurthestStateGen furthestState;
 	
 	private Image tileImgs[];
 	private Player player;
@@ -95,19 +97,45 @@ public class Level extends JPanel implements ActionListener {
 		this.tileSize = tileSize;
 		this.difficulty = difficulty;
 		prevStates = new Stack<ArrayList<Entity>>();
-		boxList = new ArrayList<Box>();
+		int numGoals = 0;
 
 		animationTimer = new Timer(GameMaster.FRAME_DELTA, this);
-		levelMap = levelGen.generate(height, width, 1);
+		Random r = new Random();
+		Integer diffLevels[][] = {{2, 3}, {4, 5}};
+		
+		switch(difficulty) {
+			case 1:
+				numGoals = 1;
+				break;
+			case 2:
+				numGoals = diffLevels[0][r.nextInt(2)];
+				break;
+			case 3:
+				numGoals = diffLevels[1][r.nextInt(2)];
+				break;
+			default:
+				System.out.println("Difficulty error");
+		}
+		
+		levelMap = levelGen.generate(height, width, numGoals);
 		time = 0;
 		isPaused = false;
 		pausePanel = new PauseScreen();
 		
 		setDefaultTiles();
-		makePlayer();
 		
-		for (int i = 0; i < difficulty; i++)
-			placeBox();
+		makeBoxList(numGoals);
+		this.furthestState = new FurthestStateGen(width, height, numGoals, levelMap, this.boxList);
+		
+		while(furthestState.getPlayerSpaces() == null) {
+			System.out.println("RESTART");
+			levelMap = levelGen.generate(height, width, numGoals);
+			makeBoxList(numGoals);
+			this.furthestState = new FurthestStateGen(width, height, numGoals, levelMap, this.boxList);
+		}
+		
+		boxList = furthestState.getBoxList();
+		makePlayer(furthestState.getPlayerSpaces());
 		
 		setActions();
 		setupUI();
@@ -165,7 +193,7 @@ public class Level extends JPanel implements ActionListener {
 			sIndex++;
 		}
 		
-		makePlayer();
+		makePlayer(furthestState.getPlayerSpaces());
 		setActions();
 		setupUI();
 		animationTimer.start();
@@ -273,47 +301,11 @@ public class Level extends JPanel implements ActionListener {
 		return tileSize;
 	}
 	
-	private void placeBox() {
-		Random r = new Random();
-		
-		while (true) {
-			int x = r.nextInt(width);
-			int y = r.nextInt(height);
-			
-			if (levelMap[y][x] == Tile.WALL || levelMap[y][x] == Tile.GOAL ||
-					checkBoxList(x, y) == true) {
-				continue;
-			}
-			if (	(levelMap[y + 1][x] == Tile.WALL && levelMap[y][x + 1] == Tile.WALL) ||
-					(levelMap[y][x + 1] == Tile.WALL && levelMap[y - 1][x] == Tile.WALL) ||
-					(levelMap[y - 1][x] == Tile.WALL && levelMap[y][x - 1] == Tile.WALL) ||
-					(levelMap[y][x - 1] == Tile.WALL && levelMap[y + 1][x] == Tile.WALL))
-				continue;
-			
-			boxList.add(new Box(x, y, tileImgs[2], tileSize, width, height));
-			break;
-		}
-	}
-	
-	private void makePlayer() {
-		int x = width/2;
-		int y = height/2;
-		
-		if (levelMap[y][x] == Tile.WALL || checkBoxList(x, y) == true) {
-			Random r = new Random();
-				
-			while (true) {
-				x = r.nextInt(width);
-				y = r.nextInt(height);
-				
-				if (levelMap[y][x] == Tile.WALL || checkBoxList(x, y) == true)
-					continue;
-
-				break;
-			}
-		}
+	private void makePlayer(List<List<Integer>> playerSpaces) {
 		try {
-			player = new Player(x, y, ImageIO.read(getClass().getResourceAsStream("player.png")), ImageIO.read(getClass().getResourceAsStream("player_up.png")), ImageIO.read(getClass().getResourceAsStream("player_right.png")), tileSize, width, height);
+			Random r = new Random();
+			List<Integer> playerSpace = playerSpaces.get(r.nextInt(playerSpaces.size()));
+			player = new Player(playerSpace.get(0), playerSpace.get(1), ImageIO.read(getClass().getResourceAsStream("player.png")), ImageIO.read(getClass().getResourceAsStream("player_up.png")), ImageIO.read(getClass().getResourceAsStream("player_right.png")), tileSize, width, height);
 			this.getActionMap().put(MOVE_UP, new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
 					if (!player.isAnimating() && !isPaused) {
@@ -355,17 +347,19 @@ public class Level extends JPanel implements ActionListener {
 		}
 	}
 	
-	// someone should probably change this, since it already has something similar
-	// in class Player... :v
-	private boolean checkBoxList(int x, int y) {
-		for (int i = 0; i < boxList.size(); i++) {
-			Box box = boxList.get(i);
-			if (box.getTileX() == x && box.getTileY() == y) {
-				return true;
+	private void makeBoxList(int numGoals) {
+		// places boxes on the goals		
+		this.boxList = new ArrayList<Box>();
+		
+		for (int x = 0; x < width; x++) {
+			for (int y = 0 ; y < height; y++) {
+				if (levelMap[y][x] == Tile.GOAL)
+					this.boxList.add(new Box(x, y, tileImgs[2], tileSize, width, height));
+				if (this.boxList.size() == numGoals) break;
 			}
+			if (this.boxList.size() == numGoals) break;
 		}
-		return false;
-	}  
+	} 
 	
 	private boolean isCompleted() {
 		for (Box b : boxList)
