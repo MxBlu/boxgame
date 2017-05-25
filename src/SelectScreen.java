@@ -16,6 +16,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
@@ -321,7 +324,10 @@ public class SelectScreen extends JPanel {
 		}
 
 		String imageLocation = sc.nextLine();
-		String highScore = sc.nextLine();
+		String highScoreString = sc.nextLine();
+		String[] stringArray = highScoreString.split(" ");
+		String highScore = stringArray[0];
+			
 
 		if (sc != null)
 			sc.close();

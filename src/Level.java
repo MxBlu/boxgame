@@ -85,7 +85,8 @@ public class Level extends JPanel implements ActionListener {
 	private File levelFile = null;
 	private String levelMapString = "";
 	private int highScore = 0;
-	
+	private long bestTime = 0;
+	private boolean newHighScore = false;
 	//for key input
     private static final String MOVE_UP = "move up";
     private static final String MOVE_DOWN = "move down";
@@ -223,7 +224,15 @@ public class Level extends JPanel implements ActionListener {
 			String imageLocation = sc.nextLine();
 			String highScoreString = sc.nextLine();
 			if (!highScoreString.equals("None set")) {
-				highScore = Integer.parseInt(highScoreString);
+				String[] stringArray = highScoreString.split(" ");
+				highScore = Integer.parseInt(stringArray[0]);
+				System.out.println("highscore" + highScore);
+				if (stringArray.length >1){
+					bestTime = Long.parseLong(stringArray[1]);
+					
+				}
+				
+			
 			}
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(null, "File not found");
@@ -510,22 +519,30 @@ public class Level extends JPanel implements ActionListener {
 			animationTimer.stop();
 			if (levelFile != null) {
 				saveHighScore();
-				GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves, difficulty, true));
+				GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves, difficulty, true, newHighScore, dateFormat.format(bestTime), highScore));
 			} else {
-				GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves, difficulty, false));
+				GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves, difficulty, false, newHighScore, dateFormat.format(bestTime), highScore));
 			}
 		}
 	}
 	
 	private void saveHighScore() {
-		if (moves >= highScore && highScore != 0) {
+		System.out.println("moves "+ moves + " highScore " + highScore + " time " + time + " bestTime ");
+		if ((moves > highScore && highScore != 0)&&(time >= bestTime && bestTime != 0)) {
 			return;
+		}
+		newHighScore = true;
+		if ((moves > highScore && highScore != 0)||(time >= bestTime && bestTime != 0)) {
+			
+			newHighScore = false;
+
 		}
 		
 		try {
 			String lines = "";
 		    String line = null;
-	        Scanner br = new Scanner(levelFile);
+	       
+		    Scanner br = new Scanner(levelFile);
 	        
 	        int linesSinceNothingLine = -1;
 
@@ -535,7 +552,7 @@ public class Level extends JPanel implements ActionListener {
 	        	
 	        	if (linesSinceNothingLine >= 0) {
 	        		linesSinceNothingLine++;
-	        		if (linesSinceNothingLine == 2) line = Integer.toString(moves);
+	        		if (linesSinceNothingLine == 2) line = Integer.toString(moves)+ " " + Long.toString(time);
 	        	}
 	        	
 				if (!lsScanner.hasNext()) {
@@ -552,6 +569,7 @@ public class Level extends JPanel implements ActionListener {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}       
+		System.out.println("Changes high SCore");
 
 	}
 	

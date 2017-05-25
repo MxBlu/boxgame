@@ -26,15 +26,23 @@ public class IntermissionScreen extends JPanel {
 	private HoverButton menu;
 	private HoverButton next;
 	
+	private String bestTime;
+	private int bestMoves;
+	private boolean newHighScore;
+	
 	Font gameFont;
 	
 	private boolean isPremade;
 	
-	public IntermissionScreen(String d, int moves, int difficulty, boolean premadeFlag){
+	public IntermissionScreen(String d, int moves, int difficulty, boolean premadeFlag,
+			boolean n, String b, int h){
 		isPremade = premadeFlag;
 		init(difficulty);
 		time = "Time: " + d;
 		movesString = "Moves: " + moves;
+		bestMoves = h;
+		bestTime = b;
+		newHighScore = n;
 	}
 	
 	public IntermissionScreen(){
@@ -135,6 +143,24 @@ public class IntermissionScreen extends JPanel {
         	g.setColor(Color.ORANGE);
         	g.drawString(movesString, GameMaster.WIDTH/3, 265);
 
+        }
+        
+        if (isPremade){
+        	g.setColor(Color.WHITE);
+        	if (newHighScore){
+        		g.drawString("New High Score", GameMaster.WIDTH/5, 500);
+        		g.drawString(time,  GameMaster.WIDTH/5, 550 );
+        		g.drawString(movesString,  GameMaster.WIDTH/5,600);
+        	}else {
+        		g.drawString("High Score",  GameMaster.WIDTH/5, 500);
+        		if (bestTime != null){
+        			g.drawString("Time : "+bestTime,  GameMaster.WIDTH/5, 550 );
+        		}
+        		g.drawString("Moves: " +
+        		
+        				Integer.toString(bestMoves),  GameMaster.WIDTH/5,600);
+        		
+        	}
         }
 	}
 	
