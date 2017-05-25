@@ -92,7 +92,7 @@ public class Level extends JPanel implements ActionListener {
 	 * @param screenHeight Screen height in pixels.
 	 * @param tileSize Width/Height of a tile in pixels.
 	 */
-	Level(int screenWidth, int screenHeight, int tileSize, int difficulty, LevelGen levelGen) {
+	Level(int screenWidth, int screenHeight, int tileSize, int difficulty) {
 		// 1 pixel padding so I don't need to add edge cases to generation.
 		
 		GameMaster.toggleCursorPointer();
@@ -115,9 +115,10 @@ public class Level extends JPanel implements ActionListener {
 		
 		setDefaultTiles();
 		
+		LevelGen gen = new LevelGen();
 		FurthestStateGen f = null;
 		while(f == null || f.getPlayerSpaces() == null) {
-			levelMap = levelGen.generate(height, width, numGoals);
+			levelMap = gen.generate(height, width, numGoals);
 			makeBoxList(numGoals);
 			f = new FurthestStateGen(width, height, numGoals, levelMap, this.boxList);
 			System.out.println("RESTART");

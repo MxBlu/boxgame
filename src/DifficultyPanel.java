@@ -60,7 +60,7 @@ public class DifficultyPanel extends JPanel{
 		Easy.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				System.out.println("easy");
-				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50, Level.EASY, new LevelGenBlock()));
+				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50, Level.EASY));
 			}
 		});
 		
@@ -68,7 +68,7 @@ public class DifficultyPanel extends JPanel{
 		Medium.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				System.out.println("medium");
-				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50, Level.MEDIUM, new LevelGenBlock()));
+				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50, Level.MEDIUM));
 			}
 		});
 		
@@ -76,7 +76,7 @@ public class DifficultyPanel extends JPanel{
 		Hard.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				System.out.println("hard");
-				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50, Level.HARD, new LevelGenBlock()));
+				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 50, Level.HARD));
 
 			}
 		});

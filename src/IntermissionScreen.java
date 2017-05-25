@@ -82,7 +82,7 @@ public class IntermissionScreen extends JPanel {
 		next.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				System.out.println("next level load");
-				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 40, difficulty, new LevelGenBlock()));
+				GameMaster.changeScreens(new Level(GameMaster.WIDTH, GameMaster.HEIGHT, 40, difficulty));
 			}
 		});
 		
