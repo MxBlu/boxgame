@@ -37,6 +37,12 @@ import javax.swing.border.EmptyBorder;
 
 public class Level extends JPanel implements ActionListener {
 	
+	public static final int EASY = 0;
+	public static final int MEDIUM = 1;
+	public static final int HARD = 2;
+	
+	private static final Integer diffLevels[][] = { {1}, {2}, {3}};
+	
 	private Tile levelMap[][];
 	private ArrayList<Box> boxList;
 	private Stack<ArrayList<Entity>> prevStates;
@@ -45,7 +51,6 @@ public class Level extends JPanel implements ActionListener {
 	private int height; // Height of the level
 	private int tileSize;
 	private int difficulty;
-	private FurthestStateGen furthestState;
 	
 	private Image tileImgs[];
 	private Player player;
@@ -97,45 +102,29 @@ public class Level extends JPanel implements ActionListener {
 		this.tileSize = tileSize;
 		this.difficulty = difficulty;
 		prevStates = new Stack<ArrayList<Entity>>();
-		int numGoals = 0;
 
 		animationTimer = new Timer(GameMaster.FRAME_DELTA, this);
+
 		Random r = new Random();
-		Integer diffLevels[][] = {{2, 3}, {4, 5}};
+		int numGoals = diffLevels[difficulty][r.nextInt(diffLevels[difficulty].length)];
 		
-		switch(difficulty) {
-			case 1:
-				numGoals = 1;
-				break;
-			case 2:
-				numGoals = diffLevels[0][r.nextInt(2)];
-				break;
-			case 3:
-				numGoals = diffLevels[1][r.nextInt(2)];
-				break;
-			default:
-				System.out.println("Difficulty error");
-		}
-		
-		levelMap = levelGen.generate(height, width, numGoals);
 		time = 0;
 		isPaused = false;
 		pausePanel = new PauseScreen();
+		isPremade = false;
 		
 		setDefaultTiles();
 		
-		makeBoxList(numGoals);
-		this.furthestState = new FurthestStateGen(width, height, numGoals, levelMap, this.boxList);
-		
-		while(furthestState.getPlayerSpaces() == null) {
-			System.out.println("RESTART");
+		FurthestStateGen f = null;
+		while(f == null || f.getPlayerSpaces() == null) {
 			levelMap = levelGen.generate(height, width, numGoals);
 			makeBoxList(numGoals);
-			this.furthestState = new FurthestStateGen(width, height, numGoals, levelMap, this.boxList);
+			f = new FurthestStateGen(width, height, numGoals, levelMap, this.boxList);
+			System.out.println("RESTART");
 		}
 		
-		boxList = furthestState.getBoxList();
-		makePlayer(furthestState.getPlayerSpaces());
+		boxList = f.getBoxList();
+		makePlayer(f.getPlayerSpaces());
 		
 		setActions();
 		setupUI();
@@ -143,7 +132,7 @@ public class Level extends JPanel implements ActionListener {
 		pushCurrentState();
 	}
 	
-	Level(String input, int tileSize, boolean premadeFlag) {
+	Level(String input, int tileSize) {
 		GameMaster.toggleCursorPointer();
 
 		this.tileSize = tileSize;
@@ -161,10 +150,7 @@ public class Level extends JPanel implements ActionListener {
 		// premade. We set an internal boolean isPremade
 		// to true, to alter the intermission screen
 		// appropriately upon level completion. 
-		isPremade = false;
-		if (premadeFlag == true) {
-			isPremade = true;
-		}
+		isPremade = true;
 		
 		// Get the width and height
 		byte inputArray[] = input.getBytes();

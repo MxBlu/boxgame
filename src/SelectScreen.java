@@ -42,7 +42,7 @@ public class SelectScreen extends JPanel{
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			GameMaster.changeScreens(new Level(levelString, 40, true));
+			GameMaster.changeScreens(new Level(levelString, 40));
 		}
 	}
     
