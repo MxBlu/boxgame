@@ -180,7 +180,6 @@ public class Level extends JPanel implements ActionListener {
 		}
 		
 		//makePlayer(furthestState.getPlayerSpaces());
-		addPlayerAction();
 		setActions();
 		setupUI();
 		animationTimer.start();
@@ -195,6 +194,42 @@ public class Level extends JPanel implements ActionListener {
 		
 		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), MENU);
 		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Z"), UNDO);
+		
+		getActionMap().put(MOVE_UP, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				if (!player.isAnimating() && !isPaused) {
+					player.setMove(1);
+					update();
+				}
+			}
+		});
+
+		getActionMap().put(MOVE_DOWN, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				if (!player.isAnimating() && !isPaused) {
+					player.setMove(2);
+					update();
+				}
+			}
+		});
+
+		getActionMap().put(MOVE_LEFT, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				if (!player.isAnimating() && !isPaused) {
+					player.setMove(3);
+					update();
+				}
+			}
+		});
+
+		getActionMap().put(MOVE_RIGHT, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				if (!player.isAnimating() && !isPaused) {
+					player.setMove(4);
+					update();
+				}
+			}
+		});
 		
 		getActionMap().put(MENU, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
@@ -293,8 +328,6 @@ public class Level extends JPanel implements ActionListener {
 			Random r = new Random();
 			List<Integer> playerSpace = playerSpaces.get(r.nextInt(playerSpaces.size()));
 			player = new Player(playerSpace.get(0), playerSpace.get(1), ImageIO.read(getClass().getResourceAsStream("player.png")), ImageIO.read(getClass().getResourceAsStream("player_up.png")), ImageIO.read(getClass().getResourceAsStream("player_right.png")), tileSize, width, height);
-			
-			addPlayerAction();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -342,45 +375,6 @@ public class Level extends JPanel implements ActionListener {
 		}
 		
 		repaint();
-	}
-	
-	private void addPlayerAction(){
-		this.getActionMap().put(MOVE_UP, new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				if (!player.isAnimating() && !isPaused) {
-					player.setMove(1);
-					update();
-				}
-			}
-		});
-
-		this.getActionMap().put(MOVE_DOWN, new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				if (!player.isAnimating() && !isPaused) {
-					player.setMove(2);
-					update();
-				}
-			}
-		});
-
-		this.getActionMap().put(MOVE_LEFT, new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				if (!player.isAnimating() && !isPaused) {
-					player.setMove(3);
-					update();
-				}
-			}
-		});
-
-		this.getActionMap().put(MOVE_RIGHT, new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				if (!player.isAnimating() && !isPaused) {
-					player.setMove(4);
-					update();
-				}
-			}
-		});
-
 	}
 	
 	@Override
