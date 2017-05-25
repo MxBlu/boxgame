@@ -161,7 +161,7 @@ public class FurthestStateGen {
 				}
 			}
 			if (flag) {
-				if (2900 < calculateScore(resultList.get(randState))) {
+				if (3000 < calculateScore(resultList.get(randState))) {
 					currScore = true;
 				}
 				System.out.println(resultList.get(randState).getNumBoxLines());
