@@ -24,7 +24,8 @@ public class LoadingScreen extends JPanel implements ActionListener {
 		this.renderWait = new Timer(10, this);
 		
 		try {
-			this.background = ImageIO.read(getClass().getResourceAsStream("loading.png"));
+			this.background = ImageIO.read(getClass().getResourceAsStream("loading.png")).getScaledInstance(screenWidth,
+					screenHeight, Image.SCALE_DEFAULT);
 		} catch (IOException e) { e.printStackTrace();}
 		
 		this.screenWidth = screenWidth;

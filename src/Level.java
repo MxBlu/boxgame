@@ -141,7 +141,7 @@ public class Level extends JPanel implements ActionListener {
 		animationTimer.start();
 		pushCurrentState();
 	}
-	
+
 	Level(File levelFile, int tileSize) {
 		GameMaster.toggleCursorPointer();
 
@@ -284,7 +284,7 @@ public class Level extends JPanel implements ActionListener {
 	}
 	
 	private void setDefaultTiles() {
-		this.tileImgs = new Image[4];
+		this.tileImgs = new Image[8];
 		try {
 			tileImgs[0] = ImageIO.read(getClass().getResourceAsStream("ground_solid.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
@@ -294,6 +294,8 @@ public class Level extends JPanel implements ActionListener {
 			tileImgs[2] = ImageIO.read(getClass().getResourceAsStream("box.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
 			tileImgs[3] = ImageIO.read(getClass().getResourceAsStream("goal.png")).getScaledInstance(tileSize,
+					tileSize, Image.SCALE_DEFAULT);
+			tileImgs[7] = ImageIO.read(getClass().getResourceAsStream("border.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -324,12 +326,18 @@ public class Level extends JPanel implements ActionListener {
 		
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) { 
-				if (tileImgs[levelMap[i][j].getIntRep()] != null) {
+				if ((levelMap[i][j] == Tile.WALL && i > 0 && i < (height - 1) && j > 0  && j < (width   - 1)) && 
+						((levelMap[i + 1][j] == Tile.WALKABLE || levelMap[i + 1][j] == Tile.GOAL) ||
+						(levelMap[i + 1][j - 1] == Tile.WALKABLE || levelMap[i + 1][j - 1] == Tile.GOAL) ||
+						(levelMap[i][j - 1] == Tile.WALKABLE || levelMap[i][j - 1] == Tile.GOAL) ||
+						(levelMap[i - 1][j - 1] == Tile.WALKABLE || levelMap[i - 1][j - 1] == Tile.GOAL) ||
+						(levelMap[i - 1][j] == Tile.WALKABLE || levelMap[i - 1][j] == Tile.GOAL) ||
+						(levelMap[i - 1][j + 1] == Tile.WALKABLE || levelMap[i - 1][j + 1] == Tile.GOAL) ||
+						(levelMap[i][j + 1] == Tile.WALKABLE || levelMap[i][j + 1] == Tile.GOAL) ||
+						(levelMap[i + 1][j + 1] == Tile.WALKABLE || levelMap[i + 1][j + 1] == Tile.GOAL)))
+					bbg.drawImage(tileImgs[Tile.BORDER.getIntRep()], left + j * tileSize, top + i * tileSize, null);
+				else
 					bbg.drawImage(tileImgs[levelMap[i][j].getIntRep()], left + j * tileSize, top + i * tileSize, null);
-				} else {
-					bbg.setColor(new Color(levelMap[i][j].getIntRep() * 127));
-					bbg.fillRect(left + j * tileSize, top + i * tileSize, tileSize, tileSize);
-				}
 			}
 		}
 		
@@ -383,7 +391,7 @@ public class Level extends JPanel implements ActionListener {
 			}
 			if (this.boxList.size() == numGoals) break;
 		}
-	} 
+	}
 	
 	private boolean isCompleted() {
 		for (Box b : boxList)

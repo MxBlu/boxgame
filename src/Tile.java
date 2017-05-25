@@ -6,7 +6,8 @@ enum Tile {
 	GOAL(3),
 	PLAYER(4),
 	TEMP_WALKABLE(5),
-	ANY(6);
+	ANY(6),
+	BORDER(7);
 	
 	private final int intRep;
 	Tile(int intRep) {
