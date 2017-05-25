@@ -193,7 +193,8 @@ public class Level extends JPanel implements ActionListener {
 			sIndex++;
 		}
 		
-		makePlayer(furthestState.getPlayerSpaces());
+		//makePlayer(furthestState.getPlayerSpaces());
+		addPlayerAction();
 		setActions();
 		setupUI();
 		animationTimer.start();
@@ -306,42 +307,8 @@ public class Level extends JPanel implements ActionListener {
 			Random r = new Random();
 			List<Integer> playerSpace = playerSpaces.get(r.nextInt(playerSpaces.size()));
 			player = new Player(playerSpace.get(0), playerSpace.get(1), ImageIO.read(getClass().getResourceAsStream("player.png")), ImageIO.read(getClass().getResourceAsStream("player_up.png")), ImageIO.read(getClass().getResourceAsStream("player_right.png")), tileSize, width, height);
-			this.getActionMap().put(MOVE_UP, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					if (!player.isAnimating() && !isPaused) {
-						player.setMove(1);
-						update();
-					}
-				}
-			});
-
-			this.getActionMap().put(MOVE_DOWN, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					if (!player.isAnimating() && !isPaused) {
-						player.setMove(2);
-						update();
-					}
-				}
-			});
-
-			this.getActionMap().put(MOVE_LEFT, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					if (!player.isAnimating() && !isPaused) {
-						player.setMove(3);
-						update();
-					}
-				}
-			});
-
-			this.getActionMap().put(MOVE_RIGHT, new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					if (!player.isAnimating() && !isPaused) {
-						player.setMove(4);
-						update();
-					}
-				}
-			});
-
+			
+			addPlayerAction();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -389,6 +356,45 @@ public class Level extends JPanel implements ActionListener {
 		}
 		
 		repaint();
+	}
+	
+	private void addPlayerAction(){
+		this.getActionMap().put(MOVE_UP, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				if (!player.isAnimating() && !isPaused) {
+					player.setMove(1);
+					update();
+				}
+			}
+		});
+
+		this.getActionMap().put(MOVE_DOWN, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				if (!player.isAnimating() && !isPaused) {
+					player.setMove(2);
+					update();
+				}
+			}
+		});
+
+		this.getActionMap().put(MOVE_LEFT, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				if (!player.isAnimating() && !isPaused) {
+					player.setMove(3);
+					update();
+				}
+			}
+		});
+
+		this.getActionMap().put(MOVE_RIGHT, new AbstractAction() {
+			public void actionPerformed(ActionEvent e) {
+				if (!player.isAnimating() && !isPaused) {
+					player.setMove(4);
+					update();
+				}
+			}
+		});
+
 	}
 	
 	@Override

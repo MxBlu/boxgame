@@ -9,7 +9,7 @@ public class HoverButton extends JButton{
 	private Image cursor1;
 	private Image cursor2;
 	public HoverButton() {
-
+		
 		try{
 	
 			cursor1 = ImageIO.read(getClass().getResourceAsStream("pointer.png"));

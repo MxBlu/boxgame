@@ -90,6 +90,8 @@ public class LevelCreatorScreen extends JPanel{
     private static final String QUIT_MENU = "quit menu";
 	
 	public LevelCreatorScreen(int width, int height, int tileSize) {
+		GameMaster.toggleCursorPointer();
+
 		this.width = width;
 		this.height = height;
 		this.tileSize = tileSize;
@@ -266,7 +268,7 @@ public class LevelCreatorScreen extends JPanel{
 		uiPanel.revalidate();
 		
 		for (int i = 0; i < Tile.values().length-2; i++) {
-			JButton tileButton = new JButton();
+			JButton tileButton = new HoverButton();
 			tileButton.setIcon(new ImageIcon(tileImgs[i]));
 			tileButton.setPreferredSize(new Dimension(tileImgs[i].getWidth(null), tileImgs[i].getHeight(null)));
 			//tileButton.setBorderPainted(false);
