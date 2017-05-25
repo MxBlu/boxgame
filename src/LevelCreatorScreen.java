@@ -81,6 +81,9 @@ public class LevelCreatorScreen extends JPanel{
 	
 	private Tile levelMap[][];
 	private Image tileImgs[];
+	private Image savebutton;
+	private Image loadbutton;
+	private Image backbutton;
 	private int width = 17;
 	private int height = 17;
 	private int tileSize = 40;
@@ -198,6 +201,11 @@ public class LevelCreatorScreen extends JPanel{
 					tileSize, Image.SCALE_DEFAULT);
 			tileImgs[4] = ImageIO.read(getClass().getResourceAsStream("player.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
+			
+			savebutton = ImageIO.read(getClass().getResourceAsStream("savebutton.png"));
+			loadbutton = ImageIO.read(getClass().getResourceAsStream("loadbutton.png"));
+			backbutton = ImageIO.read(getClass().getResourceAsStream("backbutton.png"));
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -276,7 +284,10 @@ public class LevelCreatorScreen extends JPanel{
 			uiPanel.add(tileButton);
 		}
 		
-		JButton loadButton = new JButton("Load");
+		JButton loadButton = new JButton();
+		loadButton.setIcon(new ImageIcon(loadbutton));
+		loadButton.setBorderPainted(false);
+		loadButton.setContentAreaFilled(false);
 		loadButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -285,7 +296,10 @@ public class LevelCreatorScreen extends JPanel{
 		});
 		uiPanel.add(loadButton);
 		
-		JButton saveButton = new JButton("Save");
+		JButton saveButton = new JButton();
+		saveButton.setIcon(new ImageIcon(savebutton));
+		saveButton.setBorderPainted(false);
+		saveButton.setContentAreaFilled(false);
 		saveButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -294,7 +308,10 @@ public class LevelCreatorScreen extends JPanel{
 		});
 		uiPanel.add(saveButton);
 		
-		JButton backButton = new JButton("Back");
+		JButton backButton = new JButton();
+		backButton.setIcon(new ImageIcon(backbutton));
+		backButton.setBorderPainted(false);
+		backButton.setContentAreaFilled(false);
 		backButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -317,7 +334,10 @@ public class LevelCreatorScreen extends JPanel{
 			uiPanel.add(tileButton);
 		}
 		
-		JButton backButton = new JButton("Back");
+		JButton backButton = new JButton();
+		backButton.setIcon(new ImageIcon(backbutton));
+		backButton.setBorderPainted(false);
+		backButton.setContentAreaFilled(false);		
 		backButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -340,7 +360,10 @@ public class LevelCreatorScreen extends JPanel{
 			uiPanel.add(tileButton);
 		}
 		
-		JButton backButton = new JButton("Back");
+		JButton backButton = new JButton();
+		backButton.setIcon(new ImageIcon(backbutton));
+		backButton.setBorderPainted(false);
+		backButton.setContentAreaFilled(false);
 		backButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
