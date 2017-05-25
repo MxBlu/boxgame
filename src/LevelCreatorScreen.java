@@ -267,7 +267,7 @@ public class LevelCreatorScreen extends JPanel{
 		uiPanel.removeAll();
 		uiPanel.revalidate();
 		
-		for (int i = 0; i < Tile.values().length-2; i++) {
+		for (int i = 0; i < Tile.values().length-3; i++) {
 			JButton tileButton = new HoverButton();
 			tileButton.setIcon(new ImageIcon(tileImgs[i]));
 			tileButton.setPreferredSize(new Dimension(tileImgs[i].getWidth(null), tileImgs[i].getHeight(null)));
