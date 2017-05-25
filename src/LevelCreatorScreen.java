@@ -92,11 +92,11 @@ public class LevelCreatorScreen extends JPanel{
 	
     private static final String QUIT_MENU = "quit menu";
 	
-	public LevelCreatorScreen(int width, int height, int tileSize) {
+	public LevelCreatorScreen(int screenWidth, int screenHeight, int tileSize) {
 		GameMaster.toggleCursorPointer();
 
-		this.width = width;
-		this.height = height;
+		this.width = screenWidth/tileSize;
+		this.height = screenHeight/tileSize;
 		this.tileSize = tileSize;
 		
 		levelMap = new Tile[width][height];
@@ -119,10 +119,10 @@ public class LevelCreatorScreen extends JPanel{
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				//Convert click coords to grid coords
-				int xCord = e.getX() - (GameMaster.WIDTH / 2);
-				int yCord = e.getY() - (GameMaster.HEIGHT / 2);
-				xCord += (tileSize * width) / 2;
-				yCord += (tileSize * width) / 2;
+				int xCord = e.getX();// - (GameMaster.WIDTH / 2);
+				int yCord = e.getY();// - (GameMaster.HEIGHT / 2);
+				//xCord += (tileSize * width) / 2;
+				//yCord += (tileSize * width) / 2;
 				xCord /= tileSize;
 				yCord /= tileSize;
 				
@@ -153,10 +153,10 @@ public class LevelCreatorScreen extends JPanel{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				//Convert click coords to grid coords
-				int xCord = e.getX() - (GameMaster.WIDTH / 2);
-				int yCord = e.getY() - (GameMaster.HEIGHT / 2);
-				xCord += (tileSize * width) / 2;
-				yCord += (tileSize * width) / 2;
+				int xCord = e.getX();// - (GameMaster.WIDTH / 2);
+				int yCord = e.getY();// - (GameMaster.HEIGHT / 2);
+				//xCord += (tileSize * width) / 2;
+				//yCord += (tileSize * width) / 2;
 				xCord /= tileSize;
 				yCord /= tileSize;
 				
@@ -229,7 +229,8 @@ public class LevelCreatorScreen extends JPanel{
 		
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) { 
-				if (tileImgs[levelMap[i][j].getIntRep()] != null) {
+				System.out.println(i + " " + j);
+				if (tileImgs[levelMap[j][i].getIntRep()] != null) {
 					bbg.drawImage(tileImgs[levelMap[j][i].getIntRep()], left + j * tileSize, top + i * tileSize, null);
 				} else {
 					bbg.setColor(new Color(levelMap[j][i].getIntRep() * 127));
@@ -240,6 +241,9 @@ public class LevelCreatorScreen extends JPanel{
 	}
 	
 	private void setTile(int gridX, int gridY, Tile tile) {
+		if (!(gridX > 0 && gridY > 0 && gridX < (width - 1) && gridY < (height - 1)))
+			return;
+		
 		if (tile == Tile.PLAYER) {
 			//Remove the previous player
 			for (int i = 0; i < width; i++) {

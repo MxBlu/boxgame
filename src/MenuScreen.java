@@ -129,7 +129,7 @@ public class MenuScreen extends JPanel{
 		
 		levelcreator.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				GameMaster.changeScreens(new LevelCreatorScreen(15, 15, 40));
+				GameMaster.changeScreens(new LevelCreatorScreen(GameMaster.WIDTH, GameMaster.HEIGHT, 40));
 			}
 		});
 	
