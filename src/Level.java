@@ -333,7 +333,7 @@ public class Level extends JPanel implements ActionListener {
 		
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) { 
-				if ((levelMap[i][j] == Tile.WALL/* && i > 0 && i < (height - 1) && j > 0  && j < (width - 1)*/) && 
+				if ((levelMap[i][j] == Tile.WALL) && 
 						((i < (height - 1) && (levelMap[i + 1][j] == Tile.WALKABLE || levelMap[i + 1][j] == Tile.GOAL)) ||
 						((i < (height - 1) && j > 0) && (levelMap[i + 1][j - 1] == Tile.WALKABLE || levelMap[i + 1][j - 1] == Tile.GOAL)) ||
 						((j > 0) && (levelMap[i][j - 1] == Tile.WALKABLE || levelMap[i][j - 1] == Tile.GOAL)) ||

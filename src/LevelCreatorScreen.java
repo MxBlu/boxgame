@@ -184,7 +184,7 @@ public class LevelCreatorScreen extends JPanel{
 	}
 	
 	private void setDefaultTiles() {
-		tileImgs = new Image[5];
+		tileImgs = new Image[8];
 		
 		try {
 			tileImgs[0] = ImageIO.read(getClass().getResourceAsStream("ground_solid.png")).getScaledInstance(tileSize,
@@ -197,6 +197,8 @@ public class LevelCreatorScreen extends JPanel{
 			tileImgs[3] = ImageIO.read(getClass().getResourceAsStream("goal.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
 			tileImgs[4] = ImageIO.read(getClass().getResourceAsStream("player.png")).getScaledInstance(tileSize,
+					tileSize, Image.SCALE_DEFAULT);
+			tileImgs[7] = ImageIO.read(getClass().getResourceAsStream("border.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
 			
 			savebutton = ImageIO.read(getClass().getResourceAsStream("savebutton.png"));
@@ -229,13 +231,18 @@ public class LevelCreatorScreen extends JPanel{
 		
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) { 
-				System.out.println(i + " " + j);
-				if (tileImgs[levelMap[j][i].getIntRep()] != null) {
+				if ((levelMap[j][i] == Tile.WALL) && 
+						((j < (width - 1) && (levelMap[j + 1][i] == Tile.WALKABLE || levelMap[j + 1][i] == Tile.GOAL)) ||
+						((j < (width - 1) && i > 0) && (levelMap[j + 1][i - 1] == Tile.WALKABLE || levelMap[j + 1][i - 1] == Tile.GOAL)) ||
+						((i > 0) && (levelMap[j][i - 1] == Tile.WALKABLE || levelMap[j][i - 1] == Tile.GOAL)) ||
+						((j > 0 && i > 0) && (levelMap[j - 1][i - 1] == Tile.WALKABLE || levelMap[j - 1][i - 1] == Tile.GOAL)) ||
+						((j > 0) && (levelMap[j - 1][i] == Tile.WALKABLE || levelMap[j - 1][i] == Tile.GOAL)) ||
+						((j > 0 && i < (height - 1)) && (levelMap[j - 1][i + 1] == Tile.WALKABLE || levelMap[j - 1][i + 1] == Tile.GOAL)) ||
+						((i < (height - 1)) && (levelMap[j][i + 1] == Tile.WALKABLE || levelMap[j][i + 1] == Tile.GOAL)) ||
+						((j < (width - 1) && i < (height - 1)) && (levelMap[j + 1][i + 1] == Tile.WALKABLE || levelMap[j + 1][i + 1] == Tile.GOAL))))
+					bbg.drawImage(tileImgs[Tile.BORDER.getIntRep()], left + j * tileSize, top + i * tileSize, null);
+				else
 					bbg.drawImage(tileImgs[levelMap[j][i].getIntRep()], left + j * tileSize, top + i * tileSize, null);
-				} else {
-					bbg.setColor(new Color(levelMap[j][i].getIntRep() * 127));
-					bbg.fillRect(left + j * tileSize, top + i * tileSize, tileSize, tileSize);
-				}
 			}
 		}
 	}
