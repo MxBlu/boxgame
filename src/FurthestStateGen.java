@@ -233,7 +233,7 @@ public class FurthestStateGen {
 				double newDiffScore = calculateDifficulty(stateList.get(possibleStates.get(j)));
 				
 				// compares the scores with the current set scores
-				if (currDiffScore < newDiffScore) {
+				if ((currDiffScore < newDiffScore) ||(currDiffScore == newDiffScore && currScore < newScore)) {
 					// sets state's boxList as the current ideal boxList
 					this.boxList = new ArrayList<Box>(stateList.get(possibleStates.get(j)).getBoxList());
 					currScore = newScore;
@@ -280,7 +280,7 @@ public class FurthestStateGen {
 		int numBoxLines = state.getNumBoxLines();
 		
 		// calculates based of boxLines and the length of the state's minimum action path
-		double diffScore = numBoxLines * Math.log10(numBoxLines) + Math.log10(20) - (numBoxLines/state.getMinPathLength());
+		double diffScore = numBoxLines * Math.log10(numBoxLines) - (numBoxLines/state.getMinPathLength());
 		
 		return diffScore;
 	}
