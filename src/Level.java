@@ -116,6 +116,7 @@ public class Level extends JPanel implements ActionListener {
 		animationTimer = new Timer(GameMaster.FRAME_DELTA, this);
 
 		Random r = new Random();
+		// gets a random number of goals for the assigned difficulty
 		int numGoals = diffLevels[difficulty][r.nextInt(diffLevels[difficulty].length)];
 		
 		time = 0;
@@ -126,14 +127,20 @@ public class Level extends JPanel implements ActionListener {
 		
 		LevelGen gen = new LevelGen();
 		FurthestStateGen f = null;
+		// goes while f is null or playerSpaces is null
 		while(f == null || f.getPlayerSpaces() == null) {
+			// generates the levelMap
 			levelMap = gen.generate(height, width, numGoals);
+			// makes the boxList according to the goal locations
 			makeBoxList(numGoals);
+			// makes the furthestStateGen
 			f = new FurthestStateGen(width, height, numGoals, levelMap, this.boxList);
 			System.out.println("RESTART");
 		}
 		
+		// gets the new boxList from f
 		boxList = f.getBoxList();
+		// makes the player based off playerSpaces
 		makePlayer(f.getPlayerSpaces());
 		
 		setActions();
@@ -369,9 +376,12 @@ public class Level extends JPanel implements ActionListener {
 		return tileSize;
 	}
 	
+	/* Makes the player based off playerSpaces */
 	private void makePlayer(List<List<Integer>> playerSpaces) {
 		try {
 			Random r = new Random();
+			// gets an available playerSpace from playerSpaces to set the player's coordinates
+			// in a walkable area
 			List<Integer> playerSpace = playerSpaces.get(r.nextInt(playerSpaces.size()));
 			player = new Player(playerSpace.get(0), playerSpace.get(1), ImageIO.read(getClass().getResourceAsStream("player.png")), ImageIO.read(getClass().getResourceAsStream("player_up.png")), ImageIO.read(getClass().getResourceAsStream("player_right.png")), tileSize, width, height);
 		} catch (IOException e) {
@@ -379,14 +389,18 @@ public class Level extends JPanel implements ActionListener {
 		}
 	}
 	
-	private void makeBoxList(int numGoals) {
-		// places boxes on the goals		
+	/* Makes the boxList by placing the boxes on the goals */
+	private void makeBoxList(int numGoals) {		
 		this.boxList = new ArrayList<Box>();
 		
+		// goes through the levelMap
 		for (int x = 0; x < width; x++) {
 			for (int y = 0 ; y < height; y++) {
-				if (levelMap[y][x] == Tile.GOAL)
+				// checks if the coordinates is a goal
+				if (levelMap[y][x] == Tile.GOAL) {
+					// adds box to the list
 					this.boxList.add(new Box(x, y, tileImgs[2], tileSize, width, height));
+				}
 				if (this.boxList.size() == numGoals) break;
 			}
 			if (this.boxList.size() == numGoals) break;

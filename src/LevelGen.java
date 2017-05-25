@@ -178,6 +178,7 @@ public class LevelGen {
 			}
 		}
 		
+		// goes through for the amount of goals the level has
 		for (int l = 0; l < numGoals; l++) {
 			while (true) {
 				int i = 0;
@@ -187,9 +188,11 @@ public class LevelGen {
 				for (i = hStart; k >= 0 && i < hStart + workingHeight; i++)
 					for (j = wStart; k >= 0 && j < wStart + workingWidth; j++, k--);
 				
+				// checks if the current coordinates is an obstacle (wall or goal)
 				if (levelMap[i][j] == Tile.WALL || levelMap[i][j] == Tile.GOAL)
 					continue;
 				
+				// checks if the current coordinate is cornered by walls
 				if (	(levelMap[i + 1][j] == Tile.WALL && levelMap[i][j + 1] == Tile.WALL) ||
 						(levelMap[i][j + 1] == Tile.WALL && levelMap[i - 1][j] == Tile.WALL) ||
 						(levelMap[i - 1][j] == Tile.WALL && levelMap[i][j - 1] == Tile.WALL) ||
@@ -197,39 +200,44 @@ public class LevelGen {
 					continue;
 				
 				Integer[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
-				boolean flag = false;
+				boolean directionCheck = false;
 				
+				// goes through all the directions
 				for (int count = 0; count < 4; count++) {
+					// checks if the current coordinate is accessible from 2 spaces away in a certain direction
 					if (levelMap[i + directions[count][1]][j + directions[count][0]] == Tile.WALKABLE &&
 							levelMap[i + (2 * directions[count][1])][j + (2 * directions[count][0])] == Tile.WALKABLE) {
-						flag = true;
+						directionCheck = true;
 					}
 				}
-				if (!flag)
+				if (!directionCheck)
 					continue;
 				
-				flag = false;
+				directionCheck = false;
+				// goes through all the directions
 				for (int count = 0; count < 4; count++) {
-					if ((numGoals == 4 || numGoals == 5) && l == 2) {
+					// checks if there are more than 3 goals and if this is the second goal being placed
+					if ((numGoals > 3) && l == 2) {
+						// checks if it is adjacent to a goal
 						if (levelMap[i + directions[count][1]][j + directions[count][0]] == Tile.GOAL) {
-							flag = true;
+							directionCheck = true;
 						}
 					} else {
+						// checks if it is adjacent to a wall or a goal
 						if (levelMap[i + directions[count][1]][j + directions[count][0]] == Tile.WALL ||
 								levelMap[i + directions[count][1]][j + directions[count][0]] == Tile.GOAL) {
-							flag = true;
+							directionCheck = true;
 						}
 					}
 				}
-				if (!flag)
+				if (!directionCheck)
 					continue;
 				
+				// sets the current coordinates as a goal tile
 				levelMap[i][j] = Tile.GOAL;
 				break;
 			}
 		}
-		
-		// Get 
 		
 		System.out.println("Final");
 		for (int i = 0; i < height; i++) {
