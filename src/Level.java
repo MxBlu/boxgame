@@ -333,15 +333,15 @@ public class Level extends JPanel implements ActionListener {
 		
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) { 
-				if ((levelMap[i][j] == Tile.WALL && i > 0 && i < (height - 1) && j > 0  && j < (width   - 1)) && 
-						((levelMap[i + 1][j] == Tile.WALKABLE || levelMap[i + 1][j] == Tile.GOAL) ||
-						(levelMap[i + 1][j - 1] == Tile.WALKABLE || levelMap[i + 1][j - 1] == Tile.GOAL) ||
-						(levelMap[i][j - 1] == Tile.WALKABLE || levelMap[i][j - 1] == Tile.GOAL) ||
-						(levelMap[i - 1][j - 1] == Tile.WALKABLE || levelMap[i - 1][j - 1] == Tile.GOAL) ||
-						(levelMap[i - 1][j] == Tile.WALKABLE || levelMap[i - 1][j] == Tile.GOAL) ||
-						(levelMap[i - 1][j + 1] == Tile.WALKABLE || levelMap[i - 1][j + 1] == Tile.GOAL) ||
-						(levelMap[i][j + 1] == Tile.WALKABLE || levelMap[i][j + 1] == Tile.GOAL) ||
-						(levelMap[i + 1][j + 1] == Tile.WALKABLE || levelMap[i + 1][j + 1] == Tile.GOAL)))
+				if ((levelMap[i][j] == Tile.WALL/* && i > 0 && i < (height - 1) && j > 0  && j < (width - 1)*/) && 
+						((i < (height - 1) && (levelMap[i + 1][j] == Tile.WALKABLE || levelMap[i + 1][j] == Tile.GOAL)) ||
+						((i < (height - 1) && j > 0) && (levelMap[i + 1][j - 1] == Tile.WALKABLE || levelMap[i + 1][j - 1] == Tile.GOAL)) ||
+						((j > 0) && (levelMap[i][j - 1] == Tile.WALKABLE || levelMap[i][j - 1] == Tile.GOAL)) ||
+						((i > 0 && j > 0) && (levelMap[i - 1][j - 1] == Tile.WALKABLE || levelMap[i - 1][j - 1] == Tile.GOAL)) ||
+						((i > 0) && (levelMap[i - 1][j] == Tile.WALKABLE || levelMap[i - 1][j] == Tile.GOAL)) ||
+						((i > 0 && j < (width - 1)) && (levelMap[i - 1][j + 1] == Tile.WALKABLE || levelMap[i - 1][j + 1] == Tile.GOAL)) ||
+						((j < (width - 1)) && (levelMap[i][j + 1] == Tile.WALKABLE || levelMap[i][j + 1] == Tile.GOAL)) ||
+						((i < (height - 1) && j < (width - 1)) && (levelMap[i + 1][j + 1] == Tile.WALKABLE || levelMap[i + 1][j + 1] == Tile.GOAL))))
 					bbg.drawImage(tileImgs[Tile.BORDER.getIntRep()], left + j * tileSize, top + i * tileSize, null);
 				else
 					bbg.drawImage(tileImgs[levelMap[i][j].getIntRep()], left + j * tileSize, top + i * tileSize, null);
