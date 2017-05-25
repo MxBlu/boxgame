@@ -5,7 +5,6 @@ import java.awt.Toolkit;
 import java.io.File;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -21,16 +20,12 @@ public class GameMaster{
     public static final int FPS = 60;
     public static final int FRAME_DELTA = 1000/FPS;
 
-    // Here for debugging reasons only
-    public static float adj1Chance = 0.40f;
-    public static float adj2Chance = 0.20f;
-    public static float adj3Chance = 0.50f;
-    public static float adj4Chance = 0.60f;
     private static Image cursor;
     private static Image hover;
    
     private static AudioManager audio;
     private static Boolean audioPlaying;
+	
     // JFrame which holds all of the game's
     // JPanels and their contents. 
     private static JFrame frame;
@@ -51,14 +46,11 @@ public class GameMaster{
     
     private static void initScreen(){
     	audio = new AudioManager();
-    	audioPlaying = false;
-       
-    	
+    	audioPlaying = false;    	
     	
     	try {
 			cursor = ImageIO.read(GameMaster.class.getClassLoader().getResourceAsStream("pointer.png"));
 			hover = ImageIO.read(GameMaster.class.getClassLoader().getResourceAsStream("hand.png"));
-
 		}
 		catch(Exception e) {
 			e.printStackTrace();

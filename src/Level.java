@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -554,14 +555,18 @@ public class Level extends JPanel implements ActionListener {
 		setOpaque(false);
 		setLayout(null);
 
+		Font gameFont = null;
+		try {
+			gameFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("VCR_OSD_MONO.ttf")).deriveFont(Font.PLAIN, 35);
+		} catch (FontFormatException | IOException e1) {e1.printStackTrace();}
+		
 		movesLabel = new JLabel("Moves: " + moves);
-		Font font = new Font("Arial", Font.PLAIN, 35);
-		movesLabel.setFont(font);
+		movesLabel.setFont(gameFont);
 		movesLabel.setForeground(Color.WHITE);
 		movesLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
 		
 		timerLabel = new JLabel("Time: 0:00:000");
-		timerLabel.setFont(font);
+		timerLabel.setFont(gameFont);
 		timerLabel.setForeground(Color.WHITE);
 		timerLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
 		
@@ -631,8 +636,6 @@ public class Level extends JPanel implements ActionListener {
 		uiPanel.add(movesLabel, BorderLayout.WEST);
 		uiPanel.add(timerLabel);
 		uiPanel.add(uiButtonsPanel, BorderLayout.EAST);
-		
-		
 		
 		add(uiPanel);
 	}

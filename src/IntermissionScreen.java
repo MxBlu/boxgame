@@ -26,6 +26,8 @@ public class IntermissionScreen extends JPanel {
 	private HoverButton menu;
 	private HoverButton next;
 	
+	Font gameFont;
+	
 	private boolean isPremade;
 	
 	public IntermissionScreen(String d, int moves, int difficulty, boolean premadeFlag){
@@ -47,6 +49,8 @@ public class IntermissionScreen extends JPanel {
 			background = ImageIO.read(getClass().getResourceAsStream("intermission.png"));
 			menuButton = ImageIO.read(getClass().getResourceAsStream("menubutton.png"));
 			nextButton = ImageIO.read(getClass().getResourceAsStream("nextbutton.png"));
+
+			gameFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("VCR_OSD_MONO.ttf")).deriveFont(Font.BOLD, 50);
 
 		}
 		catch(Exception e) {
@@ -120,9 +124,7 @@ public class IntermissionScreen extends JPanel {
 		// function for painting.
 		super.paintComponent(g);
 		
-		try {
-			g.setFont(Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("VCR_OSD_MONO.ttf")).deriveFont(Font.BOLD, 50));
-		} catch (FontFormatException | IOException e) {	e.printStackTrace();}		
+		g.setFont(gameFont);
 		
 	    // Draw the background for this JPanel
 	    g.setColor(Color.BLACK);
