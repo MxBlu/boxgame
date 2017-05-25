@@ -34,15 +34,15 @@ import javafx.scene.text.Font;
 public class SelectScreen extends JPanel{
 	
 	class lvlBtnListener implements ActionListener {
-		private String levelString;
+		private File levelFile;
 		
-		public lvlBtnListener(String levelString) {
-			this.levelString = levelString;
+		public lvlBtnListener(File levelFile) {
+			this.levelFile = levelFile;
 		}
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			GameMaster.changeScreens(new Level(levelString, 40));
+			GameMaster.changeScreens(new Level(levelFile, 40));
 		}
 	}
     
@@ -245,7 +245,7 @@ public class SelectScreen extends JPanel{
 		newButton.setBorderPainted(false);
 		newButton.setContentAreaFilled(false);
 		newButton.setPreferredSize(new Dimension(LEVEL_BUTTON_WIDTH, LEVEL_BUTTON_HEIGHT));
-		newButton.addActionListener(new lvlBtnListener(levelString));
+		newButton.addActionListener(new lvlBtnListener(file));
 		
 		JLabel highScoreLabel = new JLabel("Highscore: " + highScore);
 		highScoreLabel.setForeground(Color.WHITE);

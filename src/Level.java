@@ -13,13 +13,18 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.Stack;
 
 import javax.imageio.ImageIO;
@@ -30,6 +35,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
@@ -73,7 +79,11 @@ public class Level extends JPanel implements ActionListener {
 	private long time;
 
 	private boolean isPaused;
-	private boolean isPremade;
+	
+	//Premade level members
+	private File levelFile = null;
+	private String levelMapString = "";
+	private int highScore = 0;
 	
 	//for key input
     private static final String MOVE_UP = "move up";
@@ -83,7 +93,6 @@ public class Level extends JPanel implements ActionListener {
     
     private static final String MENU = "return menu";
     private static final String UNDO = "undo";
-    
 	
 	/**
 	 * Creates a new level.
@@ -111,7 +120,6 @@ public class Level extends JPanel implements ActionListener {
 		time = 0;
 		isPaused = false;
 		pausePanel = new PauseScreen();
-		isPremade = false;
 		
 		setDefaultTiles();
 		
@@ -133,10 +141,11 @@ public class Level extends JPanel implements ActionListener {
 		pushCurrentState();
 	}
 	
-	Level(String input, int tileSize) {
+	Level(File levelFile, int tileSize) {
 		GameMaster.toggleCursorPointer();
 
 		this.tileSize = tileSize;
+		this.levelFile = levelFile;
 		boxList = new ArrayList<Box>();
 		prevStates = new Stack<ArrayList<Entity>>();
 		
@@ -151,15 +160,17 @@ public class Level extends JPanel implements ActionListener {
 		// premade. We set an internal boolean isPremade
 		// to true, to alter the intermission screen
 		// appropriately upon level completion. 
-		isPremade = true;
+		loadLevelFile();
 		
 		// Get the width and height
-		byte inputArray[] = input.getBytes();
+		byte inputArray[] = levelMapString.getBytes();
 		for (this.width = 0; inputArray[this.width] != '\n'; this.width++);
 		this.height = inputArray.length/(width + 1);
 		
 		levelMap = new Tile[this.height][this.width];
 		int sIndex = 0;
+		int playerX = 0;
+		int playerY = 0;
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				if (inputArray[sIndex] - '0' == Tile.BOX.getIntRep()) {
@@ -167,7 +178,7 @@ public class Level extends JPanel implements ActionListener {
 					levelMap[i][j] = Tile.WALKABLE;
 				} else if (inputArray[sIndex] - '0' == Tile.PLAYER.getIntRep()) {
 					try {
-						player = new Player(i, j, ImageIO.read(getClass().getResourceAsStream("player.png")), ImageIO.read(getClass().getResourceAsStream("player_up.png")), ImageIO.read(getClass().getResourceAsStream("player_right.png")), tileSize, width, height);
+						player = new Player(j, i, ImageIO.read(getClass().getResourceAsStream("player.png")), ImageIO.read(getClass().getResourceAsStream("player_up.png")), ImageIO.read(getClass().getResourceAsStream("player_right.png")), tileSize, width, height);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -175,16 +186,41 @@ public class Level extends JPanel implements ActionListener {
 				} else if (inputArray[sIndex] != '\n') {
 					levelMap[i][j] = Tile.getTile(inputArray[sIndex] - '0');	
 				}
+				
 				sIndex++;
 			}
 			sIndex++;
 		}
 		
-		//makePlayer(furthestState.getPlayerSpaces());
+
 		setActions();
 		setupUI();
 		animationTimer.start();
 		pushCurrentState();
+	}
+	
+	private void loadLevelFile() {
+		try {
+			Scanner sc = new Scanner(new FileReader(levelFile));
+			while (sc.hasNextLine()) {
+				String lineString = sc.nextLine();
+				levelMapString += lineString + "\n";
+				Scanner lsScanner = new Scanner(lineString);
+
+				if (!lsScanner.hasNext()) {
+					break;
+				}
+			}
+
+			String imageLocation = sc.nextLine();
+			String highScoreString = sc.nextLine();
+			if (!highScoreString.equals("None set")) {
+				highScore = Integer.parseInt(highScoreString);
+			}
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "File not found");
+			e.printStackTrace();
+		}		
 	}
 	
 	private void setActions() {
@@ -449,8 +485,51 @@ public class Level extends JPanel implements ActionListener {
 			repaint();
 		else if (isCompleted()) {
 			animationTimer.stop();
-			GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves, difficulty, isPremade));
+			if (levelFile != null) {
+				saveHighScore();
+				GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves, difficulty, true));
+			} else {
+				GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves, difficulty, false));
+			}
 		}
+	}
+	
+	private void saveHighScore() {
+		if (moves >= highScore && highScore != 0) {
+			return;
+		}
+		
+		try {
+			String lines = "";
+		    String line = null;
+	        Scanner br = new Scanner(levelFile);
+	        
+	        int linesSinceNothingLine = -1;
+
+	        while (br.hasNextLine()) {
+	        	line = br.nextLine();
+	        	Scanner lsScanner = new Scanner(line);
+	        	
+	        	if (linesSinceNothingLine >= 0) {
+	        		linesSinceNothingLine++;
+	        		if (linesSinceNothingLine == 2) line = Integer.toString(moves);
+	        	}
+	        	
+				if (!lsScanner.hasNext()) {
+					linesSinceNothingLine = 0;
+				}
+	            lines+=line+'\n';
+	        }
+	        
+	        br.close();
+	        
+	        PrintWriter out = new PrintWriter(levelFile);
+			out.write(lines);
+			out.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}       
+
 	}
 	
 	private void pushCurrentState() {
