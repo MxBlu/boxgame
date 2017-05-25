@@ -3,6 +3,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -28,77 +29,78 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import java.awt.Font;
 
-import javafx.scene.text.Font;
+public class SelectScreen extends JPanel {
 
-public class SelectScreen extends JPanel{
-	
 	class lvlBtnListener implements ActionListener {
 		private File levelFile;
-		
+
 		public lvlBtnListener(File levelFile) {
 			this.levelFile = levelFile;
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			GameMaster.changeScreens(new Level(levelFile, 40));
 		}
 	}
-    
-    private static final String MOVE_UP = "move up";
-    private static final String MOVE_DOWN = "move down";
-    private static final String QUIT_MENU = "quit menu";
-    
-    private final int BUTTONS_PER_LINE = 3;
-    private final int LEVEL_BUTTON_WIDTH = 100;
-    private final int LEVEL_BUTTON_HEIGHT = 100;
-	
-    private Image background;
-    private GridBagConstraints c;
-    private JPanel levelsPanel;
-    
+
+	class setBtnListener implements ActionListener {
+		private char suffix;
+
+		public setBtnListener(char suffix) {
+			this.suffix = suffix;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			setUpPanels(suffix);
+		}
+	}
+
+	private static final String MOVE_UP = "move up";
+	private static final String MOVE_DOWN = "move down";
+	private static final String QUIT_MENU = "quit menu";
+
+	private final int BUTTONS_PER_LINE = 3;
+	private final int LEVEL_BUTTON_WIDTH = 100;
+	private final int LEVEL_BUTTON_HEIGHT = 100;
+
+	private Image background;
+	private GridBagConstraints c;
+	private JPanel levelsPanel;
+	private JPanel setBtnPanel;
+	private JPanel lvlSetPanel;
+	private JPanel lvlSetLabelPanel;
+
 	public SelectScreen() {
 		GameMaster.toggleCursorPointer();
 
 		// Get the image file for the background and buttons
 		try {
 			background = ImageIO.read(getClass().getResourceAsStream("levelselectmenu.png"));
-		}
-		catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		}		
+		}
 
 		setLayout(new GridBagLayout());
 		c = new GridBagConstraints();
-		
+
 		// Set the JPanels attributes and revalidate.
 		revalidate();
 		setFocusable(true);
-	    requestFocusInWindow();
-	    
-	    // Keyinput
-	    getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), MOVE_UP);
-		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), MOVE_DOWN);
+		requestFocusInWindow();
+
+		// Keyinput
 		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), QUIT_MENU);
-		getActionMap().put(MOVE_UP, new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				handleUp();
-			}
-		});
-		
-		getActionMap().put(MOVE_DOWN, new AbstractAction() {
-			public void actionPerformed(ActionEvent e) {
-				handleDown();
-			}
-		});
-		
+
 		getActionMap().put(QUIT_MENU, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				back();
 			}
 		});
-		
+
 		HoverButton back = new HoverButton();
 		try {
 			back.setIcon(new ImageIcon(ImageIO.read(getClass().getResourceAsStream("back.png"))));
@@ -108,97 +110,132 @@ public class SelectScreen extends JPanel{
 		back.setToolTipText("Back button");
 		back.setBorderPainted(false);
 		back.setContentAreaFilled(false);
-		back.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent e){
+		back.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				back();
 			}
 		});
 		add(back, c);
-		
+
 		levelsPanel = new JPanel();
-		setUpLevelsPanel();
+		setBtnPanel = new JPanel();
+		lvlSetPanel = new JPanel();
+		lvlSetLabelPanel = new JPanel();
+		add(lvlSetLabelPanel, c);
+
 		c.gridy = 0;
 		add(levelsPanel, c);
+		setUpPanels('1');
+
+		revalidate();
+		repaint();
 	}
-	
+
 	public void paintComponent(Graphics g) {
 		// Access the JPanel super class's
 		// function for painting.
 		super.paintComponent(g);
 
-	    // Draw the background for this JPanel
-	    g.setColor(Color.BLACK);
-        g.drawImage(background, 0, 0, null);
+		// Draw the background for this JPanel
+		g.setColor(Color.BLACK);
+		g.drawImage(background, 0, 0, null);
 	}
-	
-	private void handleDown() {
+
+	private void setUpPanels(char levelSuffix) {
+		setUpSetBtnPanel(levelSuffix);
+		setUpLevelsPanel(levelSuffix);
+		setUpLvlSetPanel(levelSuffix);
+		setUpLvlSetLabelPanel(levelSuffix);
+
+		revalidate();
+		repaint();
 	}
-	
-	private void handleUp() {
-	}
-	
+
 	private void quitMenu() {
 		((JFrame) SwingUtilities.getWindowAncestor(this)).dispose();
 	}
-	
+
 	private void back() {
 		GameMaster.changeScreens(new MenuScreen());
 	}
-	
-	private void setUpLevelsPanel() {
+
+	private void setUpSetBtnPanel(char levelSuffix) {
+		setBtnPanel.removeAll();
+		GridBagConstraints con = new GridBagConstraints();
+		setBtnPanel.setOpaque(false);
+		setBtnPanel.setLayout(new GridBagLayout());
+
+		Font buttonsFont = null;
+		try {
+			buttonsFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("VCR_OSD_MONO.ttf"))
+					.deriveFont(Font.PLAIN, 24);
+		} catch (FontFormatException | IOException e1) {
+			e1.printStackTrace();
+		}
+
+		HoverButton world1But = new HoverButton();
+		world1But.setText("Set 1");
+		world1But.setToolTipText("Set 1");
+		world1But.setBorderPainted(false);
+		world1But.setFont(buttonsFont);
+		world1But.addActionListener(new setBtnListener('1'));
+		setBtnPanel.add(world1But, con);
+
+		JPanel borderFiller = new JPanel();
+		borderFiller.setOpaque(false);
+		borderFiller.setPreferredSize(new Dimension(20, 20));
+		setBtnPanel.add(borderFiller, con);
+
+		HoverButton world2But = new HoverButton();
+		world2But.setText("Set 2");
+		world2But.setToolTipText("Set 2");
+		world2But.setBorderPainted(false);
+		world2But.setFont(buttonsFont);
+		world2But.addActionListener(new setBtnListener('2'));
+		setBtnPanel.add(world2But, con);
+
+		JPanel borderFiller1 = new JPanel();
+		borderFiller1.setOpaque(false);
+		borderFiller1.setPreferredSize(new Dimension(20, 20));
+		setBtnPanel.add(borderFiller1, con);
+
+		HoverButton world3But = new HoverButton();
+		world3But.setText("Set 3");
+		world3But.setToolTipText("Set 3");
+		world3But.setBorderPainted(false);
+		world3But.setFont(buttonsFont);
+		world3But.addActionListener(new setBtnListener('3'));
+		setBtnPanel.add(world3But, con);
+
+		JPanel borderFiller2 = new JPanel();
+		borderFiller2.setOpaque(false);
+		borderFiller2.setPreferredSize(new Dimension(20, 20));
+		setBtnPanel.add(borderFiller2, con);
+
+		HoverButton setCustomBut = new HoverButton();
+		setCustomBut.setText("Custom");
+		setCustomBut.setToolTipText("Custom levels");
+		setCustomBut.setBorderPainted(false);
+		setCustomBut.setFont(buttonsFont);
+		setCustomBut.addActionListener(new setBtnListener('c'));
+		setBtnPanel.add(setCustomBut, con);
+
+		revalidate();
+		repaint();
+	}
+
+	private void setUpLevelsPanel(char levelSuffix) {
+		levelsPanel.removeAll();
 		GridBagConstraints lvlPnlCon = new GridBagConstraints();
 		levelsPanel.setOpaque(false);
 		levelsPanel.setLayout(new GridBagLayout());
-		
-		JLabel worldLabel = new JLabel("World 1");
-		worldLabel.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 40));
-		lvlPnlCon.gridy = 0;
-		levelsPanel.add(worldLabel, lvlPnlCon);
-		
-		lvlPnlCon.gridy = 1;
 
-		HoverButton world1But = new HoverButton();
-		world1But.setText("World 1");
-		world1But.setToolTipText("World 1");
-		world1But.setBorderPainted(false);
-		//world1But.setContentAreaFilled(false);
-		world1But.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent e){
-				back();
-			}
-		});
-		levelsPanel.add(world1But, lvlPnlCon);
-		
-		HoverButton world2But = new HoverButton();
-		world2But.setText("World 2");
-		world2But.setToolTipText("World 2");
-		world2But.setBorderPainted(false);
-		//world1But.setContentAreaFilled(false);
-		world2But.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent e){
-				back();
-			}
-		});
-		levelsPanel.add(world2But, lvlPnlCon);
-		
-		HoverButton world3But = new HoverButton();
-		world3But.setText("World 3");
-		world3But.setToolTipText("World 3");
-		world3But.setBorderPainted(false);
-		//world1But.setContentAreaFilled(false);
-		world3But.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent e){
-				back();
-			}
-		});
-		levelsPanel.add(world3But, lvlPnlCon);
-		
 		File levelsFolder = new File("levels");
 		File[] filesList = levelsFolder.listFiles();
 
 		for (File file : filesList) {
 			if (file.isFile()) {
-				if (file.getName().startsWith("levelc") && file.getName().endsWith(".txt")) {
+				if (file.getName().startsWith("level" + levelSuffix) && file.getName().endsWith(".txt")) {
 					try {
 						setUpLvlButton(file, levelsPanel, lvlPnlCon);
 					} catch (FileNotFoundException e1) {
@@ -209,12 +246,70 @@ public class SelectScreen extends JPanel{
 				}
 			}
 		}
+
+		revalidate();
+		repaint();
 	}
 
-	private void setUpLvlButton(File file, JPanel panel, GridBagConstraints con) throws FileNotFoundException, IOException {
+	private void setUpLvlSetPanel(char levelSuffix) {
+		lvlSetPanel.removeAll();
+		GridBagConstraints lvlPnlCon = new GridBagConstraints();
+		lvlSetPanel.setOpaque(false);
+		lvlSetPanel.setLayout(new GridBagLayout());
+
+		lvlPnlCon.gridy = 0;
+		lvlSetPanel.add(setBtnPanel, lvlPnlCon);
+		lvlPnlCon.gridy++;
+		JPanel borderFiller = new JPanel();
+		borderFiller.setOpaque(false);
+		borderFiller.setPreferredSize(new Dimension(20, 20));
+		lvlSetPanel.add(borderFiller, lvlPnlCon);
+		lvlPnlCon.gridy++;
+		lvlSetPanel.add(levelsPanel, lvlPnlCon);
+
+		revalidate();
+		repaint();
+	}
+
+	private void setUpLvlSetLabelPanel(char levelSuffix) {
+		lvlSetLabelPanel.removeAll();
+		lvlSetLabelPanel.setOpaque(false);
+		GridBagConstraints lvlPnlCon = new GridBagConstraints();
+		lvlSetLabelPanel.setLayout(new GridBagLayout());
+
+		JLabel setLabel = new JLabel("Set " + levelSuffix);
+
+		if (levelSuffix == 'c')
+			setLabel.setText("Set Custom");
+
+		Font setFont = null;
+		try {
+			setFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("VCR_OSD_MONO.ttf"))
+					.deriveFont(Font.PLAIN, 35);
+		} catch (FontFormatException | IOException e1) {
+			e1.printStackTrace();
+		}
+		setLabel.setFont(setFont);
+
+		lvlPnlCon.gridy = 0;
+		lvlSetLabelPanel.add(setLabel, lvlPnlCon);
+		lvlPnlCon.gridy++;
+		JPanel borderFiller = new JPanel();
+		borderFiller.setOpaque(false);
+		borderFiller.setPreferredSize(new Dimension(20, 20));
+		lvlSetLabelPanel.add(borderFiller, lvlPnlCon);
+		lvlPnlCon.gridy++;
+		lvlSetLabelPanel.add(lvlSetPanel, lvlPnlCon);
+
+		revalidate();
+		repaint();
+	}
+
+	private void setUpLvlButton(File file, JPanel panel, GridBagConstraints con)
+			throws FileNotFoundException, IOException {
 		Scanner sc = new Scanner(new FileReader(file));
 		String levelString = "";
-		
+
 		while (sc.hasNextLine()) {
 			String lineString = sc.nextLine();
 			levelString += lineString + "\n";
@@ -227,35 +322,36 @@ public class SelectScreen extends JPanel{
 
 		String imageLocation = sc.nextLine();
 		String highScore = sc.nextLine();
-		
-		if (sc != null) sc.close();
-	    
+
+		if (sc != null)
+			sc.close();
+
 		JPanel btnPanel = new JPanel();
 		btnPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
 		btnPanel.setOpaque(false);
 		btnPanel.setLayout(new GridBagLayout());
 		GridBagConstraints levelPanelCon = new GridBagConstraints();
-		
+
 		HoverButton newButton = new HoverButton();
-		
-		
+
 		Image btnImage = ImageIO.read(new File("levels/" + imageLocation));
-		newButton.setIcon(new ImageIcon(btnImage.getScaledInstance(LEVEL_BUTTON_WIDTH, LEVEL_BUTTON_HEIGHT, java.awt.Image.SCALE_SMOOTH)));
+		newButton.setIcon(new ImageIcon(
+				btnImage.getScaledInstance(LEVEL_BUTTON_WIDTH, LEVEL_BUTTON_HEIGHT, java.awt.Image.SCALE_SMOOTH)));
 		newButton.setToolTipText("Click to start level!");
 		newButton.setBorderPainted(false);
 		newButton.setContentAreaFilled(false);
 		newButton.setPreferredSize(new Dimension(LEVEL_BUTTON_WIDTH, LEVEL_BUTTON_HEIGHT));
 		newButton.addActionListener(new lvlBtnListener(file));
-		
+
 		JLabel highScoreLabel = new JLabel("Highscore: " + highScore);
 		highScoreLabel.setForeground(Color.WHITE);
 
 		btnPanel.add(newButton, levelPanelCon);
 		levelPanelCon.gridy = 1;
 		btnPanel.add(highScoreLabel, levelPanelCon);
-		
-		con.gridy = ((panel.getComponents().length - 4) / BUTTONS_PER_LINE) + 2;
-		
+
+		con.gridy = ((panel.getComponents().length) / BUTTONS_PER_LINE);
+
 		panel.add(btnPanel, con);
 	}
 
