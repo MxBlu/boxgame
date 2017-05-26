@@ -66,7 +66,6 @@ public class DifficultyPanel extends JPanel{
 		Easy.addActionListener(new ActionListener(){
 			// Initiates the change to the load screen
 			public void actionPerformed (ActionEvent e){
-				System.out.println("easy");
 				GameMaster.changeScreens(frame, new LoadingScreen(frame, GameMaster.WIDTH, GameMaster.HEIGHT, 50, Level.EASY));
 			}
 		});
@@ -74,7 +73,6 @@ public class DifficultyPanel extends JPanel{
 		// Medium button action listener
 		Medium.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				System.out.println("medium");
 				GameMaster.changeScreens(frame, new LoadingScreen(frame, GameMaster.WIDTH, GameMaster.HEIGHT, 50, Level.MEDIUM));
 			}
 		});
@@ -82,7 +80,6 @@ public class DifficultyPanel extends JPanel{
 		// Hard button action listener
 		Hard.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				System.out.println("hard");
 				GameMaster.changeScreens(frame, new LoadingScreen(frame, GameMaster.WIDTH, GameMaster.HEIGHT, 50, Level.HARD));
 			}
 		});

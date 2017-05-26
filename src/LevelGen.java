@@ -113,9 +113,6 @@ public class LevelGen {
 	}
 	
 	public Tile[][] generate(int height, int width, int numGoals) {
-		if (height % 3 != 2 || width % 3 != 2)
-			System.out.println("Generated map size not ideal");
-		
 		Tile[][] levelMap = new Tile[height][width];
 		
 		Random r = new Random();
@@ -239,13 +236,6 @@ public class LevelGen {
 			}
 		}
 		
-		System.out.println("Final");
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) 
-				System.out.print(levelMap[i][j].getIntRep());
-			System.out.println();
-		}
-		
 		return levelMap;
 	}
 	
@@ -277,7 +267,6 @@ public class LevelGen {
 			for (j = 0; j < width; j++) {
 				if (intMap[i][j] == 0) {
 					startFound_f = true;
-					System.out.println(i + " " + j);
 					break;
 				}
 			}

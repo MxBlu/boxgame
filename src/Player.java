@@ -84,7 +84,6 @@ public class Player extends Entity implements Cloneable {
 					audioSource.playSound(WALL_COLLISION, 1.0f);
 					tileX = prevTileX;
 					tileY = prevTileY;
-					System.out.println("Box there");
 				} else {
 					if (levelMap[tileY + movY][tileX + movX] != Tile.WALL) {
 						box.setTilePos(tileX + movX, tileY + movY);
@@ -95,7 +94,6 @@ public class Player extends Entity implements Cloneable {
 						
 					} else {
 						audioSource.playSound(WALL_COLLISION, 1.0f);
-						System.out.println("move");
 						tileX = prevTileX;
 						tileY = prevTileY;
 					}

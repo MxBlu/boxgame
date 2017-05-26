@@ -156,9 +156,6 @@ public class FurthestStateGen {
 			if (resultList.size() == 0) break;
 			// expands prevTempList
 			prevTempList = expand(prevTempList, boxGoals);
-			
-			System.out.println("depth " + depth);
-			System.out.println("Time taken: " + ChronoUnit.SECONDS.between(start, LocalDateTime.now()));
 		}
 		
 		return prevResultList;
@@ -180,7 +177,6 @@ public class FurthestStateGen {
 		
 		// goes through until possibleStates' size reaches 60 or it iterates 100 times
 		for (int possibleSize = 0; possibleSize < 60 && i < 100; possibleSize++) {
-			//System.out.println("forever");
 			goalCheck = false;
 			// gets a random index from resultList
 			randState = r.nextInt(resultList.size());
@@ -249,10 +245,7 @@ public class FurthestStateGen {
 				}
 			}
 		}
-		
-		System.out.println("currMaxBoxLines " + currScore);
-		System.out.println("currMaxBoxLines " + currDiffScore);
-		System.out.println("currMaxBoxLines " + stateList.get(possibleStates.get(pos)).getMinPathLength());
+
 		// sets the current ideal state's playerSpaces
 		this.playerSpaces = stateList.get(possibleStates.get(pos)).getPlayerSpaces();
 	}

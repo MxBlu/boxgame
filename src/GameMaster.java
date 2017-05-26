@@ -71,10 +71,6 @@ public class GameMaster{
         int heightWithBorder = HEIGHT + (frame.getHeight() - frame.getContentPane().getHeight());
         frame.setSize(widthWithBorder, heightWithBorder);
         
-        
-        /*panel = new JPanel(new CardLayout());
-        frame.add(panel);*/
-        
         // Add a boot up screen/JPanel to this
         // JFrame
         frame.getContentPane().add(new BootScreen(frame));
@@ -112,7 +108,6 @@ public class GameMaster{
      * - a hand when hovering over buttons
      * - a pointer when on jframe but not over a button
      */
- 
     public void setCursorPointer(){
     	Toolkit toolkit = Toolkit.getDefaultToolkit();
      	Point cursorHotSpot = new Point(0,0);

@@ -13,6 +13,7 @@ public class HoverButton extends JButton {
 
 	public HoverButton() {
 		try {
+			// Creates the cursor when hovering oveer a button
 			cursorImage = ImageIO.read(getClass().getResourceAsStream("hand.png"));
 			Toolkit toolkit = Toolkit.getDefaultToolkit();
 			Point cursorHotSpot = new Point(0, 0);
