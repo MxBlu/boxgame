@@ -39,21 +39,21 @@ public class State {
 				if (!(prevState.boxNum == currBoxNum && prevState.pullDir == currPullDir)) {
 					(this.numBoxLines)++;
 				}
+			} else {
+				
 			}
 			
 			// gets the minimum path length from the previous state and adds onto
 			// the shortest distance from previous location to current location
 			// using Pythagoras' theorem
-			this.minPathLength = prevState.minPathLength + 
-									Math.sqrt(Math.pow(this.playerX - prevState.playerX, 2) +
-									Math.pow(this.playerY - prevState.playerY, 2));
+			this.minPathLength = prevState.minPathLength + Math.hypot(playerX - prevState.playerX, playerY - prevState.playerY);
 			this.boxNum = currBoxNum;
 			this.pullDir = currPullDir;
 		}
 	}
 	
 	public State (int playerX, int playerY, List<Box> boxList, List<List<Integer>> playerSpaces,
-					int boxNum, int pullDir, int numBoxLines) {
+					int boxNum, int pullDir, int numBoxLines, double minPathLength) {
 		this.playerX = playerX;
 		this.playerY = playerY;
 		this.boxList = boxList;
@@ -61,6 +61,7 @@ public class State {
 		this.boxNum = boxNum;
 		this.pullDir = pullDir;
 		this.numBoxLines = numBoxLines;
+		this.minPathLength = minPathLength;
 	}
 	
 	/* Returns the list of boxes in this state */
@@ -215,7 +216,7 @@ public class State {
 		}
 		
 		return new State(this.playerX, this.playerY, copyBoxList, copyPlayerSpaces,
-				this.boxNum, this.pullDir, this.numBoxLines);
+				this.boxNum, this.pullDir, this.numBoxLines, this.minPathLength);
 	}
 	
 	@Override

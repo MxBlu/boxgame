@@ -106,9 +106,6 @@ public class LevelCreatorScreen extends JPanel{
 			}
 		}
 		
-		levelMap[4][5] = Tile.WALKABLE;
-		levelMap[4][8] = Tile.WALKABLE;
-		
 		setDefaultTiles();
 		
 		addMouseMotionListener(new MouseMotionListener() {
@@ -463,7 +460,7 @@ public class LevelCreatorScreen extends JPanel{
 		//Save level picture
 		levelString += "levelc-" + slot + ".png\n";
 		//Save default highscore
-		levelString += "None set";
+		levelString += "None";
 		
 		//Write out to the file
 		try {

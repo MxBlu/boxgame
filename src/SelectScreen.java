@@ -32,6 +32,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.border.LineBorder;
+
 import java.awt.Font;
 
 public class SelectScreen extends JPanel {
@@ -76,6 +78,7 @@ public class SelectScreen extends JPanel {
 	private JPanel setBtnPanel;
 	private JPanel lvlSetPanel;
 	private JPanel lvlSetLabelPanel;
+	private Font highScoresFont;
 
 	public SelectScreen() {
 		GameMaster.toggleCursorPointer();
@@ -119,6 +122,13 @@ public class SelectScreen extends JPanel {
 			}
 		});
 		add(back, c);
+		
+		try {
+			highScoresFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("VCR_OSD_MONO.ttf"))
+					.deriveFont(Font.PLAIN, 15);
+		} catch (FontFormatException | IOException e1) {
+			e1.printStackTrace();
+		}
 
 		levelsPanel = new JPanel();
 		setBtnPanel = new JPanel();
@@ -175,52 +185,68 @@ public class SelectScreen extends JPanel {
 		} catch (FontFormatException | IOException e1) {
 			e1.printStackTrace();
 		}
+		
+		int buttonWidth = 110;
+		int buttonHeight = 40;
+		int fillerSize = 20;
 
 		HoverButton world1But = new HoverButton();
 		world1But.setText("Set 1");
 		world1But.setToolTipText("Set 1");
-		world1But.setBorderPainted(false);
 		world1But.setFont(buttonsFont);
+		world1But.setForeground(new Color(255, 18, 81));
 		world1But.addActionListener(new setBtnListener('1'));
+		world1But.setBackground(new Color(0, 0, 0));
+		world1But.setBorder(new LineBorder(Color.WHITE, 3, true));
+		world1But.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
 		setBtnPanel.add(world1But, con);
 
 		JPanel borderFiller = new JPanel();
 		borderFiller.setOpaque(false);
-		borderFiller.setPreferredSize(new Dimension(20, 20));
+		borderFiller.setPreferredSize(new Dimension(fillerSize, fillerSize));
 		setBtnPanel.add(borderFiller, con);
 
 		HoverButton world2But = new HoverButton();
 		world2But.setText("Set 2");
 		world2But.setToolTipText("Set 2");
-		world2But.setBorderPainted(false);
 		world2But.setFont(buttonsFont);
+		world2But.setForeground(new Color(255, 158, 0));
 		world2But.addActionListener(new setBtnListener('2'));
+		world2But.setBackground(new Color(0, 0, 0));
+		world2But.setBorder(new LineBorder(Color.WHITE, 3, true));
+		world2But.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
 		setBtnPanel.add(world2But, con);
 
 		JPanel borderFiller1 = new JPanel();
 		borderFiller1.setOpaque(false);
-		borderFiller1.setPreferredSize(new Dimension(20, 20));
+		borderFiller1.setPreferredSize(new Dimension(fillerSize, fillerSize));
 		setBtnPanel.add(borderFiller1, con);
 
 		HoverButton world3But = new HoverButton();
 		world3But.setText("Set 3");
 		world3But.setToolTipText("Set 3");
-		world3But.setBorderPainted(false);
 		world3But.setFont(buttonsFont);
+		world3But.setForeground(new Color(167, 255, 1));
 		world3But.addActionListener(new setBtnListener('3'));
+		world3But.setBackground(new Color(0, 0, 0));
+		world3But.setBorder(new LineBorder(Color.WHITE, 3, true));
+		world3But.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
 		setBtnPanel.add(world3But, con);
 
 		JPanel borderFiller2 = new JPanel();
 		borderFiller2.setOpaque(false);
-		borderFiller2.setPreferredSize(new Dimension(20, 20));
+		borderFiller2.setPreferredSize(new Dimension(fillerSize, fillerSize));
 		setBtnPanel.add(borderFiller2, con);
 
 		HoverButton setCustomBut = new HoverButton();
 		setCustomBut.setText("Custom");
 		setCustomBut.setToolTipText("Custom levels");
-		setCustomBut.setBorderPainted(false);
 		setCustomBut.setFont(buttonsFont);
+		setCustomBut.setForeground(new Color(0, 255, 248));
 		setCustomBut.addActionListener(new setBtnListener('c'));
+		setCustomBut.setBackground(new Color(0, 0, 0));
+		setCustomBut.setBorder(new LineBorder(Color.WHITE, 3, true));
+		setCustomBut.setPreferredSize(new Dimension(buttonWidth, buttonHeight));
 		setBtnPanel.add(setCustomBut, con);
 
 		revalidate();
@@ -250,7 +276,7 @@ public class SelectScreen extends JPanel {
 			}
 		}
 
-		revalidate();
+		revalidate();		
 		repaint();
 	}
 
@@ -292,6 +318,7 @@ public class SelectScreen extends JPanel {
 		} catch (FontFormatException | IOException e1) {
 			e1.printStackTrace();
 		}
+		setLabel.setForeground(new Color(255, 255, 255));
 		setLabel.setFont(setFont);
 
 		lvlPnlCon.gridy = 0;
@@ -351,6 +378,8 @@ public class SelectScreen extends JPanel {
 
 		JLabel highScoreLabel = new JLabel("Highscore: " + highScore);
 		highScoreLabel.setForeground(Color.WHITE);
+		highScoreLabel.setFont(highScoresFont);
+		highScoreLabel.setPreferredSize(new Dimension(150, 30));
 
 		btnPanel.add(newButton, levelPanelCon);
 		levelPanelCon.gridy = 1;
@@ -358,6 +387,7 @@ public class SelectScreen extends JPanel {
 
 		con.gridy = ((panel.getComponents().length) / BUTTONS_PER_LINE);
 
+		btnPanel.setPreferredSize(new Dimension(150, 130));
 		panel.add(btnPanel, con);
 	}
 
