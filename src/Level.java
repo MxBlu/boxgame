@@ -220,7 +220,7 @@ public class Level extends JPanel implements ActionListener {
 
 			String imageLocation = sc.nextLine();
 			String highScoreString = sc.nextLine();
-			if (!highScoreString.equals("None set")) {
+			if (!highScoreString.equals("None")) {
 				String[] stringArray = highScoreString.split(" ");
 				highScore = Integer.parseInt(stringArray[0]);
 				System.out.println("highscore" + highScore);
@@ -507,7 +507,7 @@ public class Level extends JPanel implements ActionListener {
 	}
 	
 	private void saveHighScore() {
-		System.out.println("moves "+ moves + " highScore " + highScore + " time " + time + " bestTime ");
+		System.out.println("moves "+ moves + " highScore " + highScore + " time " + time + " bestTime "+ bestTime);
 		if ((moves > highScore && highScore != 0)&&(time >= bestTime && bestTime != 0)) {
 			return;
 		}
@@ -653,9 +653,9 @@ public class Level extends JPanel implements ActionListener {
 			animationTimer.stop();
 			if (levelFile != null) {
 				saveHighScore();
-				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, true, newHighScore, dateFormat.format(date), highScore));
+				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, true, newHighScore, dateFormat.format(bestTime), highScore));
 			} else {
-				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, false,newHighScore, dateFormat.format(date), highScore));
+				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, false,newHighScore, dateFormat.format(bestTime), highScore));
 			}
 			
 		}
