@@ -11,6 +11,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+/*
+ * Pause Panel
+ * 
+ * Displayed over level screen when player presses esc or clicks pause button
+ * Allows user to go back to Main menu, or resume playing
+ * 
+ */
+
 public class PausePanel extends JPanel{
 	
 	
@@ -23,7 +31,7 @@ public class PausePanel extends JPanel{
 	private JFrame frame;
 	
 	public PausePanel(JFrame frame) {
-		//GameMaster.toggleCursorPointer();
+		
 		this.frame = frame;
 		try{
 			Background = ImageIO.read(getClass().getResourceAsStream("pausescreen.png"));
@@ -61,6 +69,8 @@ public class PausePanel extends JPanel{
 				l.togglePaused();
 			}
 		});
+		
+		//Centers the buttons
 		setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.gridx = 1;
@@ -72,7 +82,7 @@ public class PausePanel extends JPanel{
 		setVisible(true);
 		setBounds(200, 100, 2*GameMaster.WIDTH/3, 2*GameMaster.HEIGHT/3);
 	}
-	
+
 	public void paintComponent(Graphics g) {
 		// Access the JPanel super class's
 		// function for painting.
