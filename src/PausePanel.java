@@ -50,7 +50,6 @@ public class PausePanel extends JPanel{
 		// Return to menu button action listener
 		Menu.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				System.out.println("return to menu");
 	    		GameMaster.changeScreens(frame, new MenuScreen(frame));
 			}
 		});
@@ -70,7 +69,6 @@ public class PausePanel extends JPanel{
 		c.gridy = 2;
 		add(Menu,c);
 
-		System.out.println("pause screen");
 		setVisible(true);
 		setBounds(200, 100, 2*GameMaster.WIDTH/3, 2*GameMaster.HEIGHT/3);
 	}
@@ -81,7 +79,6 @@ public class PausePanel extends JPanel{
 		super.paintComponent(g);
 		
 	    // Draw the background for this JPanel
-	    //g.setColor(Color.BLACK);
         g.drawImage(Background, 0, 0, null);
      
 	}

@@ -104,7 +104,6 @@ public class Level extends JPanel implements ActionListener {
     Level(JFrame frame, int screenWidth, int screenHeight, int tileSize, int difficulty) {
 		// 1 pixel padding so I don't need to add edge cases to generation.
 		this.frame = frame;
-	//	GameMaster.toggleCursorPointer();
 
 		this.width = screenWidth/tileSize + 2;
 		this.height = screenHeight/tileSize + 2;
@@ -134,7 +133,6 @@ public class Level extends JPanel implements ActionListener {
 			makeBoxList(numGoals);
 			// makes the furthestStateGen
 			f = new FurthestStateGen(width, height, numGoals, levelMap, this.boxList);
-			System.out.println("RESTART");
 		}
 		
 		// gets the new boxList from f
@@ -175,19 +173,26 @@ public class Level extends JPanel implements ActionListener {
 		
 		levelMap = new Tile[this.height][this.width];
 		int sIndex = 0;
+		
+		// goes through initializing the levelMap using inputArray
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
+				// checks if it is representative of a box
 				if (inputArray[sIndex] - '0' == Tile.BOX.getIntRep()) {
+					// adds box to boxList and sets the coordinates as walkable on levelMap
 					boxList.add(new Box(j, i, tileImgs[2], tileSize, width, height));
 					levelMap[i][j] = Tile.WALKABLE;
+					// checks if it is representative of a plyer
 				} else if (inputArray[sIndex] - '0' == Tile.PLAYER.getIntRep()) {
 					try {
+						// creates a player and sets the coordinates as walkable on levelMap
 						player = new Player(j, i, ImageIO.read(getClass().getResourceAsStream("player.png")), ImageIO.read(getClass().getResourceAsStream("player_up.png")), ImageIO.read(getClass().getResourceAsStream("player_right.png")), tileSize, width, height);
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 					levelMap[i][j] = Tile.WALKABLE;
 				} else if (inputArray[sIndex] != '\n') {
+					// sets whatever inputArray at sIndex is representative of in levelMap
 					levelMap[i][j] = Tile.getTile(inputArray[sIndex] - '0');	
 				}
 				
@@ -196,7 +201,7 @@ public class Level extends JPanel implements ActionListener {
 			sIndex++;
 		}
 		
-
+		// prepares the level for input
 		setActions();
 		setupUI();
 		animationTimer.start();
@@ -205,6 +210,7 @@ public class Level extends JPanel implements ActionListener {
 	
 	private void loadLevelFile() {
 		try {
+			// scans for the level string representation
 			Scanner sc = new Scanner(new FileReader(levelFile));
 			while (sc.hasNextLine()) {
 				String lineString = sc.nextLine();
@@ -220,10 +226,10 @@ public class Level extends JPanel implements ActionListener {
 
 			String imageLocation = sc.nextLine();
 			String highScoreString = sc.nextLine();
+			// prints the user's highest score for the level
 			if (!highScoreString.equals("None")) {
 				String[] stringArray = highScoreString.split(" ");
 				highScore = Integer.parseInt(stringArray[0]);
-				System.out.println("highscore" + highScore);
 				if (stringArray.length >1){
 					bestTime = Long.parseLong(stringArray[1]);
 					
@@ -252,6 +258,7 @@ public class Level extends JPanel implements ActionListener {
 		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), MENU);
 		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("Z"), UNDO);
 		
+		// sets movement for the up key
 		getActionMap().put(MOVE_UP, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				if (!player.isAnimating() && !isPaused) {
@@ -261,6 +268,7 @@ public class Level extends JPanel implements ActionListener {
 			}
 		});
 
+		// sets movement for the down key
 		getActionMap().put(MOVE_DOWN, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				if (!player.isAnimating() && !isPaused) {
@@ -270,6 +278,7 @@ public class Level extends JPanel implements ActionListener {
 			}
 		});
 
+		// sets movement for the left key
 		getActionMap().put(MOVE_LEFT, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				if (!player.isAnimating() && !isPaused) {
@@ -279,6 +288,7 @@ public class Level extends JPanel implements ActionListener {
 			}
 		});
 
+		// sets movement for the right key
 		getActionMap().put(MOVE_RIGHT, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				if (!player.isAnimating() && !isPaused) {
@@ -288,12 +298,14 @@ public class Level extends JPanel implements ActionListener {
 			}
 		});
 		
+		// sets event for the menu button
 		getActionMap().put(MENU, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				togglePaused();
 			}
 		});
 		
+		// sets event for the undo button
 		getActionMap().put(UNDO, new AbstractAction() {
 			public void actionPerformed(ActionEvent e) {
 				if (!player.isAnimating() && !isPaused)
@@ -315,7 +327,6 @@ public class Level extends JPanel implements ActionListener {
 					tileSize, Image.SCALE_DEFAULT);
 			tileImgs[1] = ImageIO.read(getClass().getResourceAsStream("ground_empty.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
-			//todo remove [2]
 			tileImgs[2] = ImageIO.read(getClass().getResourceAsStream("box.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
 			tileImgs[3] = ImageIO.read(getClass().getResourceAsStream("goal.png")).getScaledInstance(tileSize,
@@ -327,33 +338,38 @@ public class Level extends JPanel implements ActionListener {
 		}
 	}
 	
+	/* Sets up the user interactive interface */
 	private void setupUI() {
 		setOpaque(false);
 		setLayout(null);
 
 		Font gameFont = null;
 		try {
+			// gets the game font to be used
 			gameFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("VCR_OSD_MONO.ttf")).deriveFont(Font.PLAIN, 35);
 		} catch (FontFormatException | IOException e1) {e1.printStackTrace();}
 		
+		// sets the moves label
 		movesLabel = new JLabel("Moves: " + moves);
 		movesLabel.setFont(gameFont);
 		movesLabel.setForeground(Color.WHITE);
 		movesLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
 		
+		// sets the time label
 		timerLabel = new JLabel("Time: 0:00:000");
 		timerLabel.setFont(gameFont);
 		timerLabel.setForeground(Color.WHITE);
 		timerLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
 		
+		// sets the boundaries and background of the level
 		uiPanel = new JPanel(new BorderLayout());
 		uiPanel.setPreferredSize(new Dimension(GameMaster.WIDTH, 80));
 		uiPanel.setBounds(new Rectangle(new Point(0, (int) (GameMaster.HEIGHT - uiPanel.getPreferredSize().getHeight())), uiPanel.getPreferredSize()));
 		uiPanel.setBackground(new Color(58, 58, 58));
 		
-		
 		getImages();
 		
+		// sets the pause button
 		Pause = new HoverButton();
 		Pause.setIcon(new ImageIcon(pauseButton));
 		Pause.setContentAreaFilled(false);
@@ -368,17 +384,20 @@ public class Level extends JPanel implements ActionListener {
 		    }
 		});
 		
+		// sets the listener for pause
 		Pause.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				togglePaused();			
 				}
 		});
 		
+		// sets the undo button
 		Undo = new HoverButton();
 		Undo.setIcon(new ImageIcon(undoButton));
 		Undo.setContentAreaFilled(false);
 		Undo.setBorderPainted(false);
 		
+		// sets the listener for the user's cursor
 		Undo.addMouseListener(new java.awt.event.MouseAdapter() {
 		  
 		    public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -389,6 +408,7 @@ public class Level extends JPanel implements ActionListener {
 		    }
 		});
 		
+		// sets the listener for undo
 		Undo.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				if (!player.isAnimating() && !isPaused)
@@ -396,6 +416,7 @@ public class Level extends JPanel implements ActionListener {
 			}
 		});
 		
+		// lays out the buttons on the panel
 		uiButtonsPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(5,5,5,5);
@@ -406,7 +427,6 @@ public class Level extends JPanel implements ActionListener {
 		uiButtonsPanel.setOpaque(false);
 		uiButtonsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		
-	
 		uiPanel.add(movesLabel, BorderLayout.WEST);
 		uiPanel.add(timerLabel);
 		uiPanel.add(uiButtonsPanel, BorderLayout.EAST);
@@ -414,6 +434,8 @@ public class Level extends JPanel implements ActionListener {
 		add(uiPanel);
 	}
 	
+	/* Gets the button images for pause and undo
+	 * Gets the cursor images when hovering over these buttons */
 	private void getImages(){
 		try {
 			pauseButton = ImageIO.read(getClass().getResourceAsStream("pause.png"));
@@ -427,6 +449,8 @@ public class Level extends JPanel implements ActionListener {
 		
 	}
 	
+	/* Controls the appearance of the pause panel
+	 * Stops the timer of the current level if paused */
 	public void togglePaused() {
 		if (isPaused) {
 			isPaused = false;
@@ -487,19 +511,16 @@ public class Level extends JPanel implements ActionListener {
 		return true;
 	} 
 	
+	/* Undo the players previous action */
 	private void undo() {
 		//Since we can't store the state when the player starts moving
 		//as we have no way of knowing when that is at the moment, we 
 		//need to pop twice and push at the end
-		System.out.println("In Undo Function");
-		System.out.println("prevstate size >=2 " +prevStates.size()+" or prev states is not empty and its animating"
-				+ " "+ prevStates.isEmpty() + " "+ player.isAnimating());
 		if (prevStates.size() >= 2 || (!prevStates.isEmpty() && player.isAnimating())) {
 			if (!player.isAnimating())
 				
 				prevStates.pop();
 			ArrayList<Entity> prevState = prevStates.pop();
-			System.out.println("Previous state check "+ prevStates);
 			boxList = new ArrayList<Box>();
 			for (Entity e : prevState) {
 				if (e.getClass() == Player.class) {
@@ -514,25 +535,30 @@ public class Level extends JPanel implements ActionListener {
 		repaint();
 	}
 	
+	/* Pushes the current state of the level */
 	private void pushCurrentState() {
-		// save state
+		// saves state
 		ArrayList<Entity> newState = new ArrayList<Entity>();
 		try {
+			// gets the state of the player
 			Player newPlayer = (Player) player.clone();
-			System.out.println("n " + newPlayer.getTileX() + " " + newPlayer.getTileY());
 			newState.add(newPlayer);
-
+			
+			// gets the state of the boxes on the level
 			for (Box b : boxList) {
 				newState.add((Entity) b.clone());
 			}
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
+		
+		// adds the current state to prevStates
 		prevStates.push(newState);
 	}
 	
+	/* Saves the players high score for that level */
 	private void saveHighScore() {
-		System.out.println("moves "+ moves + " highScore " + highScore + " time " + time + " bestTime "+ bestTime);
+		// prints out the relevant message to high score
 		if ((moves > highScore && highScore != 0)&&(time >= bestTime && bestTime != 0)) {
 			return;
 		}
@@ -551,6 +577,7 @@ public class Level extends JPanel implements ActionListener {
 	        
 	        int linesSinceNothingLine = -1;
 
+	        // continues for the extent of levelFile
 	        while (br.hasNextLine()) {
 	        	line = br.nextLine();
 	        	Scanner lsScanner = new Scanner(line);
@@ -569,38 +596,49 @@ public class Level extends JPanel implements ActionListener {
 	        
 	        br.close();
 	        
+	        // outputs the levelFile 
 	        PrintWriter out = new PrintWriter(levelFile);
 			out.write(lines);
 			out.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		}       
-		System.out.println("Changes high SCore");
+		}
 
 	}
 	
 	@Override
+	/* Converts the level to a string format */
 	public String toString() {
 		StringBuilder s = new StringBuilder(height * (width + 1));
+		
+		// goes through the level to get the location of the objects on the level
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
+				// checks if coordinate is a player
 				if (player.getTileX() == i && player.getTileY() == j) {
+					// appends player representation to string
 					s.append(Tile.PLAYER.getIntRep());
 					continue;
 				}
 				
 				boolean box_f = false;
+				// goes through the boxList
 				for (Box b : boxList) {
+					// checks if coordinate is a box
 					if (b.getTileY() == i && b.getTileX() == j) {
 						box_f = true;
 						break;
 					}
 				}
 				
-				if (box_f)
+				// checks if it is a confirmed box
+				if (box_f) {
+					// appends the box representation to string
 					s.append(Tile.BOX.getIntRep());
-				else
+				} else {
+					// appends whatever the coordinate is (walkable)
 					s.append(levelMap[i][j].getIntRep());
+				}
 			}
 				
 			s.append('\n');
@@ -609,13 +647,17 @@ public class Level extends JPanel implements ActionListener {
 		return s.toString();
 	}
 	
+	/* Paints the level for the user */
 	public void paintComponent(Graphics g) {
 		Graphics2D bbg = (Graphics2D) g;
 		int left = (int) ((double) GameMaster.WIDTH/2 - (double) (width * tileSize)/2);
 		int top = (int) ((double) GameMaster.HEIGHT/2 - (double) (height * tileSize)/2);
 		
+		// goes through the levelMap
 		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) { 
+			for (int j = 0; j < width; j++) {
+				// checks if current coordinate is a wall bordering around the playable area
+				// draws depending on whether it is a border or not
 				if ((levelMap[i][j] == Tile.WALL) && 
 						((i < (height - 1) && (levelMap[i + 1][j] == Tile.WALKABLE || levelMap[i + 1][j] == Tile.GOAL)) ||
 						((i < (height - 1) && j > 0) && (levelMap[i + 1][j - 1] == Tile.WALKABLE || levelMap[i + 1][j - 1] == Tile.GOAL)) ||
@@ -631,37 +673,49 @@ public class Level extends JPanel implements ActionListener {
 			}
 		}
 		
+		// goes through the boxList
 		for (Box box : boxList) {
+			// draws the box
 			box.draw(bbg);
 		}
 		
+		// paints the player
 		player.paintComponent(bbg);
 	}
 
+	/* Updates the player */
 	public void update() {
-		//System.out.println("player.update");
 		player.update(levelMap, boxList);
 		
+		// checks if the player is at a new tile
 		if (player.atNewTile()) {
+			// adds to the moves
 			moves++;
 			movesLabel.setText("Moves: " + moves);
+			// saves the current state to prevStates
 			pushCurrentState();
 		}
 		
 	}
 
 	@Override
+	/* Checks if the action was performed */
 	public void actionPerformed(ActionEvent e) {
 		boolean stillAnimating = false;
 		
+		// checks if the player is still animating
 		if (player.isAnimating()) {
 			stillAnimating = true;
+			// updates the player's animation
 			player.updateAnimation();
 		}
 		
+		// goes through the boxList
 		for (Box b : boxList) {
+			// checks if the box is still animating
 			if (b.isAnimating()) {
 				stillAnimating = true;
+				// updates the box's animation
 				b.updateAnimation();
 			}
 		}
@@ -672,12 +726,16 @@ public class Level extends JPanel implements ActionListener {
 		DateFormat dateFormat = new SimpleDateFormat("mm:ss:SSS");
 		timerLabel.setText("Time: " + dateFormat.format(date));
 		
+		// checks if it is still animating something else
 		if (stillAnimating)
 			repaint();
 		else if (isCompleted()) {
+			// stops the animation's timer
 			animationTimer.stop();
 			if (levelFile != null) {
+				// saves if high score
 				saveHighScore();
+				// goes to the intermission screen with player data of the played level
 				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, true, newHighScore, dateFormat.format(bestTime), highScore));
 			} else {
 				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, false,newHighScore, dateFormat.format(bestTime), highScore));
