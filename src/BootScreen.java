@@ -19,6 +19,11 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
+
+/*
+ * Animation with music at start of game
+ */
+
 public class BootScreen extends JPanel implements ActionListener{
 
 	//JFrame main;
@@ -71,7 +76,15 @@ public class BootScreen extends JPanel implements ActionListener{
         g2d.drawImage(imagem, 0, 0, null);
     }
 
-    /* Performs the event for boot screen */
+    /* 
+     * Triggers events for timer
+     *  
+     * Calls repaint on the screen at every timer interval
+     * and calls for change in image
+     * 
+     * @param ActionEvent e is triggered by the timer
+     *
+     */
     public void actionPerformed(ActionEvent e) {
     	// checks if it is an initial state
     	if (state == 0) {
