@@ -29,7 +29,6 @@ public class DifficultyPanel extends JPanel{
 	
 	public DifficultyPanel(JFrame frame) {
 		this.frame = frame;
-		//GameMaster.toggleCursorPointer();
 		// Get the image file for the background and buttons
 		try {
 			background = ImageIO.read(getClass().getResourceAsStream("difficultySelect.png"));
@@ -45,16 +44,19 @@ public class DifficultyPanel extends JPanel{
 		setBackground(Color.black);
 		setOpaque(false);
 		
+		// Sets the easy difficulty button on the panel
 		Easy = new HoverButton();
 		Easy.setIcon(new ImageIcon(easy));
 		Easy.setBorderPainted(false);
 		Easy.setContentAreaFilled(false);
 		
+		// Sets the medium difficulty button on the panel
 		Medium = new HoverButton();
 		Medium.setIcon(new ImageIcon(medium));
 		Medium.setBorderPainted(false);
 		Medium.setContentAreaFilled(false);
 		
+		// Sets the hard difficulty button on the panel
 		Hard = new HoverButton();
 		Hard.setIcon(new ImageIcon(hard));
 		Hard.setBorderPainted(false);
@@ -62,6 +64,7 @@ public class DifficultyPanel extends JPanel{
 		
 		// Easy button action listener
 		Easy.addActionListener(new ActionListener(){
+			// Initiates the change to the load screen
 			public void actionPerformed (ActionEvent e){
 				System.out.println("easy");
 				GameMaster.changeScreens(frame, new LoadingScreen(frame, GameMaster.WIDTH, GameMaster.HEIGHT, 50, Level.EASY));
@@ -84,6 +87,7 @@ public class DifficultyPanel extends JPanel{
 			}
 		});
 		
+		// Sets the layout of the buttons
 		setButtonLayout();
 
 		setVisible(true);
