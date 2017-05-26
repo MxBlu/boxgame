@@ -12,10 +12,7 @@ import java.util.ArrayList;
 import javax.swing.Timer;
 
 public class Player extends Entity implements Cloneable {
-	
-	private static final String WALL_COLLISION = "wall collision";
-	private static final String BOX_PUSH = "box push";
-	
+		
 	private Image downSprite;
 	private Image upSprite;
 	private Image rightSprite;
@@ -28,6 +25,8 @@ public class Player extends Entity implements Cloneable {
 	
 	private boolean goal = false;
 
+	private static final String WALL_COLLISION = "wall collision";
+	private static final String BOX_PUSH = "box push";
 	/**
 	 * Representative of the player the user plays as on the level
 	 */

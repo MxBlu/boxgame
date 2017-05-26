@@ -37,7 +37,7 @@ public class IntermissionScreen extends JPanel {
 	private int bestMoves;
 	private boolean newHighScore;
 	
-	Font gameFont;
+	private Font gameFont;
 	
 	private boolean isPremade;
 	private JFrame frame;

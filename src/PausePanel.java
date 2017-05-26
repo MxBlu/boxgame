@@ -21,7 +21,6 @@ import javax.swing.JPanel;
 
 public class PausePanel extends JPanel{
 	
-	
 	private Image Background;
 	private Image menuButton;
 	private Image resumeButton;

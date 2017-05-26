@@ -26,7 +26,6 @@ import javax.swing.Timer;
 
 public class BootScreen extends JPanel implements ActionListener{
 
-	//JFrame main;
     Image imagem;
     Timer timer;
     

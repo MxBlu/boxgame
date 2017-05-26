@@ -36,6 +36,10 @@ import javax.swing.border.LineBorder;
 
 import java.awt.Font;
 
+/**
+ * A screen to allow for the selection of a premade
+ * level to be played
+ */
 public class SelectScreen extends JPanel {
 
 	/**
@@ -72,15 +76,6 @@ public class SelectScreen extends JPanel {
 		}
 	}
 
-	private static final String QUIT_MENU = "quit menu";
-
-	private final int BUTTONS_PER_LINE = 3;
-	private final int LEVEL_BUTTON_WIDTH = 100;
-	private final int LEVEL_BUTTON_HEIGHT = 100;
-	private final int SET_BUTTON_WIDTH = 110;
-	private final int SET_BUTTON_HEIGHT = 40;
-	private final int FILLER_SIZE = 20;
-
 	private Image background;
 	private Font highScoresFont;
 	private GridBagConstraints c;
@@ -90,6 +85,15 @@ public class SelectScreen extends JPanel {
 	private JPanel lvlSetLabelPanel;
 	
 	private JFrame frame;
+
+	private static final String QUIT_MENU = "quit menu";
+	
+	private final int BUTTONS_PER_LINE = 3;
+	private final int LEVEL_BUTTON_WIDTH = 100;
+	private final int LEVEL_BUTTON_HEIGHT = 100;
+	private final int SET_BUTTON_WIDTH = 110;
+	private final int SET_BUTTON_HEIGHT = 40;
+	private final int FILLER_SIZE = 20;
 
 	/**
 	 * SelectScreen constructor
