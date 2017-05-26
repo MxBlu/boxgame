@@ -1,5 +1,6 @@
 import java.awt.Image;
 
+//The super class of player and box that features shared states and functionality
 public class Entity {
 
 	protected static int movementSpeed = 8;
@@ -39,6 +40,7 @@ public class Entity {
 		return animating;
 	}
 	
+	/* Updates the animation one frame */
 	public void updateAnimation() {
 		//Updates animation based off its movement
 		if (renderX < tileX * tileSize) {

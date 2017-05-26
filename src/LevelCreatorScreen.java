@@ -1,15 +1,11 @@
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
-import java.awt.Insets;
-import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -32,17 +28,21 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
-import javafx.scene.control.ButtonBar.ButtonData;
-
-public class LevelCreatorScreen extends JPanel{
+/**
+ * A screen that provides a UI and method to both
+ * load, save and create custom maps for the game
+ */
+public class LevelCreatorScreen extends JPanel {
 	
+	/**
+	 * Small listener class containing metadata 
+	 * to change the active tile
+	 */
 	class tileBtnListener implements ActionListener {
 		private Tile tile;
 		
@@ -56,6 +56,10 @@ public class LevelCreatorScreen extends JPanel{
 		}
 	}
 	
+	/**
+	 * Small listener class containing metadata 
+	 * to change the load a level
+	 */
 	class loadSlotListener implements ActionListener {
 		private int slot;
 		
@@ -69,6 +73,10 @@ public class LevelCreatorScreen extends JPanel{
 		}
 	}
 	
+	/**
+	 * Small listener class containing metadata 
+	 * to change the save a level
+	 */
 	class saveSlotListener implements ActionListener {
 		private int slot;
 		
@@ -81,76 +89,80 @@ public class LevelCreatorScreen extends JPanel{
 			saveLevel(slot);
 		}
 	}
+
+	private JFrame frame;
 	
-	private Tile levelMap[][];
 	private Image tileImgs[];
 	private Image savebutton;
 	private Image loadbutton;
 	private Image backbutton;
-	private int width = 17;
-	private int height = 17;
-	private int tileSize = 40;
-	private Tile curPlaceTile = Tile.PLAYER;
-	private JPanel uiPanel;
-	private JFrame frame;
-	private Font buttonsFont;
-	private int slotButtonWidth = 120;
-	private int slotButtonHeight = 48;
-	private int fillerSize = 20;
 	
+	private int width;
+	private int height;
+	private int tileSize;
+	private Tile levelMap[][];
+	private Tile curPlaceTile = Tile.PLAYER;
+	
+	private JPanel uiPanel;
+	private Font buttonsFont;
+	
+	private final int slotButtonWidth = 120;
+	private final int slotButtonHeight = 48;
+	private final int fillerSize = 20;
     private static final String QUIT_MENU = "quit menu";
 	
+    /**
+     * LevelCreatorScreen constructor
+     * @param frame The frame which the panel is being added to
+     * @param screenWidth Width of the window
+     * @param screenHeight Height of the window
+     * @param tileSize Size of tiles in pixels
+     */
 	public LevelCreatorScreen(JFrame frame, int screenWidth, int screenHeight, int tileSize) {
-		//GameMaster.toggleCursorPointer();
 		this.frame = frame;
-		
-		this.width = screenWidth/tileSize;
-		this.height = screenHeight/tileSize;
+
+		this.width = screenWidth / tileSize;
+		this.height = screenHeight / tileSize;
 		this.tileSize = tileSize;
-		
+
 		levelMap = new Tile[width][height];
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				levelMap[i][j] = Tile.WALL;
 			}
 		}
-		
+
 		try {
 			buttonsFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("VCR_OSD_MONO.ttf"))
 					.deriveFont(Font.PLAIN, 24);
 		} catch (FontFormatException | IOException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		setDefaultTiles();
-		
+
 		addMouseMotionListener(new MouseMotionListener() {
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
 			}
-			
+
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				//Convert click coords to grid coords
+				// Convert click coords to grid coords
 				int xCord = e.getX();
 				int yCord = e.getY();
 				xCord /= tileSize;
 				yCord /= tileSize;
-				
-				if (xCord < width && yCord < height && xCord >= 0 && yCord >= 0) {
-					setTile(xCord, yCord, curPlaceTile);
-				}
-				repaint();
+
+				setTile(xCord, yCord, curPlaceTile);
 			}
 		});
-		
+
 		addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent e) {
 			}
@@ -171,10 +183,7 @@ public class LevelCreatorScreen extends JPanel{
 				xCord /= tileSize;
 				yCord /= tileSize;
 				
-				if (xCord < width && yCord < height && xCord >= 0 && yCord >= 0) {
-					setTile(xCord, yCord, curPlaceTile);
-				}
-				repaint();
+				setTile(xCord, yCord, curPlaceTile);
 			}
 		});
 		
@@ -194,6 +203,9 @@ public class LevelCreatorScreen extends JPanel{
 		});
 	}
 	
+	/**
+	 * Loads in the default tile image set
+	 */
 	private void setDefaultTiles() {
 		tileImgs = new Image[8];
 		
@@ -202,7 +214,6 @@ public class LevelCreatorScreen extends JPanel{
 					tileSize, Image.SCALE_DEFAULT);
 			tileImgs[1] = ImageIO.read(getClass().getResourceAsStream("ground_empty.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
-			//todo remove [2]
 			tileImgs[2] = ImageIO.read(getClass().getResourceAsStream("box.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
 			tileImgs[3] = ImageIO.read(getClass().getResourceAsStream("goal.png")).getScaledInstance(tileSize,
@@ -221,7 +232,9 @@ public class LevelCreatorScreen extends JPanel{
 		}
 	}
 	
-	
+	/**
+	 * Draws the panel
+	 */
 	public void paintComponent(Graphics g) {
 		int left = (int) ((double) GameMaster.WIDTH/2 - (double) (width * tileSize)/2);
 		int top = (int) ((double) GameMaster.HEIGHT/2 - (double) (height * tileSize)/2);
@@ -230,6 +243,9 @@ public class LevelCreatorScreen extends JPanel{
 		super.paintComponent(g);
 	}
 	
+	/**
+	 * Draws the level map
+	 */
 	private void paintMap(Graphics g, int left, int top) {
 		Graphics2D bbg = (Graphics2D) g;
 		
@@ -240,8 +256,10 @@ public class LevelCreatorScreen extends JPanel{
 			}
 		}		
 		
+		//Paints the level tiles
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) { 
+				//Border logic
 				if ((levelMap[j][i] == Tile.WALL) && 
 						((j < (width - 1) && (levelMap[j + 1][i] == Tile.WALKABLE || levelMap[j + 1][i] == Tile.GOAL || levelMap[j + 1][i] == Tile.PLAYER || levelMap[j + 1][i] == Tile.BOX)) ||
 						((j < (width - 1) && i > 0) && (levelMap[j + 1][i - 1] == Tile.WALKABLE || levelMap[j + 1][i - 1] == Tile.GOAL || levelMap[j + 1][i - 1] == Tile.PLAYER || levelMap[j + 1][i - 1] == Tile.BOX)) ||
@@ -258,10 +276,18 @@ public class LevelCreatorScreen extends JPanel{
 		}
 	}
 	
+	/**
+	 * Sets the the tile at the grid cordinates
+	 * @param gridX The x coord in the grid
+	 * @param gridY The y coord in the grid
+	 * @param tile The tile type to set it as
+	 */
 	private void setTile(int gridX, int gridY, Tile tile) {
+		//Check if out of bounds
 		if (!(gridX > 0 && gridY > 0 && gridX < (width - 1) && gridY < (height - 1)))
 			return;
 		
+		//Change the position of the player tile if needed
 		if (tile == Tile.PLAYER) {
 			//Remove the previous player
 			for (int i = 0; i < width; i++) {
@@ -273,13 +299,21 @@ public class LevelCreatorScreen extends JPanel{
 			}
 		}
 		
+		//Set the tile
 		levelMap[gridX][gridY] = curPlaceTile;
+		
+		//Redraw the level
+		repaint();
 	}
 	
+	/**
+	 * Sets up the UI for the panel
+	 */
 	private void setupUI() {
 		setOpaque(false);
 		setLayout(null);
 
+		//Set up the panel on the bottom of the screen
 		uiPanel = new JPanel(new GridBagLayout());
 		uiPanel.setPreferredSize(new Dimension(GameMaster.WIDTH, 80));
 		uiPanel.setBounds(new Rectangle(new Point(0, (int) (GameMaster.HEIGHT - uiPanel.getPreferredSize().getHeight())), uiPanel.getPreferredSize()));
@@ -290,19 +324,23 @@ public class LevelCreatorScreen extends JPanel{
 		add(uiPanel);
 	}
 	
+	/**
+	 * Sets up the panel containing the tiles
+	 */
 	private void setUpTilesPanel() {
 		uiPanel.removeAll();
 		uiPanel.revalidate();
 		
+		//Set up the buttons for the tiles
 		for (int i = 0; i < Tile.values().length-3; i++) {
 			JButton tileButton = new HoverButton();
 			tileButton.setIcon(new ImageIcon(tileImgs[i]));
 			tileButton.setPreferredSize(new Dimension(tileImgs[i].getWidth(null), tileImgs[i].getHeight(null)));
-			//tileButton.setBorderPainted(false);
 			tileButton.addActionListener(new tileBtnListener(Tile.getTile(i)));
 			uiPanel.add(tileButton);
 		}
 		
+		//Set up the load button
 		JButton loadButton = new HoverButton();
 		loadButton.setIcon(new ImageIcon(loadbutton));
 		loadButton.setBorderPainted(false);
@@ -315,6 +353,7 @@ public class LevelCreatorScreen extends JPanel{
 		});
 		uiPanel.add(loadButton);
 		
+		//Set up the save button
 		JButton saveButton = new HoverButton();
 		saveButton.setIcon(new ImageIcon(savebutton));
 		saveButton.setBorderPainted(false);
@@ -327,6 +366,7 @@ public class LevelCreatorScreen extends JPanel{
 		});
 		uiPanel.add(saveButton);
 		
+		//Set up the back button
 		JButton backButton = new HoverButton();
 		backButton.setIcon(new ImageIcon(backbutton));
 		backButton.setBorderPainted(false);
@@ -340,13 +380,18 @@ public class LevelCreatorScreen extends JPanel{
 		backButton.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
 		uiPanel.add(backButton);
 		
+		//Redraw after all set up
 		repaint();
 	}
 	
+	/**
+	 * Sets up the load panel
+	 */
 	private void setUpLoadPanel() {
 		uiPanel.removeAll();
 		uiPanel.revalidate();
 		
+		//Sets up a button for each of the 6 slots
 		for (int i = 0; i < 6; i++) {
 			JButton tileButton = new HoverButton();
 			tileButton.setText("Slot " + (i+1));
@@ -361,12 +406,14 @@ public class LevelCreatorScreen extends JPanel{
 			//Skip last filler
 			if (i == 6) break;
 			
+			//Add a filler panel for blank space between buttons
 			JPanel borderFiller2 = new JPanel();
 			borderFiller2.setOpaque(false);
 			borderFiller2.setPreferredSize(new Dimension(fillerSize, fillerSize));
 			uiPanel.add(borderFiller2);
 		}
 		
+		//Set up the back button
 		JButton backButton = new JButton();
 		backButton.setIcon(new ImageIcon(backbutton));
 		backButton.setBorderPainted(false);
@@ -380,13 +427,18 @@ public class LevelCreatorScreen extends JPanel{
 		backButton.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
 		uiPanel.add(backButton);
 		
+		//Redraw the panel after setup
 		repaint();
 	}
 	
+	/**
+	 * Sets up the save panel
+	 */
 	private void setUpSavePanel() {
 		uiPanel.removeAll();
 		uiPanel.revalidate();
 		
+		//Sets up a button for each of the 6 slots
 		for (int i = 0; i < 6; i++) {
 			JButton tileButton = new HoverButton();
 			tileButton.setText("Slot " + (i+1));
@@ -401,12 +453,14 @@ public class LevelCreatorScreen extends JPanel{
 			//Skip last filler
 			if (i == 6) break;
 			
+			//Add a filler panel for blank space between buttons
 			JPanel borderFiller2 = new JPanel();
 			borderFiller2.setOpaque(false);
 			borderFiller2.setPreferredSize(new Dimension(fillerSize, fillerSize));
 			uiPanel.add(borderFiller2);
 		}
 		
+		//Set up the back button
 		JButton backButton = new JButton();
 		backButton.setIcon(new ImageIcon(backbutton));
 		backButton.setBorderPainted(false);
@@ -420,9 +474,15 @@ public class LevelCreatorScreen extends JPanel{
 		backButton.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
 		uiPanel.add(backButton);
 		
+		//Redraw the panel after setup
 		repaint();
 	}
 	
+	/**
+	 * Checks if the current level is valid
+	 * by doing a simple check of if there's a player
+	 * and if the box count is = to the goal count
+	 */
 	private boolean isValidLevel() {
 		int boxCount = 0;
 		int goalCount = 0;
@@ -450,6 +510,10 @@ public class LevelCreatorScreen extends JPanel{
 		return true;
 	}
 	
+	/**
+	 * Load the level from one of the 6 slots
+	 * @param slot The slot to load from (slot >=1 && slot <=6)
+	 */
 	private void loadLevel(int slot) {
 		setUpTilesPanel();
 		
@@ -490,16 +554,22 @@ public class LevelCreatorScreen extends JPanel{
 		
 	}
 	
+	/**
+	 * Save the level to one of the 6 slots
+	 * @param slot The slot to load from (slot >=1 && slot <=6)
+	 */
 	private void saveLevel(int slot) {
+		//Change back to the tiles panel
 		setUpTilesPanel();
 		
+		//Check if the level is valid and if not exit
 		if (!isValidLevel()) {
 			JOptionPane.showMessageDialog(null, "Invalid Level");
 			return;
 		}
 		
 		String levelString = "";
-		//Save level map
+		//Store level map in the level string
 		for (int j = 0; j < height; j++) {
 			for (int i = 0; i < width; i++) {
 				levelString += (char)(((char) levelMap[i][j].getIntRep()) + '0');
@@ -521,7 +591,8 @@ public class LevelCreatorScreen extends JPanel{
 			e.printStackTrace();
 		}
 		
-		// Find out how wide the level actually is
+		//Generate and save out a render of the level
+		// Find out how wide the level actually is to calculate the image size
 		int startingX = -1;
 		int endingX = -1;
 		int startingY = -1;
@@ -572,17 +643,22 @@ public class LevelCreatorScreen extends JPanel{
 			}
 		}	
 		
+		//Render the map
 		paintMap(g, -startingX * tileSize, -startingY * tileSize);
 		try {
+			//Write out the image
 			ImageIO.write(image, "png", new File("levels/levelc-" + slot + ".png"));
 		} catch (IOException ex) {
-//			Logger.getLogger(CustomApp.class.getName()).log(Level.SEVERE, null, ex);
+			//Logger.getLogger(CustomApp.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
 		JOptionPane.showMessageDialog(null, "Saved successfully to slot " + slot);
 		
 	}
 
+	/**
+	 * Exits back to the menu screen
+	 */
 	private void exitScreen() {
 		GameMaster.changeScreens(frame, new MenuScreen(frame));
 	}
