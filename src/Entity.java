@@ -24,20 +24,23 @@ public class Entity {
 		this.animating = false;
 	}
 	
+	/* Gets the x coordinate */
 	public int getTileX() {
 		return tileX;
 	}
 	
+	/* Gets the y coordinate */
 	public int getTileY() {
 		return tileY;
 	}
 	
+	/* Checks if the entity is still animating */
 	public boolean isAnimating() {
 		return animating;
 	}
 	
 	public void updateAnimation() {
-		//Update animation
+		//Updates animation based off its movement
 		if (renderX < tileX * tileSize) {
 			renderX+= movementSpeed;
 			if (renderX > tileX * tileSize) renderX = tileX * tileSize; 

@@ -14,13 +14,14 @@ public class Box extends Entity implements Cloneable {
 		this.sprite = sprite;
 	}
 	
-	//Potentially just change this to a move(int direction) method
+	/* Sets the tile's coordinates */
 	public void setTilePos(int tileX, int tileY){
 		this.tileX = tileX;
 		this.tileY = tileY;
 		animating = true;
 	}
 	
+	/* Draws the box */
 	public void draw(Graphics2D bbg) {
 		int left = (int) ((double) GameMaster.WIDTH / 2 - (double) (lvlWidth * tileSize) / 2);
 		int top = (int) ((double) GameMaster.HEIGHT / 2 - (double) (lvlHeight * tileSize) / 2);
@@ -29,11 +30,14 @@ public class Box extends Entity implements Cloneable {
 				sprite.getHeight(null), null);
 	}
 	
+	/* Returns a copy of Box */
 	public Box copy() {
 		Box box = new Box(this.tileX, this.tileY, this.sprite, this.tileSize, this.lvlWidth, this.lvlHeight);
 		return box;
 	}
 	
+	/* Clones the box
+	 * Returns the object instance of the box */
 	public Object clone() throws CloneNotSupportedException{  
 		Box box = (Box) super.clone();
 		box.tileX = tileX;
