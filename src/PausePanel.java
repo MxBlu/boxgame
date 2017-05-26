@@ -23,7 +23,6 @@ public class PausePanel extends JPanel{
 	private JFrame frame;
 	
 	public PausePanel(JFrame frame) {
-		//GameMaster.toggleCursorPointer();
 		this.frame = frame;
 		try{
 			Background = ImageIO.read(getClass().getResourceAsStream("pausescreen.png"));

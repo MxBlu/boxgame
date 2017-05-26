@@ -42,6 +42,9 @@ public class MenuScreen extends JPanel{
 	private static final Object MOVE_LEFT = "move left";
 	private static final Object MOVE_RIGHT = "move right";
 	
+	/**
+	 * Represents the menu screen which presents creator or player options to the user
+	 */
 	public MenuScreen(JFrame frame) {
 		this.frame = frame;
 		
@@ -180,6 +183,9 @@ public class MenuScreen extends JPanel{
 		});
 	}
 	
+	/**
+	 * Paints the visible components of the menu screen
+	 */
 	public void paintComponent(Graphics g) {
 		// Access the JPanel super class's
 		// function for painting.
@@ -210,6 +216,9 @@ public class MenuScreen extends JPanel{
 		}
 	}
 	
+	/**
+	 * Exits out of the game when the player exits
+	 */
 	private void quitMenu() {
 		System.exit(0);
 	}
@@ -240,13 +249,18 @@ public class MenuScreen extends JPanel{
 		add(quit,c);
 	}
 	
+	/**
+	 * Changes view between difficulty panel and menu screen
+	 */
 	public void toggleDifficulty() {
 		if (difficultyShow) {
+			// changes view back to original menu screen
 			difficultyShow = false;
 			remove(difficultyPanel);
 			remove(back);
 			setButtonLayout();
 		} else {
+			// changes view to the difficulty panel
 			difficultyShow = true;
 			add(back);
 			add(difficultyPanel);
@@ -260,20 +274,4 @@ public class MenuScreen extends JPanel{
 		revalidate();
 		repaint();
 	}
-	/*private void setTraversalKeys() {
-		Set forwardKeys = getFocusTraversalKeys(
-			    KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS);
-		Set newForwardKeys = new HashSet(forwardKeys);
-		newForwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0));
-		setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS,
-			    newForwardKeys);
-		
-		Set backwardKeys = getFocusTraversalKeys(
-			    KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS);
-		Set newbackwardKeys = new HashSet(backwardKeys);
-		newbackwardKeys.add(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0));
-		setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS,
-				newbackwardKeys);
-	}*/
-
 }
