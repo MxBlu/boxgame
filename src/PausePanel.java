@@ -1,7 +1,4 @@
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -11,12 +8,10 @@ import java.awt.event.ActionListener;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
-public class PauseScreen extends JPanel{
+public class PausePanel extends JPanel{
 	
 	
 	private Image Background;
@@ -27,7 +22,7 @@ public class PauseScreen extends JPanel{
 	private HoverButton Resume;
 	private JFrame frame;
 	
-	public PauseScreen(JFrame frame) {
+	public PausePanel(JFrame frame) {
 		//GameMaster.toggleCursorPointer();
 		this.frame = frame;
 		try{
