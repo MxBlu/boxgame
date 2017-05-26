@@ -1,6 +1,5 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -32,11 +31,9 @@ import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
@@ -76,7 +73,6 @@ public class Level extends JPanel implements ActionListener {
 	
 	private JPanel pausePanel;
 	private JPanel uiButtonsPanel;
-	private long startTime;
 
 	private long time;
 
@@ -96,12 +92,11 @@ public class Level extends JPanel implements ActionListener {
     
     private static final String MENU = "return menu";
     private static final String UNDO = "undo";
-	
     
     private JFrame frame;
+	
 	/**
 	 * Creates a new level.
-	 * @precondition screenWidth % tileSize == 0 && screenHeight % tileSize == 0
 	 * @param screenWidth Screen width in pixels.
 	 * @param screenHeight Screen height in pixels.
 	 * @param tileSize Width/Height of a tile in pixels.
@@ -152,10 +147,9 @@ public class Level extends JPanel implements ActionListener {
 		animationTimer.start();
 		pushCurrentState();
 	}
-    
+
 	Level(JFrame frame, File levelFile, int tileSize) {
 		this.frame = frame;
-
 		this.tileSize = tileSize;
 		this.levelFile = levelFile;
 		boxList = new ArrayList<Box>();
@@ -181,8 +175,6 @@ public class Level extends JPanel implements ActionListener {
 		
 		levelMap = new Tile[this.height][this.width];
 		int sIndex = 0;
-		int playerX = 0;
-		int playerY = 0;
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				if (inputArray[sIndex] - '0' == Tile.BOX.getIntRep()) {
@@ -220,8 +212,10 @@ public class Level extends JPanel implements ActionListener {
 				Scanner lsScanner = new Scanner(lineString);
 
 				if (!lsScanner.hasNext()) {
+					lsScanner.close();
 					break;
 				}
+				lsScanner.close();
 			}
 
 			String imageLocation = sc.nextLine();
@@ -234,14 +228,12 @@ public class Level extends JPanel implements ActionListener {
 					bestTime = Long.parseLong(stringArray[1]);
 					
 				}
-				
-			
-
+				sc.close();
 			}
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(null, "File not found");
 			e.printStackTrace();
-		}		
+		}	
 	}
 	
 	private void setActions() {
@@ -321,9 +313,96 @@ public class Level extends JPanel implements ActionListener {
 			e.printStackTrace();
 		}
 	}
+	
+	private void setupUI() {
+		setOpaque(false);
+		setLayout(null);
+
+		Font gameFont = null;
+		try {
+			gameFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("VCR_OSD_MONO.ttf")).deriveFont(Font.PLAIN, 35);
+		} catch (FontFormatException | IOException e1) {e1.printStackTrace();}
+		
+		movesLabel = new JLabel("Moves: " + moves);
+		movesLabel.setFont(gameFont);
+		movesLabel.setForeground(Color.WHITE);
+		movesLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+		
+		timerLabel = new JLabel("Time: 0:00:000");
+		timerLabel.setFont(gameFont);
+		timerLabel.setForeground(Color.WHITE);
+		timerLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+		
+		uiPanel = new JPanel(new BorderLayout());
+		uiPanel.setPreferredSize(new Dimension(GameMaster.WIDTH, 80));
+		uiPanel.setBounds(new Rectangle(new Point(0, (int) (GameMaster.HEIGHT - uiPanel.getPreferredSize().getHeight())), uiPanel.getPreferredSize()));
+		uiPanel.setBackground(new Color(58, 58, 58));
+		
+		
+		getImages();
+		
+		Pause = new HoverButton();
+		Pause.setIcon(new ImageIcon(pauseButton));
+		Pause.setContentAreaFilled(false);
+		Pause.setBorderPainted(false);
+		Pause.addMouseListener(new java.awt.event.MouseAdapter() {
+			  
+		    public void mouseEntered(java.awt.event.MouseEvent evt) {
+		    	Pause.setIcon(new ImageIcon(pauseHover));
+		    }
+		    public void mouseExited(java.awt.event.MouseEvent evt) {
+		    	Pause.setIcon(new ImageIcon(pauseButton));
+		    }
+		});
+		
+		Pause.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent e){
+				togglePaused();			
+				}
+		});
+		
+		Undo = new HoverButton();
+		Undo.setIcon(new ImageIcon(undoButton));
+		Undo.setContentAreaFilled(false);
+		Undo.setBorderPainted(false);
+		
+		Undo.addMouseListener(new java.awt.event.MouseAdapter() {
+		  
+		    public void mouseEntered(java.awt.event.MouseEvent evt) {
+		    	Undo.setIcon(new ImageIcon(undoHover));
+		    }
+		    public void mouseExited(java.awt.event.MouseEvent evt) {
+		    	Undo.setIcon(new ImageIcon(undoButton));
+		    }
+		});
+		
+		Undo.addActionListener(new ActionListener(){
+			public void actionPerformed (ActionEvent e){
+				if (!player.isAnimating() && !isPaused)
+					undo();
+			}
+		});
+		
+		uiButtonsPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		c.insets = new Insets(5,5,5,5);
+		c.gridy = 1;
+		uiButtonsPanel.add(Pause, c);
+		c.gridx = 2 ;
+		uiButtonsPanel.add(Undo, c);
+		uiButtonsPanel.setOpaque(false);
+		uiButtonsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+		
+	
+		uiPanel.add(movesLabel, BorderLayout.WEST);
+		uiPanel.add(timerLabel);
+		uiPanel.add(uiButtonsPanel, BorderLayout.EAST);
+		
+		add(uiPanel);
+	}
+	
 	private void getImages(){
 		try {
-			
 			pauseButton = ImageIO.read(getClass().getResourceAsStream("pause.png"));
 			undoButton = ImageIO.read(getClass().getResourceAsStream("undo.png"));
 			pauseHover = ImageIO.read(getClass().getResourceAsStream("pause2.png"));
@@ -333,41 +412,6 @@ public class Level extends JPanel implements ActionListener {
 			e.printStackTrace();
 		}	
 		
-	}
-	
-	public void setTile(Tile t, Image tileImage) {
-		this.tileImgs[t.getIntRep()] = tileImage;
-	}
-	
-	public void paintComponent(Graphics g) {
-		Graphics2D bbg = (Graphics2D) g;
-		int left = (int) ((double) GameMaster.WIDTH/2 - (double) (width * tileSize)/2);
-		int top = (int) ((double) GameMaster.HEIGHT/2 - (double) (height * tileSize)/2);
-		
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) { 
-				if ((levelMap[i][j] == Tile.WALL && i > 0 && i < (height - 1) && j > 0  && j < (width   - 1)) && 
-						((levelMap[i + 1][j] == Tile.WALKABLE || levelMap[i + 1][j] == Tile.GOAL) ||
-						(levelMap[i + 1][j - 1] == Tile.WALKABLE || levelMap[i + 1][j - 1] == Tile.GOAL) ||
-						(levelMap[i][j - 1] == Tile.WALKABLE || levelMap[i][j - 1] == Tile.GOAL) ||
-						(levelMap[i - 1][j - 1] == Tile.WALKABLE || levelMap[i - 1][j - 1] == Tile.GOAL) ||
-						(levelMap[i - 1][j] == Tile.WALKABLE || levelMap[i - 1][j] == Tile.GOAL) ||
-						(levelMap[i - 1][j + 1] == Tile.WALKABLE || levelMap[i - 1][j + 1] == Tile.GOAL) ||
-						(levelMap[i][j + 1] == Tile.WALKABLE || levelMap[i][j + 1] == Tile.GOAL) ||
-						(levelMap[i + 1][j + 1] == Tile.WALKABLE || levelMap[i + 1][j + 1] == Tile.GOAL)))
-					bbg.drawImage(tileImgs[Tile.BORDER.getIntRep()], left + j * tileSize, top + i * tileSize, null);
-				else
-					bbg.drawImage(tileImgs[levelMap[i][j].getIntRep()], left + j * tileSize, top + i * tileSize, null);
-			}
-		}
-		
-		for (Box box : boxList) {
-			box.draw(bbg);
-		}
-		
-		player.paintComponent(bbg);
-		super.paintComponent(bbg);
-		//movesLabel.paint(bbg);
 	}
 	
 	public void togglePaused() {
@@ -383,10 +427,6 @@ public class Level extends JPanel implements ActionListener {
 		
 		revalidate();
 		repaint();
-	}
-	
-	public int getTileSize() {
-		return tileSize;
 	}
 	
 	/* Makes the player based off playerSpaces */
@@ -450,6 +490,70 @@ public class Level extends JPanel implements ActionListener {
 		repaint();
 	}
 	
+	private void pushCurrentState() {
+		// save state
+		ArrayList<Entity> newState = new ArrayList<Entity>();
+		try {
+			Player newPlayer = (Player) player.clone();
+			System.out.println("n " + newPlayer.getTileX() + " " + newPlayer.getTileY());
+			newState.add(newPlayer);
+
+			for (Box b : boxList) {
+				newState.add((Entity) b.clone());
+			}
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void saveHighScore() {
+		System.out.println("moves "+ moves + " highScore " + highScore + " time " + time + " bestTime ");
+		if ((moves > highScore && highScore != 0)&&(time >= bestTime && bestTime != 0)) {
+			return;
+		}
+		newHighScore = true;
+		if ((moves > highScore && highScore != 0)||(time >= bestTime && bestTime != 0)) {
+			
+			newHighScore = false;
+
+		}
+		
+		try {
+			String lines = "";
+		    String line = null;
+	       
+		    Scanner br = new Scanner(levelFile);
+	        
+	        int linesSinceNothingLine = -1;
+
+	        while (br.hasNextLine()) {
+	        	line = br.nextLine();
+	        	Scanner lsScanner = new Scanner(line);
+	        	
+	        	if (linesSinceNothingLine >= 0) {
+	        		linesSinceNothingLine++;
+	        		if (linesSinceNothingLine == 2) line = Integer.toString(moves)+ " " + Long.toString(time);
+	        	}
+	        	
+				if (!lsScanner.hasNext()) {
+					linesSinceNothingLine = 0;
+				}
+	            lines+=line+'\n';
+	            lsScanner.close();
+	        }
+	        
+	        br.close();
+	        
+	        PrintWriter out = new PrintWriter(levelFile);
+			out.write(lines);
+			out.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}       
+		System.out.println("Changes high SCore");
+
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder(height * (width + 1));
@@ -479,13 +583,39 @@ public class Level extends JPanel implements ActionListener {
 		
 		return s.toString();
 	}
+	
+	public void paintComponent(Graphics g) {
+		Graphics2D bbg = (Graphics2D) g;
+		int left = (int) ((double) GameMaster.WIDTH/2 - (double) (width * tileSize)/2);
+		int top = (int) ((double) GameMaster.HEIGHT/2 - (double) (height * tileSize)/2);
+		
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) { 
+				if ((levelMap[i][j] == Tile.WALL) && 
+						((i < (height - 1) && (levelMap[i + 1][j] == Tile.WALKABLE || levelMap[i + 1][j] == Tile.GOAL)) ||
+						((i < (height - 1) && j > 0) && (levelMap[i + 1][j - 1] == Tile.WALKABLE || levelMap[i + 1][j - 1] == Tile.GOAL)) ||
+						((j > 0) && (levelMap[i][j - 1] == Tile.WALKABLE || levelMap[i][j - 1] == Tile.GOAL)) ||
+						((i > 0 && j > 0) && (levelMap[i - 1][j - 1] == Tile.WALKABLE || levelMap[i - 1][j - 1] == Tile.GOAL)) ||
+						((i > 0) && (levelMap[i - 1][j] == Tile.WALKABLE || levelMap[i - 1][j] == Tile.GOAL)) ||
+						((i > 0 && j < (width - 1)) && (levelMap[i - 1][j + 1] == Tile.WALKABLE || levelMap[i - 1][j + 1] == Tile.GOAL)) ||
+						((j < (width - 1)) && (levelMap[i][j + 1] == Tile.WALKABLE || levelMap[i][j + 1] == Tile.GOAL)) ||
+						((i < (height - 1) && j < (width - 1)) && (levelMap[i + 1][j + 1] == Tile.WALKABLE || levelMap[i + 1][j + 1] == Tile.GOAL))))
+					bbg.drawImage(tileImgs[Tile.BORDER.getIntRep()], left + j * tileSize, top + i * tileSize, null);
+				else
+					bbg.drawImage(tileImgs[levelMap[i][j].getIntRep()], left + j * tileSize, top + i * tileSize, null);
+			}
+		}
+		
+		for (Box box : boxList) {
+			box.draw(bbg);
+		}
+		
+		player.paintComponent(bbg);
+	}
 
 	public void update() {
 		//System.out.println("player.update");
 		player.update(levelMap, boxList);
-		
-//		if (player.isAnimating())
-//			animationTimer.start();
 		
 		if (player.atNewTile()) {
 			moves++;
@@ -530,163 +660,4 @@ public class Level extends JPanel implements ActionListener {
 			
 		}
 	}
-	
-	private void saveHighScore() {
-		System.out.println("moves "+ moves + " highScore " + highScore + " time " + time + " bestTime ");
-		if ((moves > highScore && highScore != 0)&&(time >= bestTime && bestTime != 0)) {
-			return;
-		}
-		newHighScore = true;
-		if ((moves > highScore && highScore != 0)||(time >= bestTime && bestTime != 0)) {
-			
-			newHighScore = false;
-
-		}
-		
-		try {
-			String lines = "";
-		    String line = null;
-	       
-		    Scanner br = new Scanner(levelFile);
-	        
-	        int linesSinceNothingLine = -1;
-
-	        while (br.hasNextLine()) {
-	        	line = br.nextLine();
-	        	Scanner lsScanner = new Scanner(line);
-	        	
-	        	if (linesSinceNothingLine >= 0) {
-	        		linesSinceNothingLine++;
-	        		if (linesSinceNothingLine == 2) line = Integer.toString(moves)+ " " + Long.toString(time);
-	        	}
-	        	
-				if (!lsScanner.hasNext()) {
-					linesSinceNothingLine = 0;
-				}
-	            lines+=line+'\n';
-	        }
-	        
-	        br.close();
-	        
-	        PrintWriter out = new PrintWriter(levelFile);
-			out.write(lines);
-			out.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}       
-		System.out.println("Changes high SCore");
-
-	}
-	
-	private void pushCurrentState() {
-		// save state
-		ArrayList<Entity> newState = new ArrayList<Entity>();
-		try {
-			Player newPlayer = (Player) player.clone();
-			System.out.println("n " + newPlayer.getTileX() + " " + newPlayer.getTileY());
-			newState.add(newPlayer);
-
-			for (Box b : boxList) {
-				newState.add((Entity) b.clone());
-			}
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		prevStates.push(newState);
-	}
-
-	private void setupUI() {
-		setOpaque(false);
-		setLayout(null);
-
-		Font gameFont = null;
-		try {
-			gameFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("VCR_OSD_MONO.ttf")).deriveFont(Font.PLAIN, 35);
-		} catch (FontFormatException | IOException e1) {e1.printStackTrace();}
-		
-		movesLabel = new JLabel("Moves: " + moves);
-		movesLabel.setFont(gameFont);
-		movesLabel.setForeground(Color.WHITE);
-		movesLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
-		
-		timerLabel = new JLabel("Time: 0:00:000");
-		timerLabel.setFont(gameFont);
-		timerLabel.setForeground(Color.WHITE);
-		timerLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
-		
-		uiPanel = new JPanel(new BorderLayout());
-		uiPanel.setPreferredSize(new Dimension(GameMaster.WIDTH, 80));
-		uiPanel.setBounds(new Rectangle(new Point(0, (int) (GameMaster.HEIGHT - uiPanel.getPreferredSize().getHeight())), uiPanel.getPreferredSize()));
-		uiPanel.setBackground(new Color(58, 58, 58));
-		
-		
-		getImages();
-		
-		Pause = new HoverButton();
-		Pause.setIcon(new ImageIcon(pauseButton));
-		Pause.setContentAreaFilled(false);
-		Pause.setBorderPainted(false);
-		Pause.addMouseListener(new java.awt.event.MouseAdapter() {
-			  
-		    public void mouseEntered(java.awt.event.MouseEvent evt) {
-		    	Pause.setIcon(new ImageIcon(pauseHover));
-		    }
-		    public void mouseExited(java.awt.event.MouseEvent evt) {
-		    	Pause.setIcon(new ImageIcon(pauseButton));
-		    }
-		});
-		
-		Pause.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent e){
-				togglePaused();			
-				}
-		});
-		//Pause.setBorder(new EmptyBorder(10, 10, 10, 10));
-		
-		Undo = new HoverButton();
-		Undo.setIcon(new ImageIcon(undoButton));
-		Undo.setContentAreaFilled(false);
-		Undo.setBorderPainted(false);
-		
-		Undo.addMouseListener(new java.awt.event.MouseAdapter() {
-		  
-		    public void mouseEntered(java.awt.event.MouseEvent evt) {
-		    	Undo.setIcon(new ImageIcon(undoHover));
-		    }
-		    public void mouseExited(java.awt.event.MouseEvent evt) {
-		    	Undo.setIcon(new ImageIcon(undoButton));
-		    }
-		});
-		
-		Undo.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent e){
-				if (!player.isAnimating() && !isPaused)
-					undo();
-			}
-		});
-		
-		//Undo.setBorder(new EmptyBorder(10, 10, 10, 10));
-		uiButtonsPanel = new JPanel(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.insets = new Insets(5,5,5,5);
-		c.gridy = 1;
-		uiButtonsPanel.add(Pause, c);
-		c.gridx = 2 ;
-		uiButtonsPanel.add(Undo, c);
-		uiButtonsPanel.setOpaque(false);
-		uiButtonsPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-		
-	
-		uiPanel.add(movesLabel, BorderLayout.WEST);
-		uiPanel.add(timerLabel);
-		uiPanel.add(uiButtonsPanel, BorderLayout.EAST);
-		
-		add(uiPanel);
-	}
-	
-	public void unPause(){
-		isPaused = false;
-	}
-	
 }

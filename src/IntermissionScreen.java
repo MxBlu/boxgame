@@ -53,11 +53,6 @@ public class IntermissionScreen extends JPanel {
 		newHighScore = n;
 	}
 	
-	public IntermissionScreen(JFrame frame){
-		this.frame = frame;
-		init(1);
-	}
-	
 	private void init(int difficulty) {
 		//GameMaster.toggleCursorPointer();
 
