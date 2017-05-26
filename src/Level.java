@@ -719,6 +719,13 @@ public class Level extends JPanel implements ActionListener {
 		
 		// goes through the boxList
 		for (Box box : boxList) {
+			if (!box.isAnimating()) {
+				if (levelMap[box.getTileY()][box.getTileX()] == Tile.GOAL)
+					box.setOnGoal(true);
+				else
+					box.setOnGoal(false);
+			}
+			
 			// draws the box
 			box.draw(bbg);
 		}
@@ -784,7 +791,6 @@ public class Level extends JPanel implements ActionListener {
 			} else {
 				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, false,newHighScore, dateFormat.format(bestTime), highScore));
 			}
-			
 		}
 	}
 }

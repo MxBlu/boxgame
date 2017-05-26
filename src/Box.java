@@ -10,14 +10,17 @@ import javax.swing.Timer;
 public class Box extends Entity implements Cloneable {
 	
 	private Image sprite;
+	
+	private Image offGoalSprite;
 	private Image onGoalSprite;
 	
 	public Box(int tileX, int tileY, Image sprite, int tileSize, int lvlWidth, int lvlHeight) {
 		super(tileX, tileY, tileSize, lvlWidth, lvlHeight);
-		this.sprite = sprite;
+		this.offGoalSprite = sprite;
+		this.sprite = this.offGoalSprite;
 		
 		try {
-			this.onGoalSprite = ImageIO.read(getClass().getResourceAsStream("box_goal.png"));
+			this.onGoalSprite = ImageIO.read(getClass().getResourceAsStream("box_goal.png")).getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -30,17 +33,21 @@ public class Box extends Entity implements Cloneable {
 		animating = true;
 	}
 	
+	/* Switches the sprite for the box appropriately*/
+	public void setOnGoal(boolean val) {
+		if (val)
+			sprite = onGoalSprite;
+		else
+			sprite = offGoalSprite;
+	}
+	
 	/* Draws the box */
-	public void draw(Graphics2D bbg, boolean onGoal) {
+	public void draw(Graphics2D bbg) {
 		int left = (int) ((double) GameMaster.WIDTH / 2 - (double) (lvlWidth * tileSize) / 2);
 		int top = (int) ((double) GameMaster.HEIGHT / 2 - (double) (lvlHeight * tileSize) / 2);
 
-		if (onGoal)
-			bbg.drawImage(onGoalSprite, left + renderX, top + renderY, onGoalSprite.getWidth(null),
-					onGoalSprite.getHeight(null), null);
-		else
-			bbg.drawImage(sprite, left + renderX, top + renderY, sprite.getWidth(null),
-				sprite.getHeight(null), null);
+		bbg.drawImage(sprite, left + renderX, top + renderY, sprite.getWidth(null),
+			sprite.getHeight(null), null);
 	}
 	
 	/* Returns a copy of Box */
