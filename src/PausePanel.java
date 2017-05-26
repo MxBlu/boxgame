@@ -22,9 +22,13 @@ public class PausePanel extends JPanel{
 	private HoverButton Resume;
 	private JFrame frame;
 	
+	/**
+	 * Representative of the pause panel that shows up when the user pauses their level
+	 */
 	public PausePanel(JFrame frame) {
 		this.frame = frame;
 		try{
+			// Sets the images to be used
 			Background = ImageIO.read(getClass().getResourceAsStream("pausescreen.png"));
 			menuButton = ImageIO.read(getClass().getResourceAsStream("returntomenu.png"));
 			resumeButton = ImageIO.read(getClass().getResourceAsStream("resumebutton.png"));
@@ -36,6 +40,7 @@ public class PausePanel extends JPanel{
 		setBackground(Color.black);
 		setOpaque(false);
 
+		// Sets the hover buttons
 		Menu = new HoverButton();
 		Menu.setIcon(new ImageIcon(menuButton));
 		Menu.setBorderPainted(false);
@@ -72,6 +77,9 @@ public class PausePanel extends JPanel{
 		setBounds(200, 100, 2*GameMaster.WIDTH/3, 2*GameMaster.HEIGHT/3);
 	}
 	
+	/**
+	 * Paints the components for the pause panel for the user
+	 */
 	public void paintComponent(Graphics g) {
 		// Access the JPanel super class's
 		// function for painting.

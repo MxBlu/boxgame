@@ -41,13 +41,12 @@ public class IntermissionScreen extends JPanel {
 	
 	private boolean isPremade;
 	private JFrame frame;
-	
 
+	/**
+	 * Representative of the screen after completing a level
+	 */
 	public IntermissionScreen(JFrame frame, String playerTime, int moves, int difficulty, boolean premadeFlag,
 			boolean isHighScore, String highTime, int highMoves){
-
-	
-	
 		this.frame = frame;
 
 		isPremade = premadeFlag;
@@ -139,7 +138,10 @@ public class IntermissionScreen extends JPanel {
 		setFocusable(true);
 	    requestFocusInWindow();
 	}
-		
+	
+	/**
+	 * Paints the components of the intermission screen for the user
+	 */
 	public void paintComponent(Graphics g) {
 		// Access the JPanel super class's
 		// function for painting.
