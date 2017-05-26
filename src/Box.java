@@ -6,63 +6,12 @@ import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
 public class Box extends Entity implements Cloneable {
-
-	private static int movementSpeed = 8;
 	
-	private int tileX, tileY;
-	private int renderX, renderY;
 	private Image sprite;
-	private int tileSize;
-	private int lvlWidth, lvlHeight;
-	
-	private boolean animating;
 	
 	public Box(int tileX, int tileY, Image sprite, int tileSize, int lvlWidth, int lvlHeight) {
-		this.tileX = tileX;
-		this.tileY = tileY;
+		super(tileX, tileY, tileSize, lvlWidth, lvlHeight);
 		this.sprite = sprite;
-		this.tileSize = tileSize;
-		this.renderX = tileX * tileSize;
-		this.renderY = tileY * tileSize;
-		this.lvlWidth = lvlWidth;
-		this.lvlHeight = lvlHeight;
-		this.animating = false;
-	}
-	
-	public int getTileX() {
-		return tileX;
-	}
-	
-	public int getTileY() {
-		return tileY;
-	}
-	
-	public boolean isAnimating() {
-		return animating;
-	}
-	
-	public void updateAnimation() {
-		//Update animation
-		if (renderX < tileX * tileSize) {
-			renderX+= movementSpeed;
-			if (renderX > tileX * tileSize) renderX = tileX * tileSize; 
-			return;
-		} else if (renderX > tileX * tileSize) {
-			renderX-= movementSpeed;
-			if (renderX < tileX * tileSize) renderX = tileX * tileSize;
-			return;
-		} else if (renderY < tileY * tileSize) {
-			renderY+= movementSpeed;
-			if (renderY > tileY * tileSize) renderY = tileY * tileSize;
-			return;
-		} else if (renderY > tileY * tileSize) {
-			renderY-= movementSpeed;
-			if (renderY < tileY * tileSize) renderY = tileY * tileSize;
-			return;
-		} else {
-			animating = false;
-		}
-				
 	}
 	
 	//Potentially just change this to a move(int direction) method

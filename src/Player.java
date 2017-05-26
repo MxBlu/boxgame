@@ -13,12 +13,8 @@ import javax.swing.Timer;
 
 public class Player extends Entity implements Cloneable {
 	
-	private static int movementSpeed = 12;
-	
 	private static final String WALL_COLLISION = "wall collision";
 	private static final String BOX_PUSH = "box push";
-
-	private int tileX, tileY;
 	
 	private Image downSprite;
 	private Image upSprite;
@@ -26,25 +22,15 @@ public class Player extends Entity implements Cloneable {
 	private Image leftSprite;
 	private Image renderSprite;
 	private AudioManager audioSource;
-	private int tileSize;
-	private int lvlWidth, lvlHeight;
 	private int movY;
 	private int movX;
 	private boolean atNewTile = true;
 	
-	private boolean goal= false;
-	
-	private int renderX, renderY;
-	private boolean animating = true;
+	private boolean goal = false;
 
 	public Player(int tileX, int tileY, Image downSprite, Image upSprite, Image rightSprite, int tileSize, int lvlWidth, int lvlHeight) {
-		this.tileX = tileX;
-		this.tileY = tileY;
-		this.tileSize = tileSize;
-		this.renderX = tileX * tileSize;
-		this.renderY = tileY * tileSize;
-		this.lvlWidth = lvlWidth;
-		this.lvlHeight = lvlHeight;
+		super(tileX, tileY, tileSize, lvlWidth, lvlHeight);
+		
 		this.downSprite = downSprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
 		this.rightSprite = rightSprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
 		this.audioSource = new AudioManager();
@@ -55,7 +41,6 @@ public class Player extends Entity implements Cloneable {
 		this.leftSprite = tr.filter((BufferedImage) rightSprite, null);
 		this.upSprite = upSprite.getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
 		renderSprite = downSprite;
-		animating = false;
 		
 		audioSource.addSound("wall_collision.wav", WALL_COLLISION);
 		audioSource.addSound("box_push_2.wav", BOX_PUSH);
@@ -134,10 +119,9 @@ public class Player extends Entity implements Cloneable {
 				renderSprite = downSprite;
 			}
 		}
-		
-		
 	}
 	
+	@Override
 	public void updateAnimation() {
 		// Update animation
 		if (renderX < tileX * tileSize) {
@@ -171,10 +155,6 @@ public class Player extends Entity implements Cloneable {
 		
 	}
 	
-	public boolean isAnimating() {
-		return animating;
-	}
-	
 	public boolean atNewTile() {
 		return atNewTile;
 	}
@@ -185,14 +165,6 @@ public class Player extends Entity implements Cloneable {
 		int top = (int) ((double) GameMaster.HEIGHT / 2 - (double) (lvlHeight * tileSize) / 2);
 
 		bbg.drawImage(renderSprite, left + renderX, top + renderY, upSprite.getWidth(null), upSprite.getHeight(null), null);		 
-	}
-	
-	public int getTileX() {
-		return tileX;
-	}
-	
-	public int getTileY() {
-		return tileY;
 	}
 	
 	public Object clone() throws CloneNotSupportedException{  

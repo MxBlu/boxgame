@@ -120,7 +120,7 @@ public class Level extends JPanel implements ActionListener {
 		
 		time = 0;
 		isPaused = false;
-		pausePanel = new PauseScreen(frame);
+		pausePanel = new PausePanel(frame);
 		
 		setDefaultTiles();
 		
@@ -158,7 +158,7 @@ public class Level extends JPanel implements ActionListener {
 		animationTimer = new Timer(GameMaster.FRAME_DELTA, this);
 		time = 0;
 		isPaused = false;
-		pausePanel = new PauseScreen(frame);
+		pausePanel = new PausePanel(frame);
 		setDefaultTiles();
 		
 		// premadeFlag is set to true if it is passed
