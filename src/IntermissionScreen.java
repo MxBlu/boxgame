@@ -34,16 +34,16 @@ public class IntermissionScreen extends JPanel {
 	Font gameFont;
 	
 	private boolean isPremade;
-	
-<<<<<<< HEAD
-	public IntermissionScreen(String d, int moves, int difficulty, boolean premadeFlag,
-			boolean n, String b, int h){
-=======
 	private JFrame frame;
 	
-	public IntermissionScreen(JFrame frame, String d, int moves, int difficulty, boolean premadeFlag){
+
+	public IntermissionScreen(JFrame frame,String d, int moves, int difficulty, boolean premadeFlag,
+			boolean n, String b, int h){
+
+	
+	
 		this.frame = frame;
->>>>>>> e41114235af058827edec451ff64dcc3845cad8c
+
 		isPremade = premadeFlag;
 		init(difficulty);
 		time = "Time: " + d;
@@ -153,7 +153,16 @@ public class IntermissionScreen extends JPanel {
         	g.drawString(movesString, GameMaster.WIDTH/3, 265);
 
         }
-        
+        try {
+			gameFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("VCR_OSD_MONO.ttf")).deriveFont(Font.BOLD, 25);
+		} catch (FontFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        g.setFont(gameFont);
         if (isPremade){
         	g.setColor(Color.WHITE);
         	if (newHighScore){
