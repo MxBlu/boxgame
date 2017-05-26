@@ -1,6 +1,5 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -32,11 +31,9 @@ import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
@@ -76,7 +73,6 @@ public class Level extends JPanel implements ActionListener {
 	
 	private JPanel pausePanel;
 	private JPanel uiButtonsPanel;
-	private long startTime;
 
 	private long time;
 
@@ -180,8 +176,6 @@ public class Level extends JPanel implements ActionListener {
 		
 		levelMap = new Tile[this.height][this.width];
 		int sIndex = 0;
-		int playerX = 0;
-		int playerY = 0;
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				if (inputArray[sIndex] - '0' == Tile.BOX.getIntRep()) {
@@ -219,8 +213,10 @@ public class Level extends JPanel implements ActionListener {
 				Scanner lsScanner = new Scanner(lineString);
 
 				if (!lsScanner.hasNext()) {
+					lsScanner.close();
 					break;
 				}
+				lsScanner.close();
 			}
 
 			String imageLocation = sc.nextLine();
@@ -228,10 +224,12 @@ public class Level extends JPanel implements ActionListener {
 			if (!highScoreString.equals("None")) {
 				highScore = Integer.parseInt(highScoreString);
 			}
+			
+			sc.close();
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(null, "File not found");
 			e.printStackTrace();
-		}		
+		}	
 	}
 	
 	private void setActions() {
@@ -356,8 +354,6 @@ public class Level extends JPanel implements ActionListener {
 		}
 		
 		player.paintComponent(bbg);
-		super.paintComponent(bbg);
-		//movesLabel.paint(bbg);
 	}
 	
 	public void togglePaused() {
@@ -473,9 +469,6 @@ public class Level extends JPanel implements ActionListener {
 	public void update() {
 		//System.out.println("player.update");
 		player.update(levelMap, boxList);
-		
-//		if (player.isAnimating())
-//			animationTimer.start();
 		
 		if (player.atNewTile()) {
 			moves++;
@@ -622,7 +615,6 @@ public class Level extends JPanel implements ActionListener {
 				togglePaused();			
 				}
 		});
-		//Pause.setBorder(new EmptyBorder(10, 10, 10, 10));
 		
 		Undo = new HoverButton();
 		Undo.setIcon(new ImageIcon(undoButton));
@@ -646,7 +638,6 @@ public class Level extends JPanel implements ActionListener {
 			}
 		});
 		
-		//Undo.setBorder(new EmptyBorder(10, 10, 10, 10));
 		uiButtonsPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(5,5,5,5);
@@ -663,10 +654,6 @@ public class Level extends JPanel implements ActionListener {
 		uiPanel.add(uiButtonsPanel, BorderLayout.EAST);
 		
 		add(uiPanel);
-	}
-	
-	public void unPause(){
-		isPaused = false;
 	}
 	
 }
