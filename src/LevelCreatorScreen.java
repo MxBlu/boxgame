@@ -112,7 +112,6 @@ public class LevelCreatorScreen extends JPanel{
 		setDefaultTiles();
 		
 		addMouseMotionListener(new MouseMotionListener() {
-			
 			@Override
 			public void mouseMoved(MouseEvent e) {
 				// TODO Auto-generated method stub
@@ -122,10 +121,8 @@ public class LevelCreatorScreen extends JPanel{
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				//Convert click coords to grid coords
-				int xCord = e.getX();// - (GameMaster.WIDTH / 2);
-				int yCord = e.getY();// - (GameMaster.HEIGHT / 2);
-				//xCord += (tileSize * width) / 2;
-				//yCord += (tileSize * width) / 2;
+				int xCord = e.getX();
+				int yCord = e.getY();
 				xCord /= tileSize;
 				yCord /= tileSize;
 				
@@ -156,10 +153,8 @@ public class LevelCreatorScreen extends JPanel{
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				//Convert click coords to grid coords
-				int xCord = e.getX();// - (GameMaster.WIDTH / 2);
-				int yCord = e.getY();// - (GameMaster.HEIGHT / 2);
-				//xCord += (tileSize * width) / 2;
-				//yCord += (tileSize * width) / 2;
+				int xCord = e.getX();
+				int yCord = e.getY();
 				xCord /= tileSize;
 				yCord /= tileSize;
 				
@@ -295,7 +290,7 @@ public class LevelCreatorScreen extends JPanel{
 			uiPanel.add(tileButton);
 		}
 		
-		JButton loadButton = new JButton();
+		JButton loadButton = new HoverButton();
 		loadButton.setIcon(new ImageIcon(loadbutton));
 		loadButton.setBorderPainted(false);
 		loadButton.setContentAreaFilled(false);
@@ -307,7 +302,7 @@ public class LevelCreatorScreen extends JPanel{
 		});
 		uiPanel.add(loadButton);
 		
-		JButton saveButton = new JButton();
+		JButton saveButton = new HoverButton();
 		saveButton.setIcon(new ImageIcon(savebutton));
 		saveButton.setBorderPainted(false);
 		saveButton.setContentAreaFilled(false);
@@ -319,7 +314,7 @@ public class LevelCreatorScreen extends JPanel{
 		});
 		uiPanel.add(saveButton);
 		
-		JButton backButton = new JButton();
+		JButton backButton = new HoverButton();
 		backButton.setIcon(new ImageIcon(backbutton));
 		backButton.setBorderPainted(false);
 		backButton.setContentAreaFilled(false);
@@ -340,7 +335,8 @@ public class LevelCreatorScreen extends JPanel{
 		uiPanel.revalidate();
 		
 		for (int i = 0; i < 6; i++) {
-			JButton tileButton = new JButton("Slot " + (i+1));
+			JButton tileButton = new HoverButton();
+			tileButton.setText("Slot " + (i+1));
 			tileButton.addActionListener(new loadSlotListener(i+1));
 			uiPanel.add(tileButton);
 		}
@@ -366,7 +362,8 @@ public class LevelCreatorScreen extends JPanel{
 		uiPanel.revalidate();
 		
 		for (int i = 0; i < 6; i++) {
-			JButton tileButton = new JButton("Slot " + (i+1));
+			JButton tileButton = new HoverButton();
+			tileButton.setText("Slot " + (i+1));
 			tileButton.addActionListener(new saveSlotListener(i+1));
 			uiPanel.add(tileButton);
 		}
