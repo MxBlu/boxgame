@@ -309,266 +309,7 @@ public class Level extends JPanel implements ActionListener {
 			e.printStackTrace();
 		}
 	}
-	private void getImages(){
-		try {
-			
-			pauseButton = ImageIO.read(getClass().getResourceAsStream("pause.png"));
-			undoButton = ImageIO.read(getClass().getResourceAsStream("undo.png"));
-			pauseHover = ImageIO.read(getClass().getResourceAsStream("pause2.png"));
-			undoHover = ImageIO.read(getClass().getResourceAsStream("undo2.png"));
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}	
-		
-	}
 	
-	public void setTile(Tile t, Image tileImage) {
-		this.tileImgs[t.getIntRep()] = tileImage;
-	}
-	
-	public void paintComponent(Graphics g) {
-		Graphics2D bbg = (Graphics2D) g;
-		int left = (int) ((double) GameMaster.WIDTH/2 - (double) (width * tileSize)/2);
-		int top = (int) ((double) GameMaster.HEIGHT/2 - (double) (height * tileSize)/2);
-		
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) { 
-				if ((levelMap[i][j] == Tile.WALL) && 
-						((i < (height - 1) && (levelMap[i + 1][j] == Tile.WALKABLE || levelMap[i + 1][j] == Tile.GOAL)) ||
-						((i < (height - 1) && j > 0) && (levelMap[i + 1][j - 1] == Tile.WALKABLE || levelMap[i + 1][j - 1] == Tile.GOAL)) ||
-						((j > 0) && (levelMap[i][j - 1] == Tile.WALKABLE || levelMap[i][j - 1] == Tile.GOAL)) ||
-						((i > 0 && j > 0) && (levelMap[i - 1][j - 1] == Tile.WALKABLE || levelMap[i - 1][j - 1] == Tile.GOAL)) ||
-						((i > 0) && (levelMap[i - 1][j] == Tile.WALKABLE || levelMap[i - 1][j] == Tile.GOAL)) ||
-						((i > 0 && j < (width - 1)) && (levelMap[i - 1][j + 1] == Tile.WALKABLE || levelMap[i - 1][j + 1] == Tile.GOAL)) ||
-						((j < (width - 1)) && (levelMap[i][j + 1] == Tile.WALKABLE || levelMap[i][j + 1] == Tile.GOAL)) ||
-						((i < (height - 1) && j < (width - 1)) && (levelMap[i + 1][j + 1] == Tile.WALKABLE || levelMap[i + 1][j + 1] == Tile.GOAL))))
-					bbg.drawImage(tileImgs[Tile.BORDER.getIntRep()], left + j * tileSize, top + i * tileSize, null);
-				else
-					bbg.drawImage(tileImgs[levelMap[i][j].getIntRep()], left + j * tileSize, top + i * tileSize, null);
-			}
-		}
-		
-		for (Box box : boxList) {
-			box.draw(bbg);
-		}
-		
-		player.paintComponent(bbg);
-	}
-	
-	public void togglePaused() {
-		if (isPaused) {
-			isPaused = false;
-			animationTimer.start();
-			remove(pausePanel);
-		} else {
-			isPaused = true;
-			animationTimer.stop();
-			add(pausePanel);
-		}
-		
-		revalidate();
-		repaint();
-	}
-	
-	public int getTileSize() {
-		return tileSize;
-	}
-	
-	/* Makes the player based off playerSpaces */
-	private void makePlayer(List<List<Integer>> playerSpaces) {
-		try {
-			Random r = new Random();
-			// gets an available playerSpace from playerSpaces to set the player's coordinates
-			// in a walkable area
-			List<Integer> playerSpace = playerSpaces.get(r.nextInt(playerSpaces.size()));
-			player = new Player(playerSpace.get(0), playerSpace.get(1), ImageIO.read(getClass().getResourceAsStream("player.png")), ImageIO.read(getClass().getResourceAsStream("player_up.png")), ImageIO.read(getClass().getResourceAsStream("player_right.png")), tileSize, width, height);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/* Makes the boxList by placing the boxes on the goals */
-	private void makeBoxList(int numGoals) {		
-		this.boxList = new ArrayList<Box>();
-		
-		// goes through the levelMap
-		for (int x = 0; x < width; x++) {
-			for (int y = 0 ; y < height; y++) {
-				// checks if the coordinates is a goal
-				if (levelMap[y][x] == Tile.GOAL) {
-					// adds box to the list
-					this.boxList.add(new Box(x, y, tileImgs[2], tileSize, width, height));
-				}
-				if (this.boxList.size() == numGoals) break;
-			}
-			if (this.boxList.size() == numGoals) break;
-		}
-	}
-	
-	private boolean isCompleted() {
-		for (Box b : boxList)
-			if (levelMap[b.getTileY()][b.getTileX()] != Tile.GOAL)
-				return false;
-		
-		return true;
-	} 
-	
-	private void undo() {
-		//Since we can't store the state when the player starts moving
-		//as we have no way of knowing when that is at the moment, we 
-		//need to pop twice and push at the end
-		if (prevStates.size() >= 2 || (!prevStates.isEmpty() && player.isAnimating())) {
-			if (!player.isAnimating())
-				prevStates.pop();
-			ArrayList<Entity> prevState = prevStates.pop();
-			boxList = new ArrayList<Box>();
-			for (Entity e : prevState) {
-				if (e.getClass() == Player.class) {
-					player = (Player) e;
-				} else {
-					boxList.add((Box) e);
-				}
-			}
-			pushCurrentState();
-		}
-		
-		repaint();
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder s = new StringBuilder(height * (width + 1));
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) {
-				if (player.getTileX() == i && player.getTileY() == j) {
-					s.append(Tile.PLAYER.getIntRep());
-					continue;
-				}
-				
-				boolean box_f = false;
-				for (Box b : boxList) {
-					if (b.getTileY() == i && b.getTileX() == j) {
-						box_f = true;
-						break;
-					}
-				}
-				
-				if (box_f)
-					s.append(Tile.BOX.getIntRep());
-				else
-					s.append(levelMap[i][j].getIntRep());
-			}
-				
-			s.append('\n');
-		}
-		
-		return s.toString();
-	}
-
-	public void update() {
-		//System.out.println("player.update");
-		player.update(levelMap, boxList);
-		
-		if (player.atNewTile()) {
-			moves++;
-			movesLabel.setText("Moves: " + moves);
-			pushCurrentState();
-		}
-		
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		boolean stillAnimating = false;
-		
-		if (player.isAnimating()) {
-			stillAnimating = true;
-			player.updateAnimation();
-		}
-		
-		for (Box b : boxList) {
-			if (b.isAnimating()) {
-				stillAnimating = true;
-				b.updateAnimation();
-			}
-		}
-		
-		// Update time label
-		time += GameMaster.FRAME_DELTA;
-		Date date = new Date(time);
-		DateFormat dateFormat = new SimpleDateFormat("mm:ss:SSS");
-		timerLabel.setText("Time: " + dateFormat.format(date));
-		
-		if (stillAnimating)
-			repaint();
-		else if (isCompleted()) {
-			animationTimer.stop();
-			if (levelFile != null) {
-				saveHighScore();
-				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, true));
-			} else {
-				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, false));
-			}
-		}
-	}
-	
-	private void saveHighScore() {
-		if (moves >= highScore && highScore != 0) {
-			return;
-		}
-		
-		try {
-			String lines = "";
-		    String line = null;
-	        Scanner br = new Scanner(levelFile);
-	        
-	        int linesSinceNothingLine = -1;
-
-	        while (br.hasNextLine()) {
-	        	line = br.nextLine();
-	        	Scanner lsScanner = new Scanner(line);
-	        	
-	        	if (linesSinceNothingLine >= 0) {
-	        		linesSinceNothingLine++;
-	        		if (linesSinceNothingLine == 2) line = Integer.toString(moves);
-	        	}
-	        	
-				if (!lsScanner.hasNext()) {
-					linesSinceNothingLine = 0;
-				}
-	            lines+=line+'\n';
-	        }
-	        
-	        br.close();
-	        
-	        PrintWriter out = new PrintWriter(levelFile);
-			out.write(lines);
-			out.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}       
-
-	}
-	
-	private void pushCurrentState() {
-		// save state
-		ArrayList<Entity> newState = new ArrayList<Entity>();
-		try {
-			Player newPlayer = (Player) player.clone();
-			System.out.println("n " + newPlayer.getTileX() + " " + newPlayer.getTileY());
-			newState.add(newPlayer);
-
-			for (Box b : boxList) {
-				newState.add((Entity) b.clone());
-			}
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		prevStates.push(newState);
-	}
-
 	private void setupUI() {
 		setOpaque(false);
 		setLayout(null);
@@ -656,4 +397,254 @@ public class Level extends JPanel implements ActionListener {
 		add(uiPanel);
 	}
 	
+	private void getImages(){
+		try {
+			pauseButton = ImageIO.read(getClass().getResourceAsStream("pause.png"));
+			undoButton = ImageIO.read(getClass().getResourceAsStream("undo.png"));
+			pauseHover = ImageIO.read(getClass().getResourceAsStream("pause2.png"));
+			undoHover = ImageIO.read(getClass().getResourceAsStream("undo2.png"));
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}	
+		
+	}
+	
+	public void togglePaused() {
+		if (isPaused) {
+			isPaused = false;
+			animationTimer.start();
+			remove(pausePanel);
+		} else {
+			isPaused = true;
+			animationTimer.stop();
+			add(pausePanel);
+		}
+		
+		revalidate();
+		repaint();
+	}
+	
+	/* Makes the player based off playerSpaces */
+	private void makePlayer(List<List<Integer>> playerSpaces) {
+		try {
+			Random r = new Random();
+			// gets an available playerSpace from playerSpaces to set the player's coordinates
+			// in a walkable area
+			List<Integer> playerSpace = playerSpaces.get(r.nextInt(playerSpaces.size()));
+			player = new Player(playerSpace.get(0), playerSpace.get(1), ImageIO.read(getClass().getResourceAsStream("player.png")), ImageIO.read(getClass().getResourceAsStream("player_up.png")), ImageIO.read(getClass().getResourceAsStream("player_right.png")), tileSize, width, height);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/* Makes the boxList by placing the boxes on the goals */
+	private void makeBoxList(int numGoals) {		
+		this.boxList = new ArrayList<Box>();
+		
+		// goes through the levelMap
+		for (int x = 0; x < width; x++) {
+			for (int y = 0 ; y < height; y++) {
+				// checks if the coordinates is a goal
+				if (levelMap[y][x] == Tile.GOAL) {
+					// adds box to the list
+					this.boxList.add(new Box(x, y, tileImgs[2], tileSize, width, height));
+				}
+				if (this.boxList.size() == numGoals) break;
+			}
+			if (this.boxList.size() == numGoals) break;
+		}
+	}
+	
+	private boolean isCompleted() {
+		for (Box b : boxList)
+			if (levelMap[b.getTileY()][b.getTileX()] != Tile.GOAL)
+				return false;
+		
+		return true;
+	} 
+	
+	private void undo() {
+		//Since we can't store the state when the player starts moving
+		//as we have no way of knowing when that is at the moment, we 
+		//need to pop twice and push at the end
+		if (prevStates.size() >= 2 || (!prevStates.isEmpty() && player.isAnimating())) {
+			if (!player.isAnimating())
+				prevStates.pop();
+			ArrayList<Entity> prevState = prevStates.pop();
+			boxList = new ArrayList<Box>();
+			for (Entity e : prevState) {
+				if (e.getClass() == Player.class) {
+					player = (Player) e;
+				} else {
+					boxList.add((Box) e);
+				}
+			}
+			pushCurrentState();
+		}
+		
+		repaint();
+	}
+	
+	private void saveHighScore() {
+		if (moves >= highScore && highScore != 0) {
+			return;
+		}
+		
+		try {
+			String lines = "";
+		    String line = null;
+	        Scanner br = new Scanner(levelFile);
+	        
+	        int linesSinceNothingLine = -1;
+
+	        while (br.hasNextLine()) {
+	        	line = br.nextLine();
+	        	Scanner lsScanner = new Scanner(line);
+	        	
+	        	if (linesSinceNothingLine >= 0) {
+	        		linesSinceNothingLine++;
+	        		if (linesSinceNothingLine == 2) line = Integer.toString(moves);
+	        	}
+	        	
+				if (!lsScanner.hasNext()) {
+					linesSinceNothingLine = 0;
+				}
+	            lines+=line+'\n';
+	            lsScanner.close();
+	        }
+	        
+	        br.close();
+	        
+	        PrintWriter out = new PrintWriter(levelFile);
+			out.write(lines);
+			out.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}       
+
+	}
+	
+	private void pushCurrentState() {
+		// save state
+		ArrayList<Entity> newState = new ArrayList<Entity>();
+		try {
+			Player newPlayer = (Player) player.clone();
+			System.out.println("n " + newPlayer.getTileX() + " " + newPlayer.getTileY());
+			newState.add(newPlayer);
+
+			for (Box b : boxList) {
+				newState.add((Entity) b.clone());
+			}
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		prevStates.push(newState);
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder s = new StringBuilder(height * (width + 1));
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				if (player.getTileX() == i && player.getTileY() == j) {
+					s.append(Tile.PLAYER.getIntRep());
+					continue;
+				}
+				
+				boolean box_f = false;
+				for (Box b : boxList) {
+					if (b.getTileY() == i && b.getTileX() == j) {
+						box_f = true;
+						break;
+					}
+				}
+				
+				if (box_f)
+					s.append(Tile.BOX.getIntRep());
+				else
+					s.append(levelMap[i][j].getIntRep());
+			}
+				
+			s.append('\n');
+		}
+		
+		return s.toString();
+	}
+	
+	public void paintComponent(Graphics g) {
+		Graphics2D bbg = (Graphics2D) g;
+		int left = (int) ((double) GameMaster.WIDTH/2 - (double) (width * tileSize)/2);
+		int top = (int) ((double) GameMaster.HEIGHT/2 - (double) (height * tileSize)/2);
+		
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) { 
+				if ((levelMap[i][j] == Tile.WALL) && 
+						((i < (height - 1) && (levelMap[i + 1][j] == Tile.WALKABLE || levelMap[i + 1][j] == Tile.GOAL)) ||
+						((i < (height - 1) && j > 0) && (levelMap[i + 1][j - 1] == Tile.WALKABLE || levelMap[i + 1][j - 1] == Tile.GOAL)) ||
+						((j > 0) && (levelMap[i][j - 1] == Tile.WALKABLE || levelMap[i][j - 1] == Tile.GOAL)) ||
+						((i > 0 && j > 0) && (levelMap[i - 1][j - 1] == Tile.WALKABLE || levelMap[i - 1][j - 1] == Tile.GOAL)) ||
+						((i > 0) && (levelMap[i - 1][j] == Tile.WALKABLE || levelMap[i - 1][j] == Tile.GOAL)) ||
+						((i > 0 && j < (width - 1)) && (levelMap[i - 1][j + 1] == Tile.WALKABLE || levelMap[i - 1][j + 1] == Tile.GOAL)) ||
+						((j < (width - 1)) && (levelMap[i][j + 1] == Tile.WALKABLE || levelMap[i][j + 1] == Tile.GOAL)) ||
+						((i < (height - 1) && j < (width - 1)) && (levelMap[i + 1][j + 1] == Tile.WALKABLE || levelMap[i + 1][j + 1] == Tile.GOAL))))
+					bbg.drawImage(tileImgs[Tile.BORDER.getIntRep()], left + j * tileSize, top + i * tileSize, null);
+				else
+					bbg.drawImage(tileImgs[levelMap[i][j].getIntRep()], left + j * tileSize, top + i * tileSize, null);
+			}
+		}
+		
+		for (Box box : boxList) {
+			box.draw(bbg);
+		}
+		
+		player.paintComponent(bbg);
+	}
+
+	public void update() {
+		//System.out.println("player.update");
+		player.update(levelMap, boxList);
+		
+		if (player.atNewTile()) {
+			moves++;
+			movesLabel.setText("Moves: " + moves);
+			pushCurrentState();
+		}
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		boolean stillAnimating = false;
+		
+		if (player.isAnimating()) {
+			stillAnimating = true;
+			player.updateAnimation();
+		}
+		
+		for (Box b : boxList) {
+			if (b.isAnimating()) {
+				stillAnimating = true;
+				b.updateAnimation();
+			}
+		}
+		
+		// Update time label
+		time += GameMaster.FRAME_DELTA;
+		Date date = new Date(time);
+		DateFormat dateFormat = new SimpleDateFormat("mm:ss:SSS");
+		timerLabel.setText("Time: " + dateFormat.format(date));
+		
+		if (stillAnimating)
+			repaint();
+		else if (isCompleted()) {
+			animationTimer.stop();
+			if (levelFile != null) {
+				saveHighScore();
+				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, true));
+			} else {
+				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, false));
+			}
+		}
+	}
 }
