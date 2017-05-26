@@ -37,8 +37,8 @@ public class IntermissionScreen extends JPanel {
 	private JFrame frame;
 	
 
-	public IntermissionScreen(JFrame frame,String d, int moves, int difficulty, boolean premadeFlag,
-			boolean n, String b, int h){
+	public IntermissionScreen(JFrame frame, String playerTime, int moves, int difficulty, boolean premadeFlag,
+			boolean isHighScore, String highTime, int highMoves){
 
 	
 	
@@ -46,16 +46,11 @@ public class IntermissionScreen extends JPanel {
 
 		isPremade = premadeFlag;
 		init(difficulty);
-		time = "Time: " + d;
+		time = "Time: " + playerTime;
 		movesString = "Moves: " + moves;
-		bestMoves = h;
-		bestTime = b;
-		newHighScore = n;
-	}
-	
-	public IntermissionScreen(JFrame frame){
-		this.frame = frame;
-		init(1);
+		bestMoves = highMoves;
+		bestTime = highTime;
+		newHighScore = isHighScore;
 	}
 	
 	private void init(int difficulty) {
@@ -162,9 +157,14 @@ public class IntermissionScreen extends JPanel {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        g.setFont(gameFont);
+        
+        //If Preset level, displays a highScore
+         
+        
         if (isPremade){
+        	g.setFont(gameFont);
         	g.setColor(Color.WHITE);
+        	
         	if (newHighScore){
         		g.drawString("New High Score", GameMaster.WIDTH/5, 500);
         		g.drawString(time,  GameMaster.WIDTH/5, 550 );

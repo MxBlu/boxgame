@@ -57,7 +57,7 @@ public class BootScreen extends JPanel implements ActionListener{
 			}
 		});
     } 
-
+    
     public void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.pink);
@@ -65,7 +65,7 @@ public class BootScreen extends JPanel implements ActionListener{
         g2d.drawImage(imagem, 0, 0, null);
     }
 
-
+  
     public void actionPerformed(ActionEvent e) {
     	if (state == 0) {
 	        alpha += 0.015f;

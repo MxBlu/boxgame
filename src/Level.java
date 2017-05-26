@@ -1,6 +1,5 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -32,11 +31,9 @@ import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
@@ -76,7 +73,6 @@ public class Level extends JPanel implements ActionListener {
 	
 	private JPanel pausePanel;
 	private JPanel uiButtonsPanel;
-	private long startTime;
 
 	private long time;
 
@@ -96,12 +92,11 @@ public class Level extends JPanel implements ActionListener {
     
     private static final String MENU = "return menu";
     private static final String UNDO = "undo";
-	
     
     private JFrame frame;
+	
 	/**
 	 * Creates a new level.
-	 * @precondition screenWidth % tileSize == 0 && screenHeight % tileSize == 0
 	 * @param screenWidth Screen width in pixels.
 	 * @param screenHeight Screen height in pixels.
 	 * @param tileSize Width/Height of a tile in pixels.
@@ -152,10 +147,9 @@ public class Level extends JPanel implements ActionListener {
 		animationTimer.start();
 		pushCurrentState();
 	}
-    
+
 	Level(JFrame frame, File levelFile, int tileSize) {
 		this.frame = frame;
-
 		this.tileSize = tileSize;
 		this.levelFile = levelFile;
 		boxList = new ArrayList<Box>();
@@ -181,8 +175,6 @@ public class Level extends JPanel implements ActionListener {
 		
 		levelMap = new Tile[this.height][this.width];
 		int sIndex = 0;
-		int playerX = 0;
-		int playerY = 0;
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				if (inputArray[sIndex] - '0' == Tile.BOX.getIntRep()) {
@@ -220,8 +212,10 @@ public class Level extends JPanel implements ActionListener {
 				Scanner lsScanner = new Scanner(lineString);
 
 				if (!lsScanner.hasNext()) {
+					lsScanner.close();
 					break;
 				}
+				lsScanner.close();
 			}
 
 			String imageLocation = sc.nextLine();
@@ -234,16 +228,21 @@ public class Level extends JPanel implements ActionListener {
 					bestTime = Long.parseLong(stringArray[1]);
 					
 				}
-				
-			
-
+				sc.close();
 			}
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(null, "File not found");
 			e.printStackTrace();
-		}		
+		}	
 	}
 	
+	/*
+	 * Sets KeyActions 
+	 * 
+	 * This function uses keybinding to set key-actions for the game
+	 * 
+	 * 
+	 */
 	private void setActions() {
 		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), MOVE_UP);
 		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), MOVE_DOWN);
@@ -303,6 +302,12 @@ public class Level extends JPanel implements ActionListener {
 		});
 	}
 	
+	/*
+	 * Sets Tiles
+	 * 
+	 * This function sets the images for each specific tile
+	 * 
+	 */
 	private void setDefaultTiles() {
 		this.tileImgs = new Image[8];
 		try {
@@ -321,281 +326,7 @@ public class Level extends JPanel implements ActionListener {
 			e.printStackTrace();
 		}
 	}
-	private void getImages(){
-		try {
-			
-			pauseButton = ImageIO.read(getClass().getResourceAsStream("pause.png"));
-			undoButton = ImageIO.read(getClass().getResourceAsStream("undo.png"));
-			pauseHover = ImageIO.read(getClass().getResourceAsStream("pause2.png"));
-			undoHover = ImageIO.read(getClass().getResourceAsStream("undo2.png"));
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}	
-		
-	}
 	
-	public void setTile(Tile t, Image tileImage) {
-		this.tileImgs[t.getIntRep()] = tileImage;
-	}
-	
-	public void paintComponent(Graphics g) {
-		Graphics2D bbg = (Graphics2D) g;
-		int left = (int) ((double) GameMaster.WIDTH/2 - (double) (width * tileSize)/2);
-		int top = (int) ((double) GameMaster.HEIGHT/2 - (double) (height * tileSize)/2);
-		
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) { 
-				if ((levelMap[i][j] == Tile.WALL && i > 0 && i < (height - 1) && j > 0  && j < (width   - 1)) && 
-						((levelMap[i + 1][j] == Tile.WALKABLE || levelMap[i + 1][j] == Tile.GOAL) ||
-						(levelMap[i + 1][j - 1] == Tile.WALKABLE || levelMap[i + 1][j - 1] == Tile.GOAL) ||
-						(levelMap[i][j - 1] == Tile.WALKABLE || levelMap[i][j - 1] == Tile.GOAL) ||
-						(levelMap[i - 1][j - 1] == Tile.WALKABLE || levelMap[i - 1][j - 1] == Tile.GOAL) ||
-						(levelMap[i - 1][j] == Tile.WALKABLE || levelMap[i - 1][j] == Tile.GOAL) ||
-						(levelMap[i - 1][j + 1] == Tile.WALKABLE || levelMap[i - 1][j + 1] == Tile.GOAL) ||
-						(levelMap[i][j + 1] == Tile.WALKABLE || levelMap[i][j + 1] == Tile.GOAL) ||
-						(levelMap[i + 1][j + 1] == Tile.WALKABLE || levelMap[i + 1][j + 1] == Tile.GOAL)))
-					bbg.drawImage(tileImgs[Tile.BORDER.getIntRep()], left + j * tileSize, top + i * tileSize, null);
-				else
-					bbg.drawImage(tileImgs[levelMap[i][j].getIntRep()], left + j * tileSize, top + i * tileSize, null);
-			}
-		}
-		
-		for (Box box : boxList) {
-			box.draw(bbg);
-		}
-		
-		player.paintComponent(bbg);
-		super.paintComponent(bbg);
-		//movesLabel.paint(bbg);
-	}
-	
-	public void togglePaused() {
-		if (isPaused) {
-			isPaused = false;
-			animationTimer.start();
-			remove(pausePanel);
-		} else {
-			isPaused = true;
-			animationTimer.stop();
-			add(pausePanel);
-		}
-		
-		revalidate();
-		repaint();
-	}
-	
-	public int getTileSize() {
-		return tileSize;
-	}
-	
-	/* Makes the player based off playerSpaces */
-	private void makePlayer(List<List<Integer>> playerSpaces) {
-		try {
-			Random r = new Random();
-			// gets an available playerSpace from playerSpaces to set the player's coordinates
-			// in a walkable area
-			List<Integer> playerSpace = playerSpaces.get(r.nextInt(playerSpaces.size()));
-			player = new Player(playerSpace.get(0), playerSpace.get(1), ImageIO.read(getClass().getResourceAsStream("player.png")), ImageIO.read(getClass().getResourceAsStream("player_up.png")), ImageIO.read(getClass().getResourceAsStream("player_right.png")), tileSize, width, height);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/* Makes the boxList by placing the boxes on the goals */
-	private void makeBoxList(int numGoals) {		
-		this.boxList = new ArrayList<Box>();
-		
-		// goes through the levelMap
-		for (int x = 0; x < width; x++) {
-			for (int y = 0 ; y < height; y++) {
-				// checks if the coordinates is a goal
-				if (levelMap[y][x] == Tile.GOAL) {
-					// adds box to the list
-					this.boxList.add(new Box(x, y, tileImgs[2], tileSize, width, height));
-				}
-				if (this.boxList.size() == numGoals) break;
-			}
-			if (this.boxList.size() == numGoals) break;
-		}
-	}
-	
-	private boolean isCompleted() {
-		for (Box b : boxList)
-			if (levelMap[b.getTileY()][b.getTileX()] != Tile.GOAL)
-				return false;
-		
-		return true;
-	} 
-	
-	private void undo() {
-		//Since we can't store the state when the player starts moving
-		//as we have no way of knowing when that is at the moment, we 
-		//need to pop twice and push at the end
-		if (prevStates.size() >= 2 || (!prevStates.isEmpty() && player.isAnimating())) {
-			if (!player.isAnimating())
-				prevStates.pop();
-			ArrayList<Entity> prevState = prevStates.pop();
-			boxList = new ArrayList<Box>();
-			for (Entity e : prevState) {
-				if (e.getClass() == Player.class) {
-					player = (Player) e;
-				} else {
-					boxList.add((Box) e);
-				}
-			}
-			pushCurrentState();
-		}
-		
-		repaint();
-	}
-	
-	@Override
-	public String toString() {
-		StringBuilder s = new StringBuilder(height * (width + 1));
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) {
-				if (player.getTileX() == i && player.getTileY() == j) {
-					s.append(Tile.PLAYER.getIntRep());
-					continue;
-				}
-				
-				boolean box_f = false;
-				for (Box b : boxList) {
-					if (b.getTileY() == i && b.getTileX() == j) {
-						box_f = true;
-						break;
-					}
-				}
-				
-				if (box_f)
-					s.append(Tile.BOX.getIntRep());
-				else
-					s.append(levelMap[i][j].getIntRep());
-			}
-				
-			s.append('\n');
-		}
-		
-		return s.toString();
-	}
-
-	public void update() {
-		//System.out.println("player.update");
-		player.update(levelMap, boxList);
-		
-//		if (player.isAnimating())
-//			animationTimer.start();
-		
-		if (player.atNewTile()) {
-			moves++;
-			movesLabel.setText("Moves: " + moves);
-			pushCurrentState();
-		}
-		
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		boolean stillAnimating = false;
-		
-		if (player.isAnimating()) {
-			stillAnimating = true;
-			player.updateAnimation();
-		}
-		
-		for (Box b : boxList) {
-			if (b.isAnimating()) {
-				stillAnimating = true;
-				b.updateAnimation();
-			}
-		}
-		
-		// Update time label
-		time += GameMaster.FRAME_DELTA;
-		Date date = new Date(time);
-		DateFormat dateFormat = new SimpleDateFormat("mm:ss:SSS");
-		timerLabel.setText("Time: " + dateFormat.format(date));
-		
-		if (stillAnimating)
-			repaint();
-		else if (isCompleted()) {
-			animationTimer.stop();
-			if (levelFile != null) {
-				saveHighScore();
-				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, true, newHighScore, dateFormat.format(bestTime), highScore));
-			} else {
-				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, false,newHighScore, dateFormat.format(bestTime), highScore));
-			}
-			
-		}
-	}
-	
-	private void saveHighScore() {
-		System.out.println("moves "+ moves + " highScore " + highScore + " time " + time + " bestTime "+ bestTime);
-		if ((moves > highScore && highScore != 0)&&(time >= bestTime && bestTime != 0)) {
-			return;
-		}
-		newHighScore = true;
-		if ((moves > highScore && highScore != 0)||(time >= bestTime && bestTime != 0)) {
-			
-			newHighScore = false;
-
-		}
-		
-		try {
-			String lines = "";
-		    String line = null;
-	       
-		    Scanner br = new Scanner(levelFile);
-	        
-	        int linesSinceNothingLine = -1;
-
-	        while (br.hasNextLine()) {
-	        	line = br.nextLine();
-	        	Scanner lsScanner = new Scanner(line);
-	        	
-	        	if (linesSinceNothingLine >= 0) {
-	        		linesSinceNothingLine++;
-	        		if (linesSinceNothingLine == 2) line = Integer.toString(moves)+ " " + Long.toString(time);
-	        	}
-	        	
-				if (!lsScanner.hasNext()) {
-					linesSinceNothingLine = 0;
-				}
-	            lines+=line+'\n';
-	        }
-	        
-	        br.close();
-	        
-	        PrintWriter out = new PrintWriter(levelFile);
-			out.write(lines);
-			out.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}       
-		System.out.println("Changes high SCore");
-
-	}
-	
-	private void pushCurrentState() {
-		// save state
-		ArrayList<Entity> newState = new ArrayList<Entity>();
-		try {
-			Player newPlayer = (Player) player.clone();
-			System.out.println("n " + newPlayer.getTileX() + " " + newPlayer.getTileY());
-			newState.add(newPlayer);
-
-			for (Box b : boxList) {
-				newState.add((Entity) b.clone());
-			}
-		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		prevStates.push(newState);
-	}
-
 	private void setupUI() {
 		setOpaque(false);
 		setLayout(null);
@@ -642,7 +373,6 @@ public class Level extends JPanel implements ActionListener {
 				togglePaused();			
 				}
 		});
-		//Pause.setBorder(new EmptyBorder(10, 10, 10, 10));
 		
 		Undo = new HoverButton();
 		Undo.setIcon(new ImageIcon(undoButton));
@@ -666,7 +396,6 @@ public class Level extends JPanel implements ActionListener {
 			}
 		});
 		
-		//Undo.setBorder(new EmptyBorder(10, 10, 10, 10));
 		uiButtonsPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.insets = new Insets(5,5,5,5);
@@ -685,8 +414,275 @@ public class Level extends JPanel implements ActionListener {
 		add(uiPanel);
 	}
 	
-	public void unPause(){
-		isPaused = false;
+	private void getImages(){
+		try {
+			pauseButton = ImageIO.read(getClass().getResourceAsStream("pause.png"));
+			undoButton = ImageIO.read(getClass().getResourceAsStream("undo.png"));
+			pauseHover = ImageIO.read(getClass().getResourceAsStream("pause2.png"));
+			undoHover = ImageIO.read(getClass().getResourceAsStream("undo2.png"));
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}	
+		
 	}
 	
+	public void togglePaused() {
+		if (isPaused) {
+			isPaused = false;
+			animationTimer.start();
+			remove(pausePanel);
+		} else {
+			isPaused = true;
+			animationTimer.stop();
+			add(pausePanel);
+		}
+		
+		revalidate();
+		repaint();
+	}
+	
+	/* Makes the player based off playerSpaces */
+	private void makePlayer(List<List<Integer>> playerSpaces) {
+		try {
+			Random r = new Random();
+			// gets an available playerSpace from playerSpaces to set the player's coordinates
+			// in a walkable area
+			List<Integer> playerSpace = playerSpaces.get(r.nextInt(playerSpaces.size()));
+			player = new Player(playerSpace.get(0), playerSpace.get(1), ImageIO.read(getClass().getResourceAsStream("player.png")), ImageIO.read(getClass().getResourceAsStream("player_up.png")), ImageIO.read(getClass().getResourceAsStream("player_right.png")), tileSize, width, height);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/* Makes the boxList by placing the boxes on the goals */
+	private void makeBoxList(int numGoals) {		
+		this.boxList = new ArrayList<Box>();
+		
+		// goes through the levelMap
+		for (int x = 0; x < width; x++) {
+			for (int y = 0 ; y < height; y++) {
+				// checks if the coordinates is a goal
+				if (levelMap[y][x] == Tile.GOAL) {
+					// adds box to the list
+					this.boxList.add(new Box(x, y, tileImgs[2], tileSize, width, height));
+				}
+				if (this.boxList.size() == numGoals) break;
+			}
+			if (this.boxList.size() == numGoals) break;
+		}
+	}
+	
+	/*
+	 * Checks if player has won
+	 * 
+	 * @return boolean
+	 * 
+	 */
+	private boolean isCompleted() {
+		for (Box b : boxList)
+			if (levelMap[b.getTileY()][b.getTileX()] != Tile.GOAL)
+				return false;
+		
+		return true;
+	} 
+	
+	private void undo() {
+		//Since we can't store the state when the player starts moving
+		//as we have no way of knowing when that is at the moment, we 
+		//need to pop twice and push at the end
+		System.out.println("In Undo Function");
+		System.out.println("prevstate size >=2 " +prevStates.size()+" or prev states is not empty and its animating"
+				+ " "+ prevStates.isEmpty() + " "+ player.isAnimating());
+		if (prevStates.size() >= 2 || (!prevStates.isEmpty() && player.isAnimating())) {
+			if (!player.isAnimating())
+				
+				prevStates.pop();
+			ArrayList<Entity> prevState = prevStates.pop();
+			System.out.println("Previous state check "+ prevStates);
+			boxList = new ArrayList<Box>();
+			for (Entity e : prevState) {
+				if (e.getClass() == Player.class) {
+					player = (Player) e;
+				} else {
+					boxList.add((Box) e);
+				}
+			}
+			pushCurrentState();
+		}
+		
+		repaint();
+	}
+	
+	private void pushCurrentState() {
+		// save state
+		ArrayList<Entity> newState = new ArrayList<Entity>();
+		try {
+			Player newPlayer = (Player) player.clone();
+			System.out.println("n " + newPlayer.getTileX() + " " + newPlayer.getTileY());
+			newState.add(newPlayer);
+
+			for (Box b : boxList) {
+				newState.add((Entity) b.clone());
+			}
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		prevStates.push(newState);
+	}
+	
+	private void saveHighScore() {
+		System.out.println("moves "+ moves + " highScore " + highScore + " time " + time + " bestTime "+ bestTime);
+		if ((moves > highScore && highScore != 0)&&(time >= bestTime && bestTime != 0)) {
+			return;
+		}
+		newHighScore = true;
+		if ((moves > highScore && highScore != 0)||(time >= bestTime && bestTime != 0)) {
+			
+			newHighScore = false;
+
+		}
+		
+		try {
+			String lines = "";
+		    String line = null;
+	       
+		    Scanner br = new Scanner(levelFile);
+	        
+	        int linesSinceNothingLine = -1;
+
+	        while (br.hasNextLine()) {
+	        	line = br.nextLine();
+	        	Scanner lsScanner = new Scanner(line);
+	        	
+	        	if (linesSinceNothingLine >= 0) {
+	        		linesSinceNothingLine++;
+	        		if (linesSinceNothingLine == 2) line = Integer.toString(moves)+ " " + Long.toString(time);
+	        	}
+	        	
+				if (!lsScanner.hasNext()) {
+					linesSinceNothingLine = 0;
+				}
+	            lines+=line+'\n';
+	            lsScanner.close();
+	        }
+	        
+	        br.close();
+	        
+	        PrintWriter out = new PrintWriter(levelFile);
+			out.write(lines);
+			out.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}       
+		System.out.println("Changes high SCore");
+
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder s = new StringBuilder(height * (width + 1));
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				if (player.getTileX() == i && player.getTileY() == j) {
+					s.append(Tile.PLAYER.getIntRep());
+					continue;
+				}
+				
+				boolean box_f = false;
+				for (Box b : boxList) {
+					if (b.getTileY() == i && b.getTileX() == j) {
+						box_f = true;
+						break;
+					}
+				}
+				
+				if (box_f)
+					s.append(Tile.BOX.getIntRep());
+				else
+					s.append(levelMap[i][j].getIntRep());
+			}
+				
+			s.append('\n');
+		}
+		
+		return s.toString();
+	}
+	
+	public void paintComponent(Graphics g) {
+		Graphics2D bbg = (Graphics2D) g;
+		int left = (int) ((double) GameMaster.WIDTH/2 - (double) (width * tileSize)/2);
+		int top = (int) ((double) GameMaster.HEIGHT/2 - (double) (height * tileSize)/2);
+		
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) { 
+				if ((levelMap[i][j] == Tile.WALL) && 
+						((i < (height - 1) && (levelMap[i + 1][j] == Tile.WALKABLE || levelMap[i + 1][j] == Tile.GOAL)) ||
+						((i < (height - 1) && j > 0) && (levelMap[i + 1][j - 1] == Tile.WALKABLE || levelMap[i + 1][j - 1] == Tile.GOAL)) ||
+						((j > 0) && (levelMap[i][j - 1] == Tile.WALKABLE || levelMap[i][j - 1] == Tile.GOAL)) ||
+						((i > 0 && j > 0) && (levelMap[i - 1][j - 1] == Tile.WALKABLE || levelMap[i - 1][j - 1] == Tile.GOAL)) ||
+						((i > 0) && (levelMap[i - 1][j] == Tile.WALKABLE || levelMap[i - 1][j] == Tile.GOAL)) ||
+						((i > 0 && j < (width - 1)) && (levelMap[i - 1][j + 1] == Tile.WALKABLE || levelMap[i - 1][j + 1] == Tile.GOAL)) ||
+						((j < (width - 1)) && (levelMap[i][j + 1] == Tile.WALKABLE || levelMap[i][j + 1] == Tile.GOAL)) ||
+						((i < (height - 1) && j < (width - 1)) && (levelMap[i + 1][j + 1] == Tile.WALKABLE || levelMap[i + 1][j + 1] == Tile.GOAL))))
+					bbg.drawImage(tileImgs[Tile.BORDER.getIntRep()], left + j * tileSize, top + i * tileSize, null);
+				else
+					bbg.drawImage(tileImgs[levelMap[i][j].getIntRep()], left + j * tileSize, top + i * tileSize, null);
+			}
+		}
+		
+		for (Box box : boxList) {
+			box.draw(bbg);
+		}
+		
+		player.paintComponent(bbg);
+	}
+
+	public void update() {
+		//System.out.println("player.update");
+		player.update(levelMap, boxList);
+		
+		if (player.atNewTile()) {
+			moves++;
+			movesLabel.setText("Moves: " + moves);
+			pushCurrentState();
+		}
+		
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		boolean stillAnimating = false;
+		
+		if (player.isAnimating()) {
+			stillAnimating = true;
+			player.updateAnimation();
+		}
+		
+		for (Box b : boxList) {
+			if (b.isAnimating()) {
+				stillAnimating = true;
+				b.updateAnimation();
+			}
+		}
+		
+		// Update time label
+		time += GameMaster.FRAME_DELTA;
+		Date date = new Date(time);
+		DateFormat dateFormat = new SimpleDateFormat("mm:ss:SSS");
+		timerLabel.setText("Time: " + dateFormat.format(date));
+		
+		if (stillAnimating)
+			repaint();
+		else if (isCompleted()) {
+			animationTimer.stop();
+			if (levelFile != null) {
+				saveHighScore();
+				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, true, newHighScore, dateFormat.format(bestTime), highScore));
+			} else {
+				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, false,newHighScore, dateFormat.format(bestTime), highScore));
+			}
+			
+		}
+	}
 }
