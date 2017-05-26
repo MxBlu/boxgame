@@ -42,28 +42,47 @@ import javax.swing.border.EmptyBorder;
 
 public class Level extends JPanel implements ActionListener {
 	
+	/**
+	 * Difficulty constants
+	 */
 	public static final int EASY = 0;
 	public static final int MEDIUM = 1;
 	public static final int HARD = 2;
 	
+	/**
+	 * Boxes for every difficulty
+	 */
 	private static final Integer diffLevels[][] = { {1}, {2, 3}, {4, 5}};
 	
+	/**
+	 * Level tile-map and entities
+	 */
 	private Tile levelMap[][];
 	private ArrayList<Box> boxList;
+	private Player player;
 	private Stack<ArrayList<Entity>> prevStates;
 	
+	/**
+	 * Generation and rendering values
+	 */
 	private int width; // Width of the level
 	private int height; // Height of the level
 	private int tileSize;
 	private int difficulty;
+
+	/**
+	 * Pause panel elements
+	 */
+	private JPanel pausePanel;
+	private boolean isPaused;
 	
-	private Image tileImgs[];
-	private Player player;
-	private int moves = 0;
-	private Timer animationTimer;
+	/**
+	 * UI panel elements
+	 */
 	private JPanel uiPanel;
 	private JLabel movesLabel;
 	private JLabel timerLabel;
+	private JPanel uiButtonsPanel;
 	private HoverButton Pause;
 	private HoverButton Undo;
 	private Image pauseButton;
@@ -71,55 +90,71 @@ public class Level extends JPanel implements ActionListener {
 	private Image pauseHover;
 	private Image undoHover;
 	
-	private JPanel pausePanel;
-	private JPanel uiButtonsPanel;
-
+	/**
+	 * Score variables
+	 */
 	private long time;
+	private int moves;
 
-	private boolean isPaused;
+	/**
+	 * Tile images and frame timer for updating and animation
+	 */
+	private Image tileImgs[];
+	private Timer frameTimer;
 	
-	//Premade level members
+	/**
+	 * Premade level members
+	 */
 	private File levelFile = null;
 	private String levelMapString = "";
 	private int highScore = 0;
 	private long bestTime = 0;
 	private boolean newHighScore = false;
-	//for key input
+	
+	/**
+	 * Key binding constants
+	 */
     private static final String MOVE_UP = "move up";
     private static final String MOVE_DOWN = "move down";
     private static final String MOVE_LEFT = "move left";
     private static final String MOVE_RIGHT = "move right";
-    
     private static final String MENU = "return menu";
     private static final String UNDO = "undo";
     
+    /**
+     * Host JFrame
+     */
     private JFrame frame;
 	
 	/**
 	 * Creates a new level.
+	 * @param frame Host JFrame
 	 * @param screenWidth Screen width in pixels.
 	 * @param screenHeight Screen height in pixels.
 	 * @param tileSize Width/Height of a tile in pixels.
+	 * @param difficulty Difficulty of the level to be generated.
 	 */
     Level(JFrame frame, int screenWidth, int screenHeight, int tileSize, int difficulty) {
-		// 1 pixel padding so I don't need to add edge cases to generation.
 		this.frame = frame;
 
+		// 1 pixel padding so I don't need to add edge cases to generation.
 		this.width = screenWidth/tileSize + 2;
 		this.height = screenHeight/tileSize + 2;
 		this.tileSize = tileSize;
 		this.difficulty = difficulty;
 		prevStates = new Stack<ArrayList<Entity>>();
 
-		animationTimer = new Timer(GameMaster.FRAME_DELTA, this);
+		frameTimer = new Timer(GameMaster.FRAME_DELTA, this);
 
-		Random r = new Random();
 		// gets a random number of goals for the assigned difficulty
+		Random r = new Random();
 		int numGoals = diffLevels[difficulty][r.nextInt(diffLevels[difficulty].length)];
 		
 		time = 0;
-		isPaused = false;
+		moves = 0;
+		
 		pausePanel = new PausePanel(frame);
+		isPaused = false;
 		
 		setDefaultTiles();
 		
@@ -142,10 +177,16 @@ public class Level extends JPanel implements ActionListener {
 		
 		setActions();
 		setupUI();
-		animationTimer.start();
+		frameTimer.start();
 		pushCurrentState();
 	}
 
+    /**
+     * Creates a level from a file.
+     * @param frame Host JFrame
+     * @param levelFile File containing level data
+     * @param tileSize Width/Height of a tile in pixels
+     */
 	Level(JFrame frame, File levelFile, int tileSize) {
 		this.frame = frame;
 		this.tileSize = tileSize;
@@ -153,7 +194,7 @@ public class Level extends JPanel implements ActionListener {
 		boxList = new ArrayList<Box>();
 		prevStates = new Stack<ArrayList<Entity>>();
 		
-		animationTimer = new Timer(GameMaster.FRAME_DELTA, this);
+		frameTimer = new Timer(GameMaster.FRAME_DELTA, this);
 		time = 0;
 		isPaused = false;
 		pausePanel = new PausePanel(frame);
@@ -204,10 +245,13 @@ public class Level extends JPanel implements ActionListener {
 		// prepares the level for input
 		setActions();
 		setupUI();
-		animationTimer.start();
+		frameTimer.start();
 		pushCurrentState();
 	}
 	
+	/**
+	 * Loads and parses a level from a file.
+	 */
 	private void loadLevelFile() {
 		try {
 			// scans for the level string representation
@@ -242,12 +286,8 @@ public class Level extends JPanel implements ActionListener {
 		}	
 	}
 	
-	/*
-	 * Sets KeyActions 
-	 * 
-	 * This function uses keybinding to set key-actions for the game
-	 * 
-	 * 
+	/**
+	 * Sets up actions and binds keys to their appropriate actions.
 	 */
 	private void setActions() {
 		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), MOVE_UP);
@@ -314,11 +354,8 @@ public class Level extends JPanel implements ActionListener {
 		});
 	}
 	
-	/*
-	 * Sets Tiles
-	 * 
-	 * This function sets the images for each specific tile
-	 * 
+	/**
+	 * Sets the default tile images for rendering.
 	 */
 	private void setDefaultTiles() {
 		this.tileImgs = new Image[8];
@@ -338,7 +375,9 @@ public class Level extends JPanel implements ActionListener {
 		}
 	}
 	
-	/* Sets up the user interactive interface */
+	/**
+	 * Sets up the UI panel elements.
+	 */
 	private void setupUI() {
 		setOpaque(false);
 		setLayout(null);
@@ -367,7 +406,16 @@ public class Level extends JPanel implements ActionListener {
 		uiPanel.setBounds(new Rectangle(new Point(0, (int) (GameMaster.HEIGHT - uiPanel.getPreferredSize().getHeight())), uiPanel.getPreferredSize()));
 		uiPanel.setBackground(new Color(58, 58, 58));
 		
-		getImages();
+		// Load in button assets
+		try {
+			pauseButton = ImageIO.read(getClass().getResourceAsStream("pause.png"));
+			undoButton = ImageIO.read(getClass().getResourceAsStream("undo.png"));
+			pauseHover = ImageIO.read(getClass().getResourceAsStream("pause2.png"));
+			undoHover = ImageIO.read(getClass().getResourceAsStream("undo2.png"));
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}	
 		
 		// sets the pause button
 		Pause = new HoverButton();
@@ -434,31 +482,17 @@ public class Level extends JPanel implements ActionListener {
 		add(uiPanel);
 	}
 	
-	/* Gets the button images for pause and undo
-	 * Gets the cursor images when hovering over these buttons */
-	private void getImages(){
-		try {
-			pauseButton = ImageIO.read(getClass().getResourceAsStream("pause.png"));
-			undoButton = ImageIO.read(getClass().getResourceAsStream("undo.png"));
-			pauseHover = ImageIO.read(getClass().getResourceAsStream("pause2.png"));
-			undoHover = ImageIO.read(getClass().getResourceAsStream("undo2.png"));
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}	
-		
-	}
-	
-	/* Controls the appearance of the pause panel
-	 * Stops the timer of the current level if paused */
+	/**
+	 * Switches the paused state of the level.
+	 */
 	public void togglePaused() {
 		if (isPaused) {
 			isPaused = false;
-			animationTimer.start();
+			frameTimer.start();
 			remove(pausePanel);
 		} else {
 			isPaused = true;
-			animationTimer.stop();
+			frameTimer.stop();
 			add(pausePanel);
 		}
 		
@@ -466,7 +500,9 @@ public class Level extends JPanel implements ActionListener {
 		repaint();
 	}
 	
-	/* Makes the player based off playerSpaces */
+	/**
+	 * Makes the player based off playerSpaces.
+	 */
 	private void makePlayer(List<List<Integer>> playerSpaces) {
 		try {
 			Random r = new Random();
@@ -479,7 +515,9 @@ public class Level extends JPanel implements ActionListener {
 		}
 	}
 	
-	/* Makes the boxList by placing the boxes on the goals */
+	/**
+	 * Makes the boxList by placing the boxes on the goals.
+	 */
 	private void makeBoxList(int numGoals) {		
 		this.boxList = new ArrayList<Box>();
 		
@@ -497,11 +535,9 @@ public class Level extends JPanel implements ActionListener {
 		}
 	}
 	
-	/*
-	 * Checks if player has won
-	 * 
-	 * @return boolean
-	 * 
+	/**
+	 * Returns whether a level has been completed.
+	 * @return Level completion
 	 */
 	private boolean isCompleted() {
 		for (Box b : boxList)
@@ -511,7 +547,9 @@ public class Level extends JPanel implements ActionListener {
 		return true;
 	} 
 	
-	/* Undo the players previous action */
+	/**
+	 * Undo the players previous action.
+	 */
 	private void undo() {
 		//Since we can't store the state when the player starts moving
 		//as we have no way of knowing when that is at the moment, we 
@@ -535,7 +573,9 @@ public class Level extends JPanel implements ActionListener {
 		repaint();
 	}
 	
-	/* Pushes the current state of the level */
+	/**
+	 * Pushes the current state of the level
+	 */
 	private void pushCurrentState() {
 		// saves state
 		ArrayList<Entity> newState = new ArrayList<Entity>();
@@ -556,7 +596,9 @@ public class Level extends JPanel implements ActionListener {
 		prevStates.push(newState);
 	}
 	
-	/* Saves the players high score for that level */
+	/**
+	 * Saves the players high score for that level.
+	 */
 	private void saveHighScore() {
 		// prints out the relevant message to high score
 		if ((moves > highScore && highScore != 0)&&(time >= bestTime && bestTime != 0)) {
@@ -647,7 +689,9 @@ public class Level extends JPanel implements ActionListener {
 		return s.toString();
 	}
 	
-	/* Paints the level for the user */
+	/**
+	 * Renders the level to the screen.
+	 */
 	public void paintComponent(Graphics g) {
 		Graphics2D bbg = (Graphics2D) g;
 		int left = (int) ((double) GameMaster.WIDTH/2 - (double) (width * tileSize)/2);
@@ -699,7 +743,7 @@ public class Level extends JPanel implements ActionListener {
 	}
 
 	@Override
-	/* Checks if the action was performed */
+	/* Handles actions for a timer trigger */
 	public void actionPerformed(ActionEvent e) {
 		boolean stillAnimating = false;
 		
@@ -731,7 +775,7 @@ public class Level extends JPanel implements ActionListener {
 			repaint();
 		else if (isCompleted()) {
 			// stops the animation's timer
-			animationTimer.stop();
+			frameTimer.stop();
 			if (levelFile != null) {
 				// saves if high score
 				saveHighScore();
