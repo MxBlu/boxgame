@@ -2,16 +2,25 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.Timer;
 
 public class Box extends Entity implements Cloneable {
 	
 	private Image sprite;
+	private Image onGoalSprite;
 	
 	public Box(int tileX, int tileY, Image sprite, int tileSize, int lvlWidth, int lvlHeight) {
 		super(tileX, tileY, tileSize, lvlWidth, lvlHeight);
 		this.sprite = sprite;
+		
+		try {
+			this.onGoalSprite = ImageIO.read(getClass().getResourceAsStream("box_goal.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/* Sets the tile's coordinates */
@@ -22,11 +31,15 @@ public class Box extends Entity implements Cloneable {
 	}
 	
 	/* Draws the box */
-	public void draw(Graphics2D bbg) {
+	public void draw(Graphics2D bbg, boolean onGoal) {
 		int left = (int) ((double) GameMaster.WIDTH / 2 - (double) (lvlWidth * tileSize) / 2);
 		int top = (int) ((double) GameMaster.HEIGHT / 2 - (double) (lvlHeight * tileSize) / 2);
 
-		bbg.drawImage(sprite, left + renderX, top + renderY, sprite.getWidth(null),
+		if (onGoal)
+			bbg.drawImage(onGoalSprite, left + renderX, top + renderY, onGoalSprite.getWidth(null),
+					onGoalSprite.getHeight(null), null);
+		else
+			bbg.drawImage(sprite, left + renderX, top + renderY, sprite.getWidth(null),
 				sprite.getHeight(null), null);
 	}
 	
