@@ -12,10 +12,7 @@ import java.util.ArrayList;
 import javax.swing.Timer;
 
 public class Player extends Entity implements Cloneable {
-	
-	private static final String WALL_COLLISION = "wall collision";
-	private static final String BOX_PUSH = "box push";
-	
+		
 	private Image downSprite;
 	private Image upSprite;
 	private Image rightSprite;
@@ -28,6 +25,11 @@ public class Player extends Entity implements Cloneable {
 	
 	private boolean goal = false;
 
+	private static final String WALL_COLLISION = "wall collision";
+	private static final String BOX_PUSH = "box push";
+	/**
+	 * Representative of the player the user plays as on the level
+	 */
 	public Player(int tileX, int tileY, Image downSprite, Image upSprite, Image rightSprite, int tileSize, int lvlWidth, int lvlHeight) {
 		super(tileX, tileY, tileSize, lvlWidth, lvlHeight);
 		
@@ -46,10 +48,11 @@ public class Player extends Entity implements Cloneable {
 		audioSource.addSound("box_push_2.wav", BOX_PUSH);
 	}
 
-	/*
-	 * @param input
-	 * 
+	/**
+	 * Updates the player according to where it is on the map, and
+	 * its current action
 	 * @param levelMap
+	 * @param boxList
 	 */
 	public void update(Tile[][] levelMap, ArrayList<Box> boxList) {
 		int prevTileX = tileX;
@@ -120,6 +123,9 @@ public class Player extends Entity implements Cloneable {
 	}
 	
 	@Override
+	/**
+	 * Updates the player's animation
+	 */
 	public void updateAnimation() {
 		// Update animation
 		if (renderX < tileX * tileSize) {
@@ -152,19 +158,31 @@ public class Player extends Entity implements Cloneable {
 		}
 		
 	}
-	
+	/**
+	 * Checking if player is at a new tile
+	 * @return true if it is at a new tile
+	 * Otherwise, returns false
+	 */
 	public boolean atNewTile() {
 		return atNewTile;
 	}
 
+	/**
+	 * Paints the components for player
+	 * @param g, for graphics
+	 */
 	public void paintComponent(Graphics g) {
 		Graphics2D bbg = (Graphics2D) g;
 		int left = (int) ((double) GameMaster.WIDTH / 2 - (double) (lvlWidth * tileSize) / 2);
 		int top = (int) ((double) GameMaster.HEIGHT / 2 - (double) (lvlHeight * tileSize) / 2);
 
+		// paints the player at its new location, with new movement sprite
 		bbg.drawImage(renderSprite, left + renderX, top + renderY, upSprite.getWidth(null), upSprite.getHeight(null), null);		 
 	}
 	
+	/**
+	 * Clones the player
+	 */
 	public Object clone() throws CloneNotSupportedException{  
 		Player player = (Player) super.clone();
 		player.atNewTile = atNewTile;
@@ -185,9 +203,18 @@ public class Player extends Entity implements Cloneable {
 		return player;
 	} 
 
+	/**
+	 * Gets the box at the requested coordinate
+	 * @param tileX, x coordinate
+	 * @param tileY, y coordinate
+	 * @param boxList
+	 * @return a box at the requested coordinate
+	 */
 	private Box getBoxAt(int tileX, int tileY, ArrayList<Box> boxList) {
+		// goes through the boxList
 		for (int i = 0; i < boxList.size(); i++) {
 			Box box = boxList.get(i);
+			// checks if the box has the same coordinates as the request
 			if (box.getTileX() == tileX && box.getTileY() == tileY) {
 				return box;
 			}
@@ -196,6 +223,10 @@ public class Player extends Entity implements Cloneable {
 		return null;
 	}
 	
+	/**
+	 * Sets the players new movement
+	 * @param x, indicates what move the player is currently doing
+	 */
 	public void setMove(int x){
 		movY = 0;
 		movX = 0;

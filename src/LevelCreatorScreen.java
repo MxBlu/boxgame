@@ -106,9 +106,9 @@ public class LevelCreatorScreen extends JPanel {
 	private JPanel uiPanel;
 	private Font buttonsFont;
 	
-	private final int slotButtonWidth = 120;
-	private final int slotButtonHeight = 48;
-	private final int fillerSize = 20;
+	private final int SLOT_BUTTON_WIDTH = 120;
+	private final int SLOT_BUTTON_HEIGHT = 48;
+	private final int FILLER_SIZE = 20;
     private static final String QUIT_MENU = "quit menu";
 	
     /**
@@ -400,7 +400,7 @@ public class LevelCreatorScreen extends JPanel {
 			tileButton.setForeground(new Color(167, 255, 1));
 			tileButton.setBorder(new LineBorder(Color.WHITE, 2, true));
 			tileButton.setBackground(new Color(0, 0, 0));
-			tileButton.setPreferredSize(new Dimension(slotButtonWidth, slotButtonHeight));
+			tileButton.setPreferredSize(new Dimension(SLOT_BUTTON_WIDTH, SLOT_BUTTON_HEIGHT));
 			uiPanel.add(tileButton);
 			
 			//Skip last filler
@@ -409,7 +409,7 @@ public class LevelCreatorScreen extends JPanel {
 			//Add a filler panel for blank space between buttons
 			JPanel borderFiller2 = new JPanel();
 			borderFiller2.setOpaque(false);
-			borderFiller2.setPreferredSize(new Dimension(fillerSize, fillerSize));
+			borderFiller2.setPreferredSize(new Dimension(FILLER_SIZE, FILLER_SIZE));
 			uiPanel.add(borderFiller2);
 		}
 		
@@ -447,7 +447,7 @@ public class LevelCreatorScreen extends JPanel {
 			tileButton.setForeground(new Color(0, 255, 248));
 			tileButton.setBorder(new LineBorder(Color.WHITE, 2, true));
 			tileButton.setBackground(new Color(0, 0, 0));
-			tileButton.setPreferredSize(new Dimension(slotButtonWidth, slotButtonHeight));
+			tileButton.setPreferredSize(new Dimension(SLOT_BUTTON_WIDTH, SLOT_BUTTON_HEIGHT));
 			uiPanel.add(tileButton);
 			
 			//Skip last filler
@@ -456,7 +456,7 @@ public class LevelCreatorScreen extends JPanel {
 			//Add a filler panel for blank space between buttons
 			JPanel borderFiller2 = new JPanel();
 			borderFiller2.setOpaque(false);
-			borderFiller2.setPreferredSize(new Dimension(fillerSize, fillerSize));
+			borderFiller2.setPreferredSize(new Dimension(FILLER_SIZE, FILLER_SIZE));
 			uiPanel.add(borderFiller2);
 		}
 		
