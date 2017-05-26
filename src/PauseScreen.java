@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
@@ -24,11 +25,11 @@ public class PauseScreen extends JPanel{
 
 	private HoverButton Menu;
 	private HoverButton Resume;
-
+	private JFrame frame;
 	
-	public PauseScreen() {
-		GameMaster.toggleCursorPointer();
-
+	public PauseScreen(JFrame frame) {
+		//GameMaster.toggleCursorPointer();
+		this.frame = frame;
 		try{
 			Background = ImageIO.read(getClass().getResourceAsStream("pausescreen.png"));
 			menuButton = ImageIO.read(getClass().getResourceAsStream("returntomenu.png"));
@@ -55,7 +56,7 @@ public class PauseScreen extends JPanel{
 		Menu.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				System.out.println("return to menu");
-	    		GameMaster.changeScreens(new MenuScreen());
+	    		GameMaster.changeScreens(frame, new MenuScreen(frame));
 			}
 		});
 		

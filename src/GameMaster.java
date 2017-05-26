@@ -1,8 +1,10 @@
 import java.awt.Cursor;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.io.File;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -19,42 +21,28 @@ public class GameMaster{
     // Set the frames per second
     public static final int FPS = 60;
     public static final int FRAME_DELTA = 1000/FPS;
-
-    private static Image cursor;
-    private static Image hover;
    
-    private static AudioManager audio;
-    private static Boolean audioPlaying;
+    //private static AudioManager audio;
+    //private static Boolean audioPlaying;
 	
     // JFrame which holds all of the game's
     // JPanels and their contents. 
-    private static JFrame frame;
+    private JFrame frame;
     
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() { 
+            	GameMaster gameMaster = new GameMaster();
                 // Initialize the JFrames attributes
-                initScreen();
-                // Add a boot up screen/JPanel to this
-                // JFrame
-                frame.getContentPane().add(new BootScreen());
-                
+            	gameMaster.initScreen();               
             }
         });  
     }
     
-    private static void initScreen(){
-    	audio = new AudioManager();
-    	audioPlaying = false;    	
-    	
-    	try {
-			cursor = ImageIO.read(GameMaster.class.getClassLoader().getResourceAsStream("pointer.png"));
-			hover = ImageIO.read(GameMaster.class.getClassLoader().getResourceAsStream("hand.png"));
-		}
-		catch(Exception e) {
-			e.printStackTrace();
-		}	
+    private void initScreen(){
+    	//audio = new AudioManager();
+    	//audioPlaying = false;    	
     	
         // Initialize the settings and attributes
         // for our JFrame. This class, GameMaster
@@ -67,7 +55,7 @@ public class GameMaster{
         frame.setResizable(false);
         frame.setVisible(true);
         frame.setFocusable(true);
-        toggleCursorPointer();
+        setCursorPointer();
         //Need to adjust the width/height so it includes the window border
         int widthWithBorder = WIDTH  + (frame.getWidth()  - frame.getContentPane().getWidth()); 
         int heightWithBorder = HEIGHT + (frame.getHeight() - frame.getContentPane().getHeight());
@@ -76,58 +64,51 @@ public class GameMaster{
         
         /*panel = new JPanel(new CardLayout());
         frame.add(panel);*/
+        
+        // Add a boot up screen/JPanel to this
+        // JFrame
+        frame.getContentPane().add(new BootScreen(frame));
     }
     
-    public static void changeScreens(JPanel newScreen) {
+    public static void changeScreens(JFrame frame, JPanel newScreen) {
         // This function is used to change between
         // screens. For our implementation, each
         // screen is stored as a JPanel. This
         // function removes all the JPanels in the
         // main JFrame, adds a new screen/JPanel 
         // to it, and then repaints and revalidates. 
-        frame.getContentPane().removeAll();
-        frame.getContentPane().add(newScreen);
-        frame.repaint();
-        frame.revalidate();
+	    frame.getContentPane().removeAll();
+	    frame.getContentPane().add(newScreen);
+	    frame.repaint();
+	    frame.revalidate();
         
     }
     
-    public static void playMusic(){
+    /*public void playMusic(){
     	 audio.playSound("song.wav", 1.0f);
     }
     
-    public static boolean isPlaying(){
+    public boolean isPlaying(){
     	return audioPlaying;
-    }
-    
-    public static void toggleCursorHover(){
-    	
-    	Toolkit toolkit = Toolkit.getDefaultToolkit();
-     	Point cursorHotSpot = new Point(0,0);
-     	Cursor customCursor= null;
-     
-     	customCursor = toolkit.createCustomCursor(hover, cursorHotSpot, "Cursor");
-     		
-        frame.setCursor(customCursor);
+    }*/
  
-    	
-    }
-    
-    public static void toggleCursorPointer(){
-    	
+    public void setCursorPointer(){
     	Toolkit toolkit = Toolkit.getDefaultToolkit();
      	Point cursorHotSpot = new Point(0,0);
      	Cursor customCursor= null;
      	
-     	customCursor = toolkit.createCustomCursor(cursor, cursorHotSpot, "Cursor");
-   
-        frame.setCursor(customCursor);
- 
-    	
+     	try {
+			customCursor = toolkit.createCustomCursor(ImageIO.read(GameMaster.class.getClassLoader().getResourceAsStream("pointer.png")), cursorHotSpot, "Cursor");
+			frame.setCursor(customCursor);    
+		} catch (HeadlessException e) {
+			e.printStackTrace();
+		} catch (IndexOutOfBoundsException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}        	
     }
-    
-   
-    
+
 }
     
     

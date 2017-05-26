@@ -1,3 +1,6 @@
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -5,7 +8,8 @@ import java.util.Random;
 
 public class FurthestStateGen {
 	private static final Integer directions[][] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
-	private static final Integer depthLimit[] = {-1, 25, 17, 12, 12, 11};
+	//private static final Integer depthLimit[] = {-1, 40, 35, 20, 12, 11}; // Literal Depth limit
+	private static final Integer depthLimit[] = {-1, 2, 3, 3, 4, 4}; // Time Depth limit
 	
 	private Tile levelMap[][]; // layout of the level
 	private ArrayList<Box> boxList; // layout of the boxes on the level
@@ -119,7 +123,8 @@ public class FurthestStateGen {
 		
 		// goes until it reaches the allocated depthLimit or it goes above a certain list size
 		// for that type of level
-		for (int depth = 1; depth < depthLimit[level] &&
+		LocalDateTime start = LocalDateTime.now();
+		for (int depth = 1; ChronoUnit.SECONDS.between(start, LocalDateTime.now()) < depthLimit[level] &&
 				(((level > 3) && (resultList.size() < 1500)) ||
 					((level < 4) && (resultList.size() < 3000))); depth++) {
 			// checks if the prevTempList is empty
@@ -153,6 +158,7 @@ public class FurthestStateGen {
 			prevTempList = expand(prevTempList, boxGoals);
 			
 			System.out.println("depth " + depth);
+			System.out.println("Time taken: " + ChronoUnit.SECONDS.between(start, LocalDateTime.now()));
 		}
 		
 		return prevResultList;
@@ -174,7 +180,7 @@ public class FurthestStateGen {
 		
 		// goes through until possibleStates' size reaches 60 or it iterates 100 times
 		for (int possibleSize = 0; possibleSize < 60 && i < 100; possibleSize++) {
-			System.out.println("forever");
+			//System.out.println("forever");
 			goalCheck = false;
 			// gets a random index from resultList
 			randState = r.nextInt(resultList.size());
@@ -246,7 +252,7 @@ public class FurthestStateGen {
 		
 		System.out.println("currMaxBoxLines " + currScore);
 		System.out.println("currMaxBoxLines " + currDiffScore);
-		System.out.println("currMaxBoxLines " + stateList.get(pos).getMinPathLength());
+		System.out.println("currMaxBoxLines " + stateList.get(possibleStates.get(pos)).getMinPathLength());
 		// sets the current ideal state's playerSpaces
 		this.playerSpaces = stateList.get(possibleStates.get(pos)).getPlayerSpaces();
 	}

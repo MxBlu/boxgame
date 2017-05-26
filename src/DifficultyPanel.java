@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 
@@ -24,8 +25,11 @@ public class DifficultyPanel extends JPanel{
 	private HoverButton Medium;
 	private HoverButton Hard;
 	
-	public DifficultyPanel() {
-		GameMaster.toggleCursorPointer();
+	private JFrame frame;
+	
+	public DifficultyPanel(JFrame frame) {
+		this.frame = frame;
+		//GameMaster.toggleCursorPointer();
 		// Get the image file for the background and buttons
 		try {
 			background = ImageIO.read(getClass().getResourceAsStream("difficultySelect.png"));
@@ -60,7 +64,7 @@ public class DifficultyPanel extends JPanel{
 		Easy.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				System.out.println("easy");
-				GameMaster.changeScreens(new LoadingScreen(GameMaster.WIDTH, GameMaster.HEIGHT, 50, Level.EASY));
+				GameMaster.changeScreens(frame, new LoadingScreen(frame, GameMaster.WIDTH, GameMaster.HEIGHT, 50, Level.EASY));
 			}
 		});
 		
@@ -68,7 +72,7 @@ public class DifficultyPanel extends JPanel{
 		Medium.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				System.out.println("medium");
-				GameMaster.changeScreens(new LoadingScreen(GameMaster.WIDTH, GameMaster.HEIGHT, 50, Level.MEDIUM));
+				GameMaster.changeScreens(frame, new LoadingScreen(frame, GameMaster.WIDTH, GameMaster.HEIGHT, 50, Level.MEDIUM));
 			}
 		});
 		
@@ -76,7 +80,7 @@ public class DifficultyPanel extends JPanel{
 		Hard.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				System.out.println("hard");
-				GameMaster.changeScreens(new LoadingScreen(GameMaster.WIDTH, GameMaster.HEIGHT, 50, Level.HARD));
+				GameMaster.changeScreens(frame, new LoadingScreen(frame, GameMaster.WIDTH, GameMaster.HEIGHT, 50, Level.HARD));
 			}
 		});
 		
