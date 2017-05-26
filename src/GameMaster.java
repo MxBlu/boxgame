@@ -40,6 +40,16 @@ public class GameMaster{
         });  
     }
     
+    /*
+     * 
+     * Initialises the Game
+     * 
+     * This function sets up the JFrame and the initial screen/ JPanel that will be displayed
+     * It sets all the properties of the JFrame
+     * 
+     * 
+     */
+    
     private void initScreen(){
     	//audio = new AudioManager();
     	//audioPlaying = false;    	
@@ -70,6 +80,16 @@ public class GameMaster{
         frame.getContentPane().add(new BootScreen(frame));
     }
     
+    /*
+     * Change Screens Function
+     * 
+     * This function changes the JPanel within a frame,
+     * in other words, it switches between screens of our game
+     * 
+     * @param JFrame frame variable that is to have a new jpanel added
+     * @param JPanel newScreen variable that is added to frame
+     * 
+     */
     public static void changeScreens(JFrame frame, JPanel newScreen) {
         // This function is used to change between
         // screens. For our implementation, each
@@ -84,13 +104,14 @@ public class GameMaster{
         
     }
     
-    /*public void playMusic(){
-    	 audio.playSound("song.wav", 1.0f);
-    }
     
-    public boolean isPlaying(){
-    	return audioPlaying;
-    }*/
+    /*
+     * Set cursor Function
+     * 
+     * Function that toggles sets cursor to either be
+     * - a hand when hovering over buttons
+     * - a pointer when on jframe but not over a button
+     */
  
     public void setCursorPointer(){
     	Toolkit toolkit = Toolkit.getDefaultToolkit();

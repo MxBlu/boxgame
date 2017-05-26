@@ -236,6 +236,13 @@ public class Level extends JPanel implements ActionListener {
 		}	
 	}
 	
+	/*
+	 * Sets KeyActions 
+	 * 
+	 * This function uses keybinding to set key-actions for the game
+	 * 
+	 * 
+	 */
 	private void setActions() {
 		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), MOVE_UP);
 		getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), MOVE_DOWN);
@@ -295,6 +302,12 @@ public class Level extends JPanel implements ActionListener {
 		});
 	}
 	
+	/*
+	 * Sets Tiles
+	 * 
+	 * This function sets the images for each specific tile
+	 * 
+	 */
 	private void setDefaultTiles() {
 		this.tileImgs = new Image[8];
 		try {
@@ -460,6 +473,12 @@ public class Level extends JPanel implements ActionListener {
 		}
 	}
 	
+	/*
+	 * Checks if player has won
+	 * 
+	 * @return boolean
+	 * 
+	 */
 	private boolean isCompleted() {
 		for (Box b : boxList)
 			if (levelMap[b.getTileY()][b.getTileX()] != Tile.GOAL)
@@ -472,10 +491,15 @@ public class Level extends JPanel implements ActionListener {
 		//Since we can't store the state when the player starts moving
 		//as we have no way of knowing when that is at the moment, we 
 		//need to pop twice and push at the end
+		System.out.println("In Undo Function");
+		System.out.println("prevstate size >=2 " +prevStates.size()+" or prev states is not empty and its animating"
+				+ " "+ prevStates.isEmpty() + " "+ player.isAnimating());
 		if (prevStates.size() >= 2 || (!prevStates.isEmpty() && player.isAnimating())) {
 			if (!player.isAnimating())
+				
 				prevStates.pop();
 			ArrayList<Entity> prevState = prevStates.pop();
+			System.out.println("Previous state check "+ prevStates);
 			boxList = new ArrayList<Box>();
 			for (Entity e : prevState) {
 				if (e.getClass() == Player.class) {
@@ -504,6 +528,7 @@ public class Level extends JPanel implements ActionListener {
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
+		prevStates.push(newState);
 	}
 	
 	private void saveHighScore() {
