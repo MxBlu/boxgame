@@ -87,7 +87,6 @@ public class IntermissionScreen extends JPanel {
 		// Return to menu button action listener
 		menu.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				System.out.println("return to menu");
 				if (isPremade == false) {
 		    		GameMaster.changeScreens(frame, new MenuScreen(frame));
 				} else {
@@ -99,7 +98,6 @@ public class IntermissionScreen extends JPanel {
 		// Next level button action listener
 		next.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				System.out.println("next level load");
 				GameMaster.changeScreens(frame, new LoadingScreen(frame, GameMaster.WIDTH, GameMaster.HEIGHT, 50, difficulty));
 			}
 		});

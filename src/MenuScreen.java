@@ -43,12 +43,6 @@ public class MenuScreen extends JPanel{
 	private static final Object MOVE_RIGHT = "move right";
 	
 	public MenuScreen(JFrame frame) {
-		//GameMaster.toggleCursorPointer();
-
-		//setTraversalKeys();
-		//if (!GameMaster.isPlaying()){
-			//GameMaster.playMusic();
-		//}
 		this.frame = frame;
 		
 		// Get the image file for the background and buttons
