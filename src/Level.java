@@ -221,7 +221,7 @@ public class Level extends JPanel implements ActionListener {
 				// checks if it is representative of a box
 				if (inputArray[sIndex] - '0' == Tile.BOX.getIntRep()) {
 					// adds box to boxList and sets the coordinates as walkable on levelMap
-					boxList.add(new Box(j, i, tileImgs[2], tileSize, width, height));
+					boxList.add(new Box(j, i, tileImgs[2], tileImgs[4], tileSize, width, height));
 					levelMap[i][j] = Tile.WALKABLE;
 					// checks if it is representative of a plyer
 				} else if (inputArray[sIndex] - '0' == Tile.PLAYER.getIntRep()) {
@@ -367,6 +367,8 @@ public class Level extends JPanel implements ActionListener {
 			tileImgs[2] = ImageIO.read(getClass().getResourceAsStream("box.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
 			tileImgs[3] = ImageIO.read(getClass().getResourceAsStream("goal.png")).getScaledInstance(tileSize,
+					tileSize, Image.SCALE_DEFAULT);
+			tileImgs[4] = ImageIO.read(getClass().getResourceAsStream("box_goal.png")).getScaledInstance(tileSize, 
 					tileSize, Image.SCALE_DEFAULT);
 			tileImgs[7] = ImageIO.read(getClass().getResourceAsStream("border.png")).getScaledInstance(tileSize,
 					tileSize, Image.SCALE_DEFAULT);
@@ -527,7 +529,7 @@ public class Level extends JPanel implements ActionListener {
 				// checks if the coordinates is a goal
 				if (levelMap[y][x] == Tile.GOAL) {
 					// adds box to the list
-					this.boxList.add(new Box(x, y, tileImgs[2], tileSize, width, height));
+					this.boxList.add(new Box(x, y, tileImgs[2], tileImgs[4], tileSize, width, height));
 				}
 				if (this.boxList.size() == numGoals) break;
 			}

@@ -14,16 +14,11 @@ public class Box extends Entity implements Cloneable {
 	private Image offGoalSprite;
 	private Image onGoalSprite;
 	
-	public Box(int tileX, int tileY, Image sprite, int tileSize, int lvlWidth, int lvlHeight) {
+	public Box(int tileX, int tileY, Image offGoalSprite, Image onGoalSprite, int tileSize, int lvlWidth, int lvlHeight) {
 		super(tileX, tileY, tileSize, lvlWidth, lvlHeight);
-		this.offGoalSprite = sprite;
+		this.offGoalSprite = offGoalSprite;
+		this.onGoalSprite = onGoalSprite;
 		this.sprite = this.offGoalSprite;
-		
-		try {
-			this.onGoalSprite = ImageIO.read(getClass().getResourceAsStream("box_goal.png")).getScaledInstance(tileSize, tileSize, Image.SCALE_DEFAULT);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	/* Sets the tile's coordinates */
@@ -52,7 +47,7 @@ public class Box extends Entity implements Cloneable {
 	
 	/* Returns a copy of Box */
 	public Box copy() {
-		Box box = new Box(this.tileX, this.tileY, this.sprite, this.tileSize, this.lvlWidth, this.lvlHeight);
+		Box box = new Box(this.tileX, this.tileY, this.offGoalSprite, this.onGoalSprite, this.tileSize, this.lvlWidth, this.lvlHeight);
 		return box;
 	}
 	
