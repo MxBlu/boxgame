@@ -36,19 +36,22 @@ public class MenuScreen extends JPanel{
 	private JPanel difficultyPanel;
 	private Boolean difficultyShow;
 	
+	private JFrame frame;
+	
     private static final String MOVE_UP = "move up";
     private static final String MOVE_DOWN = "move down";
     private static final String QUIT_MENU = "quit menu";
 	private static final Object MOVE_LEFT = "move left";
 	private static final Object MOVE_RIGHT = "move right";
 	
-	public MenuScreen() {
-		GameMaster.toggleCursorPointer();
+	public MenuScreen(JFrame frame) {
+		//GameMaster.toggleCursorPointer();
 
 		//setTraversalKeys();
-		if (!GameMaster.isPlaying()){
+		//if (!GameMaster.isPlaying()){
 			//GameMaster.playMusic();
-		}
+		//}
+		this.frame = frame;
 		
 		// Get the image file for the background and buttons
 		try {
@@ -64,7 +67,7 @@ public class MenuScreen extends JPanel{
 			e.printStackTrace();
 		}		
 		
-		difficultyPanel = new DifficultyPanel(); 
+		difficultyPanel = new DifficultyPanel(frame); 
 		difficultyShow = false;
 		
 		// Initialize JButtons
@@ -114,7 +117,7 @@ public class MenuScreen extends JPanel{
 		
 		playPreset.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				GameMaster.changeScreens(new SelectScreen());
+				GameMaster.changeScreens(frame, new SelectScreen(frame));
 			}
 		});
 		
@@ -129,7 +132,7 @@ public class MenuScreen extends JPanel{
 		
 		levelcreator.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
-				GameMaster.changeScreens(new LevelCreatorScreen(GameMaster.WIDTH, GameMaster.HEIGHT, 40));
+				GameMaster.changeScreens(frame, new LevelCreatorScreen(frame, GameMaster.WIDTH, GameMaster.HEIGHT, 40));
 			}
 		});
 	

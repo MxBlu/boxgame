@@ -34,6 +34,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
@@ -94,6 +95,8 @@ public class Level extends JPanel implements ActionListener {
     
     private static final String MENU = "return menu";
     private static final String UNDO = "undo";
+    
+    private JFrame frame;
 	
 	/**
 	 * Creates a new level.
@@ -102,10 +105,10 @@ public class Level extends JPanel implements ActionListener {
 	 * @param screenHeight Screen height in pixels.
 	 * @param tileSize Width/Height of a tile in pixels.
 	 */
-	Level(int screenWidth, int screenHeight, int tileSize, int difficulty) {
+	Level(JFrame frame, int screenWidth, int screenHeight, int tileSize, int difficulty) {
 		// 1 pixel padding so I don't need to add edge cases to generation.
-		
-		GameMaster.toggleCursorPointer();
+		this.frame = frame;
+	//	GameMaster.toggleCursorPointer();
 
 		this.width = screenWidth/tileSize + 2;
 		this.height = screenHeight/tileSize + 2;
@@ -121,7 +124,7 @@ public class Level extends JPanel implements ActionListener {
 		
 		time = 0;
 		isPaused = false;
-		pausePanel = new PauseScreen();
+		pausePanel = new PauseScreen(frame);
 		
 		setDefaultTiles();
 		
@@ -149,9 +152,9 @@ public class Level extends JPanel implements ActionListener {
 		pushCurrentState();
 	}
 
-	Level(File levelFile, int tileSize) {
-		GameMaster.toggleCursorPointer();
-
+	Level(JFrame frame, File levelFile, int tileSize) {
+	//	GameMaster.toggleCursorPointer();
+		this.frame = frame;
 		this.tileSize = tileSize;
 		this.levelFile = levelFile;
 		boxList = new ArrayList<Box>();
@@ -160,7 +163,7 @@ public class Level extends JPanel implements ActionListener {
 		animationTimer = new Timer(GameMaster.FRAME_DELTA, this);
 		time = 0;
 		isPaused = false;
-		pausePanel = new PauseScreen();
+		pausePanel = new PauseScreen(frame);
 		setDefaultTiles();
 		
 		// premadeFlag is set to true if it is passed
@@ -510,9 +513,9 @@ public class Level extends JPanel implements ActionListener {
 			animationTimer.stop();
 			if (levelFile != null) {
 				saveHighScore();
-				GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves, difficulty, true));
+				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, true));
 			} else {
-				GameMaster.changeScreens(new IntermissionScreen(dateFormat.format(date), moves, difficulty, false));
+				GameMaster.changeScreens(frame, new IntermissionScreen(frame, dateFormat.format(date), moves, difficulty, false));
 			}
 		}
 	}

@@ -44,7 +44,7 @@ public class SelectScreen extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			GameMaster.changeScreens(new Level(levelFile, 40));
+			GameMaster.changeScreens(frame, new Level(frame, levelFile, 40));
 		}
 	}
 
@@ -76,10 +76,13 @@ public class SelectScreen extends JPanel {
 	private JPanel lvlSetPanel;
 	private JPanel lvlSetLabelPanel;
 	private Font highScoresFont;
+	
+	private JFrame frame;
 
-	public SelectScreen() {
-		GameMaster.toggleCursorPointer();
-
+	public SelectScreen(JFrame frame) {
+		//GameMaster.toggleCursorPointer();
+		this.frame = frame;
+		
 		// Get the image file for the background and buttons
 		try {
 			background = ImageIO.read(getClass().getResourceAsStream("levelselectmenu.png"));
@@ -166,7 +169,7 @@ public class SelectScreen extends JPanel {
 	}
 
 	private void back() {
-		GameMaster.changeScreens(new MenuScreen());
+		GameMaster.changeScreens(frame, new MenuScreen(frame));
 	}
 
 	private void setUpSetBtnPanel(char levelSuffix) {

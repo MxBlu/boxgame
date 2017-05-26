@@ -30,6 +30,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -89,12 +90,14 @@ public class LevelCreatorScreen extends JPanel{
 	private int tileSize = 40;
 	private Tile curPlaceTile = Tile.PLAYER;
 	private JPanel uiPanel;
+	private JFrame frame;
 	
     private static final String QUIT_MENU = "quit menu";
 	
-	public LevelCreatorScreen(int screenWidth, int screenHeight, int tileSize) {
-		GameMaster.toggleCursorPointer();
-
+	public LevelCreatorScreen(JFrame frame, int screenWidth, int screenHeight, int tileSize) {
+		//GameMaster.toggleCursorPointer();
+		this.frame = frame;
+		
 		this.width = screenWidth/tileSize;
 		this.height = screenHeight/tileSize;
 		this.tileSize = tileSize;
@@ -497,7 +500,7 @@ public class LevelCreatorScreen extends JPanel{
 	}
 
 	private void exitScreen() {
-		GameMaster.changeScreens(new MenuScreen());
+		GameMaster.changeScreens(frame, new MenuScreen(frame));
 	}
 	
 }

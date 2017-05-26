@@ -13,6 +13,7 @@ import java.util.Date;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class IntermissionScreen extends JPanel {
@@ -30,19 +31,23 @@ public class IntermissionScreen extends JPanel {
 	
 	private boolean isPremade;
 	
-	public IntermissionScreen(String d, int moves, int difficulty, boolean premadeFlag){
+	private JFrame frame;
+	
+	public IntermissionScreen(JFrame frame, String d, int moves, int difficulty, boolean premadeFlag){
+		this.frame = frame;
 		isPremade = premadeFlag;
 		init(difficulty);
 		time = "Time: " + d;
 		movesString = "Moves: " + moves;
 	}
 	
-	public IntermissionScreen(){
+	public IntermissionScreen(JFrame frame){
+		this.frame = frame;
 		init(1);
 	}
 	
 	private void init(int difficulty) {
-		GameMaster.toggleCursorPointer();
+		//GameMaster.toggleCursorPointer();
 
 		// Get the image file for the background
 		try {
@@ -77,9 +82,9 @@ public class IntermissionScreen extends JPanel {
 			public void actionPerformed (ActionEvent e){
 				System.out.println("return to menu");
 				if (isPremade == false) {
-		    		GameMaster.changeScreens(new MenuScreen());
+		    		GameMaster.changeScreens(frame, new MenuScreen(frame));
 				} else {
-		    		GameMaster.changeScreens(new SelectScreen());
+		    		GameMaster.changeScreens(frame, new SelectScreen(frame));
 				}
 			}
 		});
@@ -88,7 +93,7 @@ public class IntermissionScreen extends JPanel {
 		next.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				System.out.println("next level load");
-				GameMaster.changeScreens(new LoadingScreen(GameMaster.WIDTH, GameMaster.HEIGHT, 50, difficulty));
+				GameMaster.changeScreens(frame, new LoadingScreen(frame, GameMaster.WIDTH, GameMaster.HEIGHT, 50, difficulty));
 			}
 		});
 		

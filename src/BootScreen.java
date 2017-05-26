@@ -33,9 +33,12 @@ public class BootScreen extends JPanel implements ActionListener{
     private float alpha = 0.0f;
     private int state = 0;
     private AudioManager audioSource;
+    
+    private JFrame frame;
 
-    public BootScreen( ) {
+    public BootScreen(JFrame frame) {
     	//main = m;
+    	this.frame = frame;
         imagem = new ImageIcon("logo.png").getImage();
         timer = new Timer(GameMaster.FRAME_DELTA, this);
         timer.start();
@@ -50,7 +53,7 @@ public class BootScreen extends JPanel implements ActionListener{
 			public void actionPerformed(ActionEvent e) {
 				audioSource.stopSound();
 				timer.stop();
-				GameMaster.changeScreens(new MenuScreen());	
+				GameMaster.changeScreens(frame, new MenuScreen(frame));	
 			}
 		});
     } 
@@ -79,7 +82,7 @@ public class BootScreen extends JPanel implements ActionListener{
     	} else {
     		audioSource.stopSound();
     		timer.stop();
-    		GameMaster.changeScreens(new MenuScreen());
+    		GameMaster.changeScreens(frame, new MenuScreen(frame));
     	}
     }
 }

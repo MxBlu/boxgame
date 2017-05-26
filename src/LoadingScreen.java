@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -18,10 +19,13 @@ public class LoadingScreen extends JPanel implements ActionListener {
 	private int tileSize;
 	private int difficulty;
 	
-	Timer renderWait;
+	private Timer renderWait;
+	
+	private JFrame frame;
 
-	public LoadingScreen(int screenWidth, int screenHeight, int tileSize, int difficulty) {
+	public LoadingScreen(JFrame frame, int screenWidth, int screenHeight, int tileSize, int difficulty) {
 		this.renderWait = new Timer(10, this);
+		this.frame = frame;
 		
 		try {
 			this.background = ImageIO.read(getClass().getResourceAsStream("loading.png")).getScaledInstance(screenWidth,
@@ -44,6 +48,6 @@ public class LoadingScreen extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		renderWait.stop();
-		GameMaster.changeScreens(new Level(screenWidth, screenHeight, tileSize, difficulty));
+		GameMaster.changeScreens(frame, new Level(frame, screenWidth, screenHeight, tileSize, difficulty));
 	}
 }
