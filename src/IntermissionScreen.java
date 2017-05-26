@@ -67,7 +67,6 @@ public class IntermissionScreen extends JPanel {
 	 * @param int difficulty sets the difficulty of next level if called
 	 */
 	private void init(int difficulty) {
-	
 		// Get the image file for the background
 		try {
 			background = ImageIO.read(getClass().getResourceAsStream("intermission.png"));
@@ -161,15 +160,12 @@ public class IntermissionScreen extends JPanel {
         try {
 			gameFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("VCR_OSD_MONO.ttf")).deriveFont(Font.BOLD, 25);
 		} catch (FontFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         
         //If Preset level, displays a highScore
-         
         if (isPremade){
         	g.setFont(gameFont);
         	g.setColor(Color.WHITE);
