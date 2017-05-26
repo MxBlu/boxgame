@@ -16,6 +16,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+/*
+ * Intermission Screen (JPanel)
+ * 
+ * Screen displayed when level is completed
+ */
+
 public class IntermissionScreen extends JPanel {
 
     private Image background;
@@ -53,9 +59,15 @@ public class IntermissionScreen extends JPanel {
 		newHighScore = isHighScore;
 	}
 	
+	/*
+	 * Sets up the JPanel and all is components
+	 * 
+	 * Adds all the buttons and draws the background and highscore
+	 * 
+	 * @param int difficulty sets the difficulty of next level if called
+	 */
 	private void init(int difficulty) {
-		//GameMaster.toggleCursorPointer();
-
+	
 		// Get the image file for the background
 		try {
 			background = ImageIO.read(getClass().getResourceAsStream("intermission.png"));
@@ -158,16 +170,18 @@ public class IntermissionScreen extends JPanel {
         
         //If Preset level, displays a highScore
          
-        
         if (isPremade){
         	g.setFont(gameFont);
         	g.setColor(Color.WHITE);
         	
         	if (newHighScore){
+        		//Displays the new High Score if Player succeeds
         		g.drawString("New High Score", GameMaster.WIDTH/5, 500);
         		g.drawString(time,  GameMaster.WIDTH/5, 550 );
         		g.drawString(movesString,  GameMaster.WIDTH/5,600);
+        	
         	}else {
+        		//displays the current highscore
         		g.drawString("High Score",  GameMaster.WIDTH/5, 500);
         		if (bestTime != null){
         			g.drawString("Time : "+bestTime,  GameMaster.WIDTH/5, 550 );
