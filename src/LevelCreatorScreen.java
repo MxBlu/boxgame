@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -36,6 +37,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import javafx.scene.control.ButtonBar.ButtonData;
 
@@ -91,6 +93,10 @@ public class LevelCreatorScreen extends JPanel{
 	private Tile curPlaceTile = Tile.PLAYER;
 	private JPanel uiPanel;
 	private JFrame frame;
+	private Font buttonsFont;
+	private int slotButtonWidth = 120;
+	private int slotButtonHeight = 48;
+	private int fillerSize = 20;
 	
     private static final String QUIT_MENU = "quit menu";
 	
@@ -107,6 +113,13 @@ public class LevelCreatorScreen extends JPanel{
 			for (int j = 0; j < height; j++) {
 				levelMap[i][j] = Tile.WALL;
 			}
+		}
+		
+		try {
+			buttonsFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("VCR_OSD_MONO.ttf"))
+					.deriveFont(Font.PLAIN, 24);
+		} catch (FontFormatException | IOException e1) {
+			e1.printStackTrace();
 		}
 		
 		setDefaultTiles();
@@ -230,14 +243,14 @@ public class LevelCreatorScreen extends JPanel{
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) { 
 				if ((levelMap[j][i] == Tile.WALL) && 
-						((j < (width - 1) && (levelMap[j + 1][i] == Tile.WALKABLE || levelMap[j + 1][i] == Tile.GOAL)) ||
-						((j < (width - 1) && i > 0) && (levelMap[j + 1][i - 1] == Tile.WALKABLE || levelMap[j + 1][i - 1] == Tile.GOAL)) ||
-						((i > 0) && (levelMap[j][i - 1] == Tile.WALKABLE || levelMap[j][i - 1] == Tile.GOAL)) ||
-						((j > 0 && i > 0) && (levelMap[j - 1][i - 1] == Tile.WALKABLE || levelMap[j - 1][i - 1] == Tile.GOAL)) ||
-						((j > 0) && (levelMap[j - 1][i] == Tile.WALKABLE || levelMap[j - 1][i] == Tile.GOAL)) ||
-						((j > 0 && i < (height - 1)) && (levelMap[j - 1][i + 1] == Tile.WALKABLE || levelMap[j - 1][i + 1] == Tile.GOAL)) ||
-						((i < (height - 1)) && (levelMap[j][i + 1] == Tile.WALKABLE || levelMap[j][i + 1] == Tile.GOAL)) ||
-						((j < (width - 1) && i < (height - 1)) && (levelMap[j + 1][i + 1] == Tile.WALKABLE || levelMap[j + 1][i + 1] == Tile.GOAL))))
+						((j < (width - 1) && (levelMap[j + 1][i] == Tile.WALKABLE || levelMap[j + 1][i] == Tile.GOAL || levelMap[j + 1][i] == Tile.PLAYER || levelMap[j + 1][i] == Tile.BOX)) ||
+						((j < (width - 1) && i > 0) && (levelMap[j + 1][i - 1] == Tile.WALKABLE || levelMap[j + 1][i - 1] == Tile.GOAL || levelMap[j + 1][i - 1] == Tile.PLAYER || levelMap[j + 1][i - 1] == Tile.BOX)) ||
+						((i > 0) && (levelMap[j][i - 1] == Tile.WALKABLE || levelMap[j][i - 1] == Tile.GOAL || levelMap[j][i - 1] == Tile.PLAYER || levelMap[j][i - 1] == Tile.BOX)) ||
+						((j > 0 && i > 0) && (levelMap[j - 1][i - 1] == Tile.WALKABLE || levelMap[j - 1][i - 1] == Tile.GOAL || levelMap[j - 1][i - 1] == Tile.PLAYER || levelMap[j - 1][i - 1] == Tile.BOX)) ||
+						((j > 0) && (levelMap[j - 1][i] == Tile.WALKABLE || levelMap[j - 1][i] == Tile.GOAL || levelMap[j - 1][i] == Tile.PLAYER || levelMap[j - 1][i] == Tile.BOX)) ||
+						((j > 0 && i < (height - 1)) && (levelMap[j - 1][i + 1] == Tile.WALKABLE || levelMap[j - 1][i + 1] == Tile.GOAL || levelMap[j - 1][i + 1] == Tile.PLAYER || levelMap[j - 1][i + 1] == Tile.BOX)) ||
+						((i < (height - 1)) && (levelMap[j][i + 1] == Tile.WALKABLE || levelMap[j][i + 1] == Tile.GOAL || levelMap[j][i + 1] == Tile.PLAYER || levelMap[j][i + 1] == Tile.BOX)) ||
+						((j < (width - 1) && i < (height - 1)) && (levelMap[j + 1][i + 1] == Tile.WALKABLE || levelMap[j + 1][i + 1] == Tile.GOAL || levelMap[j + 1][i + 1] == Tile.PLAYER || levelMap[j + 1][i + 1] == Tile.BOX))))
 					bbg.drawImage(tileImgs[Tile.BORDER.getIntRep()], left + j * tileSize, top + i * tileSize, null);
 				else
 					bbg.drawImage(tileImgs[levelMap[j][i].getIntRep()], left + j * tileSize, top + i * tileSize, null);
@@ -338,7 +351,20 @@ public class LevelCreatorScreen extends JPanel{
 			JButton tileButton = new HoverButton();
 			tileButton.setText("Slot " + (i+1));
 			tileButton.addActionListener(new loadSlotListener(i+1));
+			tileButton.setFont(buttonsFont);
+			tileButton.setForeground(new Color(167, 255, 1));
+			tileButton.setBorder(new LineBorder(Color.WHITE, 2, true));
+			tileButton.setBackground(new Color(0, 0, 0));
+			tileButton.setPreferredSize(new Dimension(slotButtonWidth, slotButtonHeight));
 			uiPanel.add(tileButton);
+			
+			//Skip last filler
+			if (i == 6) break;
+			
+			JPanel borderFiller2 = new JPanel();
+			borderFiller2.setOpaque(false);
+			borderFiller2.setPreferredSize(new Dimension(fillerSize, fillerSize));
+			uiPanel.add(borderFiller2);
 		}
 		
 		JButton backButton = new JButton();
@@ -365,7 +391,20 @@ public class LevelCreatorScreen extends JPanel{
 			JButton tileButton = new HoverButton();
 			tileButton.setText("Slot " + (i+1));
 			tileButton.addActionListener(new saveSlotListener(i+1));
+			tileButton.setFont(buttonsFont);
+			tileButton.setForeground(new Color(0, 255, 248));
+			tileButton.setBorder(new LineBorder(Color.WHITE, 2, true));
+			tileButton.setBackground(new Color(0, 0, 0));
+			tileButton.setPreferredSize(new Dimension(slotButtonWidth, slotButtonHeight));
 			uiPanel.add(tileButton);
+			
+			//Skip last filler
+			if (i == 6) break;
+			
+			JPanel borderFiller2 = new JPanel();
+			borderFiller2.setOpaque(false);
+			borderFiller2.setPreferredSize(new Dimension(fillerSize, fillerSize));
+			uiPanel.add(borderFiller2);
 		}
 		
 		JButton backButton = new JButton();
@@ -482,10 +521,58 @@ public class LevelCreatorScreen extends JPanel{
 			e.printStackTrace();
 		}
 		
+		// Find out how wide the level actually is
+		int startingX = -1;
+		int endingX = -1;
+		int startingY = -1;
+		int endingY = -1;
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				if (levelMap[i][j] == Tile.WALKABLE || levelMap[i][j] == Tile.BOX || levelMap[i][j] == Tile.BOX
+						|| levelMap[i][j] == Tile.PLAYER) {
+					if (i < startingX || startingX == -1) {
+						startingX = i;
+					}
+					if (i > endingX || endingX == -1) {
+						endingX = i;
+					}
+					if (j < startingY || startingY == -1) {
+						startingY = j;
+					}
+					if (j > endingY || endingY == -1) {
+						endingY = j;
+					}
+				}
+			}
+		}
+		
+		//Calculate the offset for rendering and the size of the render image
+		int borderSize = 4;
+		int renderTileWidth = endingX - startingX;
+		int renderTileHeight = endingY - startingY;
+		int renderTileSize = 1;
+		if (renderTileHeight > renderTileWidth) {
+			renderTileSize = renderTileHeight + borderSize;
+			startingY -= borderSize / 2;
+			startingX -= (renderTileSize - renderTileWidth) / 2;
+		} else {
+			renderTileSize = renderTileWidth + borderSize;
+			startingX -= borderSize / 2;
+			startingY -= (renderTileSize - renderTileHeight) / 2;
+		}
+		
 		//Render an image of the map and write it out
-		BufferedImage image = new BufferedImage(width * tileSize, height * tileSize, BufferedImage.TYPE_INT_ARGB);
-		Graphics g = image.getGraphics();
-		paintMap(g, 0, 0);
+		BufferedImage image = new BufferedImage(renderTileSize * tileSize, renderTileSize * tileSize, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = (Graphics2D) image.getGraphics();
+		
+		//Paint all as walkables first to "clear the screen"
+		for (int i = 0; i < renderTileSize; i++) {
+			for (int j = 0; j < renderTileSize; j++) { 
+				g.drawImage(tileImgs[Tile.WALL.getIntRep()], 0 + j * tileSize, 0+ i * tileSize, null);
+			}
+		}	
+		
+		paintMap(g, -startingX * tileSize, -startingY * tileSize);
 		try {
 			ImageIO.write(image, "png", new File("levels/levelc-" + slot + ".png"));
 		} catch (IOException ex) {
