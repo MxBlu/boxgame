@@ -21,14 +21,12 @@ public class MenuScreen extends JPanel{
     private Image background;
     private Image playbutton;
     private Image playpreset;
-    private Image creditsbutton;
     private Image levelcreatorbutton;
     private Image backbutton;
     private Image quitbutton;
 
 	private HoverButton play;
 	private HoverButton playPreset;
-	private HoverButton credits;
 	private HoverButton levelcreator;
 	private HoverButton back;
 	private HoverButton quit;
@@ -59,7 +57,6 @@ public class MenuScreen extends JPanel{
 			playbutton = ImageIO.read(getClass().getResourceAsStream("playbutton.png"));
 			playpreset = ImageIO.read(getClass().getResourceAsStream("playpresetbutton.png"));
 			backbutton = ImageIO.read(getClass().getResourceAsStream("back.png"));
-			creditsbutton = ImageIO.read(getClass().getResourceAsStream("creditsbutton.png"));
 			levelcreatorbutton = ImageIO.read(getClass().getResourceAsStream("levelcreatorbutton.png"));
 			quitbutton = ImageIO.read(getClass().getResourceAsStream("quitbutton.png"));
 		}
@@ -82,12 +79,6 @@ public class MenuScreen extends JPanel{
 		playPreset.setIcon(new ImageIcon(playpreset));
 		playPreset.setBorderPainted(false);
 		playPreset.setContentAreaFilled(false);
-		
-		credits = new HoverButton();
-		credits.setIcon(new ImageIcon(creditsbutton));
-		credits.setBorderPainted(false);
-		credits.setOpaque(false);
-		credits.setContentAreaFilled(false);
 
 		levelcreator = new HoverButton();
 		levelcreator.setIcon(new ImageIcon(levelcreatorbutton));
@@ -118,15 +109,6 @@ public class MenuScreen extends JPanel{
 		playPreset.addActionListener(new ActionListener(){
 			public void actionPerformed (ActionEvent e){
 				GameMaster.changeScreens(frame, new SelectScreen(frame));
-			}
-		});
-		
-		// Credits button action listener
-		// When the credits button is clicked, call the
-		// game master to change to credits screen.
-		credits.addActionListener(new ActionListener(){
-			public void actionPerformed (ActionEvent e){
-				System.out.println("change screen");
 			}
 		});
 		
@@ -217,9 +199,7 @@ public class MenuScreen extends JPanel{
 	private void handleDown() {
 		if (play.isFocusOwner()) {
 			playPreset.requestFocus();
-		} else if (playPreset.isFocusOwner()) { 
-			credits.requestFocus();
-		} else if (credits.isFocusOwner()) {
+		} else if (playPreset.isFocusOwner()) {
 			levelcreator.requestFocus();
 		} else if (!levelcreator.isFocusOwner()) {
 			play.requestFocus();
@@ -228,8 +208,6 @@ public class MenuScreen extends JPanel{
 	
 	private void handleUp() {
 		if (levelcreator.isFocusOwner()) {
-			credits.requestFocus();
-		} else if (credits.isFocusOwner()) {
 			playPreset.requestFocus();
 		} else if (playPreset.isFocusOwner()) { 
 			play.requestFocus();
@@ -262,11 +240,9 @@ public class MenuScreen extends JPanel{
 		c.gridy = 2;
 		add(playPreset,c);
 		c.gridy = 3;
-		add(credits,c);
-		c.gridy = 4;
 		add(levelcreator,c);
 		c.gridx = 3;
-		c.gridy = 4;
+		c.gridy = 3;
 		add(quit,c);
 	}
 	
@@ -282,7 +258,6 @@ public class MenuScreen extends JPanel{
 			add(difficultyPanel);
 			remove(play);
 			remove(playPreset);
-			remove(credits);
 			remove(levelcreator);
 			remove(quit);
 
