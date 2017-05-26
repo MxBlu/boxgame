@@ -1,8 +1,20 @@
 import java.util.Random;
 
+/**
+ * Holds a pattern which can be applied to a level.
+ * @author Jumail
+ *
+ */
 public class LevelGenPattern {
+	/**
+	 * Pattern
+	 */
 	private Tile patternMap[][];
 	
+	/**
+	 * Creates a new LevelGenPattern.
+	 * @param pattern String input of pattern
+	 */
 	public LevelGenPattern(String pattern) {
 		this.patternMap = new Tile[5][5];
 		
@@ -15,7 +27,15 @@ public class LevelGenPattern {
 		}
 	}
 	
+	/**
+	 * Tests if the pattern can be applied to the level map at given coordinates and applies it if it can.
+	 * @param levelMap Level to be applied to
+	 * @param x X-coordinate to apply to
+	 * @param y Y-coordinate to apply to
+	 * @return Success of operation
+	 */
 	public boolean applyPattern(Tile levelMap[][], int x, int y) {
+		// Get a random transformation of the pattern.
 		Random r = new Random();
 		
 		Tile transformedPattern[][] = null;
@@ -43,6 +63,7 @@ public class LevelGenPattern {
 			break;
 		}
 		
+		// Create a mask to test if the pattern is applicable.
 		Tile borderMask[][] = new Tile[5][5];
 		for (int i = 0; i < 5; i++)
 			borderMask[i] = transformedPattern[i].clone();
@@ -56,6 +77,7 @@ public class LevelGenPattern {
 				if (borderMask[i][j] != Tile.ANY && levelMap[y - 1 + i][x - 1 + j] != borderMask[i][j])
 					return false;
 		
+		// Apply the pattern to the level.
 		for (int i = 0; i < 3; i++)
 			for (int j = 0; j < 3; j++) 
 				levelMap[y + i][x + j] = transformedPattern[1 + i][1 + j];
@@ -63,6 +85,12 @@ public class LevelGenPattern {
 		return true;
 	}
 	
+	/**
+	 * Rotates a given pattern (90 * rotation) degrees clockwise.
+	 * @param patternMap Pattern to rotate
+	 * @param rotations Number of 90 degree rotation
+	 * @return Transformed pattern map
+	 */
 	private Tile[][] rotate(Tile[][] patternMap, int rotations) {
 		Tile transformed[][] = new Tile[5][5];
 		
@@ -77,6 +105,11 @@ public class LevelGenPattern {
 		return transformed;
 	}
 	
+	/**
+	 * Flip a given pattern horizontally.
+	 * @param patternMap Pattern to flip
+	 * @return Transformed pattern map
+	 */
 	private Tile[][] flip(Tile[][] patternMap) {
 		Tile transformed[][] = new Tile[5][5];
 		

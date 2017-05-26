@@ -5,8 +5,14 @@ import java.util.Random;
 
 public class LevelGen {
 
+	/**
+	 * Patterns to be applied to the level.
+	 */
 	LevelGenPattern patterns[];
 	
+	/**
+	 * Creates an instance of the level generator, loading in all its patterns.
+	 */
 	public LevelGen() {
 		patterns = new LevelGenPattern[17];
 		patterns[0] = new LevelGenPattern("66666\n"
@@ -112,11 +118,19 @@ public class LevelGen {
 						+ "61166\n");
 	}
 	
+	/**
+	 * Generates a tile-map of given dimensions and number of goals.
+	 * @param height Height of tile-map
+	 * @param width Width of tile-map
+	 * @param numGoals Number of goals to be generated
+	 * @return Generated tile-map
+	 */
 	public Tile[][] generate(int height, int width, int numGoals) {
 		Tile[][] levelMap = new Tile[height][width];
 		
 		Random r = new Random();
 		
+		// Set up working region inside tile-map for the actual level.
 		int workingHeight = 9;
 		int hStart = (height - workingHeight)/2;
 		
@@ -127,14 +141,18 @@ public class LevelGen {
 		
 		while (true) {
 			int amtPicked[] = new int[17];
+			
+			// Clear the tile-map with walls.
 			for (int i = 0; i < height; i++)
 				for (int j = 0; j < width; j++)
 					levelMap[i][j] = Tile.WALL;
 			
+			// Set the level area to walkable tiles.
 			for (int i = hStart; i < hStart + workingHeight; i++)
 				for (int j = wStart; j < wStart + workingWidth; j++)
 					levelMap[i][j] = Tile.WALKABLE;
 			
+			// Constantly apply patterns to the level until one is applied to every 3x3 region in the level area.
 			for (int i = hStart; (i + 2) < hStart + workingHeight; i += 3) {
 				for (int j = wStart; (j + 2) < wStart + workingWidth; j += 3) {
 					int pat = 0;
@@ -143,16 +161,20 @@ public class LevelGen {
 				}
 			}
 
+			// Check if we have too many empty 3x3 areas.
 			if (amtPicked[0] > ((numRegions % 2 == 0) ? numRegions/2 : (numRegions + 1)/2))
 				continue;
 			
+			// Check that level is a single connected region.
 			if (!checkConnectedness(levelMap, height, width))
 				continue;
 			
+			// Check that we don't have too many walkable tiles.
 			if ((float) getNumWalkable(levelMap, height, width)/(float) 81 <= 0.6f)
 				break;
 		}
 		
+		// Clean up walkable tiles surrounded by 3 walls.
 		boolean noChange_f = false;
 		while (!noChange_f) {
 			noChange_f = true;
@@ -239,6 +261,13 @@ public class LevelGen {
 		return levelMap;
 	}
 	
+	/**
+	 * Returns number of walkable tiles on the tile-map.
+	 * @param levelMap Tile-map to check
+	 * @param height Height of tile-map
+	 * @param width Width of tile-map
+	 * @return Number of walkable tiles on the tile-map
+	 */
 	private int getNumWalkable(Tile[][] levelMap, int height, int width) {
 		int numWalkable = 0;
 		for (int i = 0; i < height; i++)
@@ -248,9 +277,17 @@ public class LevelGen {
 		return numWalkable;
 	}
 
+	/**
+	 * Tests given tile-map for connectedness.
+	 * @param levelMap Tile-map to test
+	 * @param height Height of tile-map
+	 * @param width Width of tile-map
+	 * @return Connectedness of tile-map
+	 */
 	private boolean checkConnectedness(Tile[][] levelMap, int height, int width) {
 		int intMap[][] = new int [height][width];
 		
+		// Make a integer representation of the map.
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				if (levelMap[i][j] == Tile.WALL)
@@ -260,6 +297,7 @@ public class LevelGen {
 			}
 		}
 		
+		// Find the first walkable tile.
 		int i = 0;
 		int j = 0;
 		boolean startFound_f = false;
@@ -274,10 +312,11 @@ public class LevelGen {
 				break;
 		}
 		
+		// If there isn't one, there are 0 regions, return false.
 		if (!startFound_f)
 			return false;
 		
-		
+		// Class to assist in BFS algorithm.
 		class IntPair { 
 			int i; 
 			int j; 
@@ -297,6 +336,7 @@ public class LevelGen {
 		
 		open.add(new IntPair(i, j));
 		
+		// Walk through every tile walkable tile and set its integer value to 2.
 		while (!open.isEmpty()) {
 			IntPair curr = open.poll();
 			closed.add(curr);
@@ -317,6 +357,7 @@ public class LevelGen {
 			}
 		}
 		
+		// Test if any integer value '0' tiles (walkable) exist after the search.
 		for (i = 0; i < height; i++)
 			for (j = 0; j < width; j++) 
 				if (intMap[i][j] == 0)

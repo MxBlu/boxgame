@@ -97,10 +97,10 @@ public class Level extends JPanel implements ActionListener {
 	private int moves;
 
 	/**
-	 * Tile images and frame timer for updating and animation
+	 * Tile images and timer for updating and animation
 	 */
 	private Image tileImgs[];
-	private Timer frameTimer;
+	private Timer animationTimer;
 	
 	/**
 	 * Premade level members
@@ -144,7 +144,7 @@ public class Level extends JPanel implements ActionListener {
 		this.difficulty = difficulty;
 		prevStates = new Stack<ArrayList<Entity>>();
 
-		frameTimer = new Timer(GameMaster.FRAME_DELTA, this);
+		animationTimer = new Timer(GameMaster.FRAME_DELTA, this);
 
 		// gets a random number of goals for the assigned difficulty
 		Random r = new Random();
@@ -177,7 +177,7 @@ public class Level extends JPanel implements ActionListener {
 		
 		setActions();
 		setupUI();
-		frameTimer.start();
+		animationTimer.start();
 		pushCurrentState();
 	}
 
@@ -194,7 +194,7 @@ public class Level extends JPanel implements ActionListener {
 		boxList = new ArrayList<Box>();
 		prevStates = new Stack<ArrayList<Entity>>();
 		
-		frameTimer = new Timer(GameMaster.FRAME_DELTA, this);
+		animationTimer = new Timer(GameMaster.FRAME_DELTA, this);
 		time = 0;
 		isPaused = false;
 		pausePanel = new PausePanel(frame);
@@ -245,7 +245,7 @@ public class Level extends JPanel implements ActionListener {
 		// prepares the level for input
 		setActions();
 		setupUI();
-		frameTimer.start();
+		animationTimer.start();
 		pushCurrentState();
 	}
 	
@@ -488,11 +488,11 @@ public class Level extends JPanel implements ActionListener {
 	public void togglePaused() {
 		if (isPaused) {
 			isPaused = false;
-			frameTimer.start();
+			animationTimer.start();
 			remove(pausePanel);
 		} else {
 			isPaused = true;
-			frameTimer.stop();
+			animationTimer.stop();
 			add(pausePanel);
 		}
 		
@@ -782,7 +782,7 @@ public class Level extends JPanel implements ActionListener {
 			repaint();
 		else if (isCompleted()) {
 			// stops the animation's timer
-			frameTimer.stop();
+			animationTimer.stop();
 			if (levelFile != null) {
 				// saves if high score
 				saveHighScore();
